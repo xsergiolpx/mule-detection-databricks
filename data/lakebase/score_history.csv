@@ -1,0 +1,8 @@
+id,customer_id,rm_id,score,score_type,input_params,calculated_at,expires_at
+5de3294b-5f08-43d4-b22e-522556ad1dee,CUST_A,SYSTEM,90,default,"{""risk_profile"": ""medium"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:17:40.181482+00,2026-03-06 06:17:40.181482+00
+786ec120-c8c7-45a3-9c6e-2753631b0452,CUST_A,RM_1,100,custom,"{""risk_profile"": ""low"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:17:50.421609+00,2026-03-06 06:17:50.421609+00
+9f5c2a85-91f9-46fc-9061-60351dd569b8,CUST_A,RM_2,60,custom,"{""risk_profile"": ""high"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:18:05.126947+00,2026-03-06 06:18:05.126947+00
+9a952020-89dd-44b7-a329-0a22b7011c28,CUST_A,RM_1,90,custom,"{""risk_profile"": ""medium"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:18:23.798873+00,2026-03-05 06:19:23.798873+00
+fe5faad4-580a-4817-9cab-3d5fad1c23ac,CUST_A,RM_1,100,custom,"{""risk_profile"": ""low"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:31:05.189117+00,2026-03-05 06:36:05.189117+00
+a87a4ce8-7eb6-416f-b707-19b95b19fd1f,CUST_A,RM_1,60,custom,"{""risk_profile"": ""high"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:35:07.292124+00,2026-04-04 06:35:07.292124+00
+1dcd3335-faff-46e8-98d5-9c7fc21c101c,CUST_A,RM_1,100,custom,"{""risk_profile"": ""low"", ""portfolio_size"": 1000000.0, ""credit_exposure"": 100000.0}",2026-03-05 06:44:11.149964+00,2026-03-05 06:45:11.149964+00

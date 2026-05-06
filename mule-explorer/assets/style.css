@@ -1,0 +1,146 @@
+/* Mule Network Explorer — Modern 2026 Dark Theme */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0f172a;
+    color: #f1f5f9;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 3px;
+}
+
+/* Dark dropdown overrides */
+.dark-dropdown .Select-control {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+.dark-dropdown .Select-menu-outer {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+.dark-dropdown .Select-value-label,
+.dark-dropdown .Select-placeholder {
+    color: #94a3b8 !important;
+}
+
+.dark-dropdown .Select-option {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+.dark-dropdown .Select-option.is-focused {
+    background-color: #334155 !important;
+}
+
+/* Dash dropdown (newer versions) */
+.Select-control,
+.dash-dropdown .Select-control {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+    border-radius: 8px !important;
+}
+
+.Select-menu-outer,
+.dash-dropdown .Select-menu-outer {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    border-radius: 0 0 8px 8px !important;
+}
+
+.Select-value-label {
+    color: #f1f5f9 !important;
+}
+
+.Select-placeholder {
+    color: #64748b !important;
+}
+
+.Select-option {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+.Select-option.is-focused {
+    background-color: #334155 !important;
+}
+
+.Select-input > input {
+    color: #f1f5f9 !important;
+}
+
+/* VirtualizedSelectOption */
+.VirtualizedSelectOption {
+    background-color: #1e293b !important;
+    color: #e2e8f0 !important;
+    font-size: 13px !important;
+}
+.VirtualizedSelectFocusedOption {
+    background-color: #334155 !important;
+}
+
+/* Dropdown option font size */
+.Select-option {
+    font-size: 13px !important;
+}
+.Select-value-label {
+    font-size: 13px !important;
+}
+
+/* Checklist */
+.dark-checklist label {
+    color: #e2e8f0;
+    cursor: pointer;
+}
+
+.dark-checklist input[type="checkbox"] {
+    accent-color: #3b82f6;
+}
+
+/* Slider */
+.dark-slider .rc-slider-track {
+    background-color: #3b82f6 !important;
+}
+
+.dark-slider .rc-slider-handle {
+    border-color: #3b82f6 !important;
+    background-color: #1e293b !important;
+}
+
+.dark-slider .rc-slider-rail {
+    background-color: #334155 !important;
+}
+
+.dark-slider .rc-slider-mark-text {
+    color: #64748b !important;
+    font-size: 11px !important;
+}
+
+.dark-slider .rc-slider-dot {
+    border-color: #475569 !important;
+    background-color: #1e293b !important;
+}
+
+/* Cytoscape container */
+.cytoscape-container {
+    border-radius: 0;
+}

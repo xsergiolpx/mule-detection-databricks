@@ -1,0 +1,6 @@
+dash>=2.17
+dash-cytoscape>=1.0
+fastapi
+uvicorn[standard]
+psycopg[binary]
+databricks-sdk==0.96.0

@@ -1,0 +1,1001 @@
+account_id,customer_name,age,occupation,monthly_income,income_band,province,account_open_date,account_type,kyc_risk_level
+A-1186,ภูมิพัฒน์ ไชยวงค์,69,nurse,35000.0,30-60K,Nonthaburi,2022-06-27,current,low
+A-1187,กมลวรรณ สิทธิชัย,27,accountant,15000.0,15-30K,Khon Kaen,2024-11-20,current,low
+A-1188,ชัยวัฒน์ วงศ์สกุล,59,driver,35000.0,30-60K,Surat Thani,2025-07-05,current,low
+A-1189,สุภาพร แซ่ลิ้ม,53,lawyer,15000.0,15-30K,Songkhla,2023-06-28,current,low
+A-1190,ลัดดา เจริญผล,42,merchant,60000.0,60K+,Samut Prakan,2021-10-24,current,low
+A-1191,สุวรรณา ใจดี,22,driver,60000.0,60K+,Pathum Thani,2021-01-27,current,low
+A-1192,สุรชัย วิไลวรรณ,28,merchant,100000.0,60K+,Lampang,2019-07-11,savings,low
+A-1193,สุรชัย วิไลวรรณ,39,lawyer,80000.0,60K+,Khon Kaen,2025-03-14,current,low
+A-1194,สุกัญญา จงรักษ์,61,driver,45000.0,30-60K,Pathum Thani,2020-07-03,current,medium
+A-1195,ธนวัฒน์ รุ่งเรือง,41,teacher,100000.0,60K+,Khon Kaen,2024-09-08,savings,medium
+A-1196,ประเสริฐ วงศ์สกุล,25,chef,25000.0,15-30K,Songkhla,2025-03-24,current,low
+A-1197,พรทิพย์ แสงจันทร์,48,civil_servant,80000.0,60K+,Bangkok,2020-12-23,current,medium
+A-1198,จันทร์เพ็ญ แซ่ตั้ง,37,student,15000.0,15-30K,Surat Thani,2019-12-14,savings,low
+A-1199,ภูมิพัฒน์ แซ่ตั้ง,29,civil_servant,100000.0,60K+,Songkhla,2019-07-02,current,low
+A-1200,อัครพล ศรีสุข,58,teacher,100000.0,60K+,Chiang Rai,2023-04-09,savings,low
+A-1201,สมหญิง ประเสริฐศรี,45,driver,45000.0,30-60K,Udon Thani,2021-11-28,current,low
+A-1202,ศิริพร ภูวนาท,36,nurse,100000.0,60K+,Nakhon Ratchasima,2021-07-07,savings,low
+A-1203,เบญจมาศ ธนาคม,24,accountant,25000.0,15-30K,Nonthaburi,2024-02-07,current,low
+A-1204,กมลวรรณ ประเสริฐศรี,55,lawyer,45000.0,30-60K,Samut Prakan,2022-06-22,current,low
+A-1205,สมหญิง แซ่ตั้ง,27,engineer,25000.0,15-30K,Surat Thani,2021-10-06,current,medium
+A-1206,พงศ์พัฒน์ สว่างวงศ์,55,teacher,20000.0,15-30K,Surat Thani,2019-11-06,current,medium
+A-1207,รัตนา ใจดี,56,merchant,25000.0,15-30K,Nonthaburi,2022-08-31,current,low
+A-1208,สราวุธ พงษ์สวัสดิ์,69,lawyer,25000.0,15-30K,Rayong,2020-07-22,savings,low
+A-1209,พิมพ์ชนก ลิ้มประเสริฐ,39,teacher,25000.0,15-30K,Surat Thani,2022-09-23,current,low
+A-1210,พัชรี พลอยแก้ว,36,engineer,45000.0,30-60K,Chiang Mai,2020-07-06,savings,low
+A-1211,ปรัชญา ทองดี,30,student,60000.0,60K+,Chiang Mai,2025-06-06,savings,low
+A-1212,รัฐพล พลอยแก้ว,61,engineer,80000.0,60K+,Khon Kaen,2019-06-14,current,medium
+A-1213,พงศ์พัฒน์ พงษ์สวัสดิ์,35,student,80000.0,60K+,Chonburi,2022-06-12,current,medium
+A-1214,อรุณี ธนาคม,50,accountant,35000.0,30-60K,Pathum Thani,2022-12-04,current,medium
+A-1215,ประเสริฐ ศักดิ์สิทธิ์,28,driver,20000.0,15-30K,Udon Thani,2022-09-09,savings,low
+A-1216,สุกัญญา อมรรัตน์,26,office_worker,45000.0,30-60K,Rayong,2023-06-02,savings,low
+A-1217,มาลี ตันติกุล,56,retired,60000.0,60K+,Udon Thani,2021-03-28,current,low
+A-1218,พิมพ์ชนก มงคลชัย,51,office_worker,20000.0,15-30K,Chiang Rai,2023-07-09,current,low
+A-1219,สมชาย เจริญผล,23,nurse,100000.0,60K+,Phuket,2024-05-21,savings,low
+A-1220,สุรชัย ชูศรี,66,driver,80000.0,60K+,Surat Thani,2023-03-19,savings,low
+A-1221,ชุติมา นาคสุข,55,nurse,20000.0,15-30K,Khon Kaen,2023-06-11,savings,low
+A-1222,พรทิพย์ สิทธิชัย,26,chef,60000.0,60K+,Nakhon Ratchasima,2022-11-29,current,low
+A-1223,วันดี ใจดี,22,office_worker,25000.0,15-30K,Chonburi,2022-11-05,savings,low
+A-1224,ดวงใจ พานิชย์,59,driver,25000.0,15-30K,Chiang Rai,2023-07-08,current,medium
+A-1225,พรทิพย์ วัฒนา,65,civil_servant,45000.0,30-60K,Nonthaburi,2024-06-08,savings,medium
+A-1226,รัฐพล อินทร์แก้ว,57,nurse,15000.0,15-30K,Chiang Rai,2024-06-06,savings,low
+A-1227,พัชรี แซ่ลิ้ม,57,accountant,25000.0,15-30K,Chonburi,2024-12-27,savings,low
+A-1228,พีรพัฒน์ ไชยวงค์,56,retired,20000.0,15-30K,Chonburi,2021-04-01,current,low
+A-1229,วันดี มงคลชัย,46,lawyer,100000.0,60K+,Surat Thani,2019-10-23,current,medium
+A-1230,เกียรติศักดิ์ วัฒนา,53,chef,60000.0,60K+,Surat Thani,2021-01-19,current,low
+A-1231,ณัฐพล พิทักษ์,59,accountant,35000.0,30-60K,Khon Kaen,2021-11-15,current,low
+A-1232,เกียรติศักดิ์ ศักดิ์สิทธิ์,64,retired,100000.0,60K+,Khon Kaen,2022-08-31,savings,medium
+A-1233,พงศ์พัฒน์ วงศ์สกุล,45,driver,25000.0,15-30K,Songkhla,2022-05-14,current,low
+A-1234,ณัฐธิดา นาคสุข,67,accountant,35000.0,30-60K,Pathum Thani,2021-05-17,current,low
+A-1235,วีรยุทธ รุ่งเรือง,26,civil_servant,35000.0,30-60K,Nakhon Ratchasima,2021-10-30,savings,low
+A-1236,อัครพล รัตนกุล,26,chef,60000.0,60K+,Bangkok,2024-05-28,savings,medium
+A-1237,ศิริพร ธนาคม,61,accountant,100000.0,60K+,Khon Kaen,2021-05-06,savings,low
+A-1238,พรรณี แก้วมณี,61,civil_servant,35000.0,30-60K,Lampang,2025-02-09,savings,medium
+A-1239,สุทธิพงศ์ กิจเจริญ,31,office_worker,80000.0,60K+,Lampang,2024-08-31,savings,low
+A-1240,รัฐพล พลอยแก้ว,39,civil_servant,20000.0,15-30K,Surat Thani,2022-11-13,current,low
+A-1241,อรุณี ชัยสิทธิ์,52,accountant,45000.0,30-60K,Pathum Thani,2021-04-09,current,low
+A-1242,อัจฉรา วิไลวรรณ,65,teacher,15000.0,15-30K,Chonburi,2022-11-21,current,medium
+A-1243,ปิยะดา รัตนกุล,52,driver,20000.0,15-30K,Udon Thani,2023-08-09,current,low
+A-1244,กิตติพงศ์ วัฒนา,20,nurse,80000.0,60K+,Khon Kaen,2021-10-01,savings,low
+A-1245,รัตนา พานิชย์,61,driver,35000.0,30-60K,Chonburi,2019-10-22,current,low
+A-1246,พิมพ์ชนก รัตนกุล,64,merchant,45000.0,30-60K,Udon Thani,2023-03-26,savings,medium
+A-1247,ปวีณา สว่างวงศ์,67,civil_servant,60000.0,60K+,Samut Prakan,2023-10-10,savings,low
+A-1496,ชาญวิทย์ วงศ์สกุล,45,engineer,45000.0,30-60K,Phuket,2020-08-11,current,low
+A-1497,อนุชา ประเสริฐศรี,62,engineer,25000.0,15-30K,Chiang Rai,2024-11-15,savings,medium
+A-1498,กิตติพงศ์ แซ่ตั้ง,42,office_worker,35000.0,30-60K,Nakhon Ratchasima,2024-07-30,savings,low
+A-1499,จุฑามาศ แก้วมณี,53,driver,80000.0,60K+,Bangkok,2024-05-17,current,low
+A-1500,อัจฉรา ประเสริฐศรี,65,lawyer,45000.0,30-60K,Phuket,2022-01-23,current,low
+A-1501,สราวุธ พิทักษ์,57,student,20000.0,15-30K,Surat Thani,2024-11-26,current,low
+A-1502,กัญญา แสงจันทร์,42,accountant,100000.0,60K+,Chonburi,2019-03-09,savings,low
+A-1503,อนุชา แซ่ตั้ง,52,student,45000.0,30-60K,Chiang Rai,2021-06-25,savings,low
+A-1504,มาลี มงคลชัย,46,driver,20000.0,15-30K,Chiang Rai,2024-07-05,savings,medium
+A-1505,ปิยะดา รัตนกุล,21,engineer,15000.0,15-30K,Nonthaburi,2020-07-17,savings,low
+A-1506,จันทร์เพ็ญ ศรีวิชัย,23,teacher,45000.0,30-60K,Chiang Rai,2021-02-16,savings,low
+A-1507,ปิยะดา พิทักษ์,25,engineer,100000.0,60K+,Rayong,2024-05-24,current,low
+A-1508,สุทธิพงศ์ วัฒนา,70,civil_servant,25000.0,15-30K,Lampang,2024-11-02,current,low
+A-1509,ธนกฤต รุ่งเรือง,34,chef,80000.0,60K+,Rayong,2020-08-04,current,low
+A-1510,พัชรี แก้วมณี,58,merchant,25000.0,15-30K,Lampang,2024-06-12,savings,low
+A-1511,จุฑามาศ คำแก้ว,50,student,25000.0,15-30K,Surat Thani,2025-02-26,current,low
+A-1512,มาลี แซ่ลิ้ม,22,retired,80000.0,60K+,Songkhla,2021-09-06,savings,medium
+A-1513,วิภาวดี กิจเจริญ,28,nurse,100000.0,60K+,Chiang Rai,2021-09-19,current,low
+A-1514,วันดี สุขสวัสดิ์,32,office_worker,15000.0,15-30K,Phuket,2025-08-04,savings,low
+A-1515,นพดล สมบูรณ์,46,driver,20000.0,15-30K,Khon Kaen,2020-11-04,current,low
+A-1516,ธนวัฒน์ นาคสุข,59,nurse,80000.0,60K+,Udon Thani,2021-05-24,savings,low
+A-1517,อัจฉรา ลิ้มประเสริฐ,55,lawyer,100000.0,60K+,Samut Prakan,2021-12-15,current,low
+A-1518,ปิยะดา เจริญผล,62,merchant,35000.0,30-60K,Nakhon Ratchasima,2024-02-13,current,low
+A-1519,รัฐพล สุขสวัสดิ์,55,civil_servant,15000.0,15-30K,Samut Prakan,2020-11-29,savings,low
+A-1520,ภูมิพัฒน์ แซ่ตั้ง,50,civil_servant,80000.0,60K+,Chiang Mai,2020-02-06,savings,medium
+A-1521,อรทัย ประเสริฐศรี,45,civil_servant,45000.0,30-60K,Nonthaburi,2019-10-03,current,medium
+A-1522,อภิสิทธิ์ ตันติกุล,20,engineer,45000.0,30-60K,Surat Thani,2021-04-17,savings,low
+A-1523,ปิยะดา วงศ์สกุล,63,office_worker,60000.0,60K+,Khon Kaen,2021-10-16,current,low
+A-1524,สมชาย ศรีสุข,62,chef,80000.0,60K+,Lampang,2025-09-06,savings,low
+A-1525,ณัฐธิดา พิทักษ์,66,lawyer,60000.0,60K+,Chiang Rai,2023-01-03,savings,medium
+A-1526,ชาญวิทย์ เจริญผล,45,civil_servant,15000.0,15-30K,Surat Thani,2022-01-14,savings,low
+A-1527,อัจฉรา สมบูรณ์,41,merchant,45000.0,30-60K,Pathum Thani,2025-02-21,current,medium
+A-1528,รัตนา ใจดี,56,accountant,35000.0,30-60K,Lampang,2022-12-02,savings,medium
+A-1529,พิมพ์ชนก พิทักษ์,27,nurse,20000.0,15-30K,Samut Prakan,2023-05-27,current,medium
+A-1530,วิชัย จงรักษ์,42,lawyer,15000.0,15-30K,Nonthaburi,2022-01-23,current,low
+A-1531,วีรยุทธ ชูศรี,55,teacher,100000.0,60K+,Khon Kaen,2022-08-18,savings,low
+A-1532,พรรณี สมบูรณ์,51,retired,35000.0,30-60K,Nakhon Ratchasima,2021-09-28,savings,low
+A-1533,นภาพร วงศ์สกุล,35,civil_servant,60000.0,60K+,Nonthaburi,2020-11-09,current,low
+A-1534,พีรพัฒน์ ภูวนาท,68,lawyer,15000.0,15-30K,Lampang,2024-07-08,current,medium
+A-1535,นพดล รัตนกุล,31,lawyer,45000.0,30-60K,Bangkok,2023-07-28,current,medium
+A-1536,ชุติมา ประเสริฐศรี,54,office_worker,60000.0,60K+,Udon Thani,2023-07-11,savings,medium
+A-1537,จันทร์เพ็ญ อินทร์แก้ว,40,retired,15000.0,15-30K,Chiang Mai,2019-03-30,current,low
+A-1538,กิตติพงศ์ สว่างวงศ์,59,nurse,25000.0,15-30K,Chiang Rai,2025-04-05,current,low
+A-1539,อัครพล แซ่ตั้ง,31,accountant,80000.0,60K+,Songkhla,2021-06-21,current,low
+A-1540,อรทัย เจริญผล,48,teacher,25000.0,15-30K,Pathum Thani,2025-07-26,current,low
+A-1541,สุทธิพงศ์ สิทธิชัย,55,chef,80000.0,60K+,Udon Thani,2021-04-23,savings,low
+A-1542,อรุณี ภูวนาท,46,accountant,25000.0,15-30K,Khon Kaen,2024-11-27,current,low
+A-1543,กิตติพงศ์ สว่างวงศ์,45,merchant,25000.0,15-30K,Rayong,2019-10-13,savings,medium
+A-1544,เกียรติศักดิ์ สมบูรณ์,67,driver,45000.0,30-60K,Songkhla,2023-02-27,savings,medium
+A-1545,ลัดดา พลอยแก้ว,27,driver,35000.0,30-60K,Chonburi,2025-07-30,current,low
+A-1546,จันทร์เพ็ญ เทพพิทักษ์,40,student,100000.0,60K+,Khon Kaen,2024-02-14,current,low
+A-1547,อัจฉรา จงรักษ์,30,student,60000.0,60K+,Rayong,2023-11-03,savings,low
+A-1548,ณัฐพล ศักดิ์สิทธิ์,30,driver,35000.0,30-60K,Chiang Rai,2022-08-17,current,low
+A-1549,ปรัชญา ทองดี,48,driver,100000.0,60K+,Chonburi,2023-10-02,savings,low
+A-1550,ประเสริฐ เจริญผล,67,retired,20000.0,15-30K,Chiang Mai,2021-06-21,current,low
+A-1551,สมศักดิ์ วงศ์สกุล,21,chef,20000.0,15-30K,Nonthaburi,2020-04-10,current,low
+A-1552,กัญญา รุ่งเรือง,34,engineer,45000.0,30-60K,Rayong,2024-01-30,savings,low
+A-1553,รัตนา พลอยแก้ว,22,student,60000.0,60K+,Lampang,2022-10-04,current,medium
+A-1554,ลัดดา ชูศรี,28,retired,25000.0,15-30K,Phuket,2025-09-26,current,low
+A-1555,จิรายุ ไชยวงค์,50,lawyer,35000.0,30-60K,Khon Kaen,2020-02-11,savings,low
+A-1556,เกียรติศักดิ์ สุขสวัสดิ์,20,office_worker,25000.0,15-30K,Pathum Thani,2022-12-19,current,medium
+A-1557,เบญจมาศ สุขสวัสดิ์,39,office_worker,80000.0,60K+,Surat Thani,2022-05-24,current,low
+A-1930,ธนวัฒน์ ทองดี,39,merchant,20000.0,15-30K,Chiang Rai,2019-06-04,current,low
+A-1931,อรทัย พงษ์สวัสดิ์,35,merchant,100000.0,60K+,Rayong,2021-10-13,current,low
+A-1932,อัจฉรา บุญมาก,24,civil_servant,100000.0,60K+,Chiang Mai,2020-03-07,savings,low
+A-1933,ธนวัฒน์ แสงจันทร์,44,driver,20000.0,15-30K,Bangkok,2020-07-16,current,medium
+A-1934,ปรัชญา แซ่ลิ้ม,24,merchant,15000.0,15-30K,Phuket,2025-05-19,savings,medium
+A-1935,ธนวัฒน์ คำแก้ว,34,civil_servant,15000.0,15-30K,Lampang,2024-03-12,savings,low
+A-1936,อัจฉรา วิไลวรรณ,61,student,15000.0,15-30K,Chiang Mai,2024-03-14,savings,low
+A-1937,ธนพร ชูศรี,58,retired,20000.0,15-30K,Chonburi,2025-10-04,current,low
+A-1938,ธนวัฒน์ แก้วมณี,46,accountant,100000.0,60K+,Bangkok,2021-03-12,savings,low
+A-1939,นิภา สิทธิชัย,57,chef,60000.0,60K+,Chonburi,2022-08-07,current,low
+A-1940,วันดี อินทร์แก้ว,58,driver,45000.0,30-60K,Nonthaburi,2023-03-31,savings,low
+A-1941,ธนกฤต วิไลวรรณ,35,lawyer,15000.0,15-30K,Samut Prakan,2023-11-04,savings,low
+A-1942,อรุณี อินทร์แก้ว,32,student,100000.0,60K+,Chiang Rai,2024-05-08,current,low
+A-1943,ธนวัฒน์ แก้วมณี,46,driver,25000.0,15-30K,Udon Thani,2020-04-14,savings,low
+A-1944,พิมพ์ชนก สว่างวงศ์,60,engineer,35000.0,30-60K,Pathum Thani,2024-05-04,current,medium
+A-1945,วิชัย ลิ้มประเสริฐ,33,chef,25000.0,15-30K,Bangkok,2019-03-09,savings,low
+A-1946,พรทิพย์ แก้วมณี,38,accountant,35000.0,30-60K,Bangkok,2025-09-04,savings,low
+A-1947,อรุณี นาคสุข,38,teacher,35000.0,30-60K,Nakhon Ratchasima,2022-01-18,savings,low
+A-1948,ชัยวัฒน์ รัตนกุล,21,teacher,45000.0,30-60K,Phuket,2020-03-30,savings,low
+A-1949,จิรายุ ชัยสิทธิ์,33,nurse,100000.0,60K+,Surat Thani,2021-10-20,current,low
+A-1950,ศุภกร แซ่ตั้ง,27,teacher,25000.0,15-30K,Songkhla,2021-03-27,current,low
+A-1951,สมศักดิ์ ธนาคม,22,civil_servant,35000.0,30-60K,Nakhon Ratchasima,2025-02-11,savings,low
+A-1952,เบญจมาศ สว่างวงศ์,28,lawyer,100000.0,60K+,Samut Prakan,2021-06-16,savings,low
+A-1953,ปิยะดา ธนาคม,52,chef,60000.0,60K+,Pathum Thani,2024-09-13,current,medium
+A-1954,ลัดดา อินทร์แก้ว,65,accountant,100000.0,60K+,Nonthaburi,2022-02-13,savings,low
+A-1955,ณัฐพล คำแก้ว,34,engineer,100000.0,60K+,Lampang,2021-09-27,current,low
+A-1956,ศิริพร แสงจันทร์,43,nurse,20000.0,15-30K,Surat Thani,2020-08-13,current,low
+A-1957,สุกัญญา แสงจันทร์,57,office_worker,100000.0,60K+,Udon Thani,2024-11-08,current,medium
+A-1958,อนุชา แสงจันทร์,43,accountant,60000.0,60K+,Nakhon Ratchasima,2022-03-04,current,low
+A-1959,ลัดดา วงศ์สกุล,42,merchant,45000.0,30-60K,Samut Prakan,2024-09-26,current,low
+A-1960,ธนกฤต วัฒนา,26,merchant,20000.0,15-30K,Nakhon Ratchasima,2023-02-24,current,low
+A-1961,กัญญา พลอยแก้ว,39,retired,45000.0,30-60K,Lampang,2021-03-31,current,low
+A-1962,จันทร์เพ็ญ จงรักษ์,69,nurse,45000.0,30-60K,Rayong,2022-12-30,savings,medium
+A-1963,สุทธิพงศ์ มงคลชัย,61,lawyer,25000.0,15-30K,Udon Thani,2023-07-27,savings,medium
+A-1964,ธนกฤต คำแก้ว,66,accountant,60000.0,60K+,Samut Prakan,2020-01-27,current,low
+A-1965,ปรัชญา รัตนกุล,48,accountant,15000.0,15-30K,Khon Kaen,2023-04-24,savings,medium
+A-1966,ชัยวัฒน์ จงรักษ์,62,driver,60000.0,60K+,Samut Prakan,2021-08-21,current,low
+A-1967,พีรพัฒน์ ชูศรี,57,office_worker,15000.0,15-30K,Nonthaburi,2020-09-01,current,medium
+A-1968,วรพล เจริญผล,33,chef,20000.0,15-30K,Songkhla,2025-02-07,current,low
+A-1969,กฤษณะ ศรีวิชัย,25,teacher,20000.0,15-30K,Udon Thani,2025-04-23,savings,low
+A-1970,ณัฐพล รุ่งเรือง,32,merchant,80000.0,60K+,Chiang Mai,2022-04-17,current,low
+A-1971,สราวุธ ไชยวงค์,43,lawyer,15000.0,15-30K,Phuket,2021-01-13,savings,low
+A-1972,จันทร์เพ็ญ มงคลชัย,28,lawyer,80000.0,60K+,Chonburi,2024-06-21,savings,low
+A-1973,ศิริพร อินทร์แก้ว,47,retired,100000.0,60K+,Nakhon Ratchasima,2020-11-21,current,low
+A-1974,ศุภกร ศรีวิชัย,32,office_worker,25000.0,15-30K,Samut Prakan,2024-02-09,savings,low
+A-1975,ดวงใจ วงศ์สกุล,56,accountant,100000.0,60K+,Khon Kaen,2024-04-19,current,low
+A-1976,เบญจมาศ ประเสริฐศรี,64,retired,45000.0,30-60K,Phuket,2023-06-30,savings,low
+A-1977,ชัยวัฒน์ ประเสริฐศรี,59,retired,80000.0,60K+,Pathum Thani,2024-03-30,savings,medium
+A-1978,รัฐพล พลอยแก้ว,64,office_worker,35000.0,30-60K,Khon Kaen,2020-11-17,savings,low
+A-1979,ประเสริฐ ตันติกุล,51,chef,20000.0,15-30K,Samut Prakan,2023-03-31,current,medium
+A-1980,รัตนา ทองดี,48,teacher,45000.0,30-60K,Chiang Mai,2021-06-08,current,medium
+A-1981,สมชาย สมบูรณ์,41,retired,80000.0,60K+,Chiang Mai,2021-04-16,savings,low
+A-1982,วิชัย นาคสุข,62,retired,100000.0,60K+,Nonthaburi,2024-07-18,savings,medium
+A-1983,สมชาย ศรีวิชัย,28,accountant,45000.0,30-60K,Chiang Mai,2020-12-01,savings,low
+A-1984,อัครพล สุขสวัสดิ์,27,lawyer,80000.0,60K+,Nonthaburi,2020-12-30,current,low
+A-1985,จุฑามาศ พลอยแก้ว,48,driver,25000.0,15-30K,Nakhon Ratchasima,2021-07-16,current,low
+A-1986,รัตนา พงษ์สวัสดิ์,60,lawyer,20000.0,15-30K,Chiang Rai,2023-06-28,savings,low
+A-1987,ภูมิพัฒน์ วิไลวรรณ,69,chef,35000.0,30-60K,Chiang Mai,2021-11-28,savings,medium
+A-1988,วิภาวดี พิทักษ์,21,office_worker,60000.0,60K+,Lampang,2021-04-07,savings,low
+A-1989,อรทัย ธนาคม,66,teacher,15000.0,15-30K,Songkhla,2023-10-09,savings,low
+A-1990,ประเสริฐ ลิ้มประเสริฐ,54,chef,80000.0,60K+,Songkhla,2020-06-18,savings,low
+A-1991,ปิยะ พิทักษ์,45,student,60000.0,60K+,Chiang Mai,2019-03-31,current,low
+A-1992,อภิสิทธิ์ ภูวนาท,22,merchant,35000.0,30-60K,Chiang Mai,2023-09-20,savings,low
+A-1993,ชุติมา รัตนกุล,26,civil_servant,60000.0,60K+,Songkhla,2023-06-20,savings,low
+A-1994,สราวุธ อินทร์แก้ว,62,accountant,20000.0,15-30K,Udon Thani,2022-11-13,current,low
+A-1995,อัครพล บุญมาก,52,civil_servant,15000.0,15-30K,Khon Kaen,2021-09-19,savings,medium
+A-1996,วรพล กิจเจริญ,68,engineer,20000.0,15-30K,Nakhon Ratchasima,2019-10-13,savings,medium
+A-1997,พัชรี แสงจันทร์,33,student,15000.0,15-30K,Pathum Thani,2021-10-12,current,low
+A-1998,สุกัญญา กิจเจริญ,37,driver,15000.0,15-30K,Samut Prakan,2024-12-13,savings,low
+A-1999,สุรชัย อมรรัตน์,66,driver,60000.0,60K+,Samut Prakan,2021-10-29,savings,medium
+A-1372,สมชาย ธนาคม,56,lawyer,60000.0,60K+,Chiang Rai,2023-06-19,savings,low
+A-1373,ชุติมา อินทร์แก้ว,69,nurse,15000.0,15-30K,Nakhon Ratchasima,2024-05-26,savings,low
+A-1374,เบญจมาศ พงษ์สวัสดิ์,35,student,35000.0,30-60K,Samut Prakan,2022-02-05,savings,medium
+A-1375,เบญจมาศ ลิ้มประเสริฐ,42,teacher,25000.0,15-30K,Lampang,2021-10-05,savings,low
+A-1376,อรทัย ภูวนาท,56,civil_servant,25000.0,15-30K,Surat Thani,2025-06-04,current,low
+A-1377,ภูมิพัฒน์ ทองดี,51,office_worker,20000.0,15-30K,Surat Thani,2019-09-28,current,low
+A-1378,อนุชา ธนาคม,41,civil_servant,35000.0,30-60K,Bangkok,2020-07-28,savings,low
+A-1379,พรรณี แซ่ตั้ง,57,retired,25000.0,15-30K,Chiang Mai,2020-05-09,current,medium
+A-1380,อนุชา คำแก้ว,57,merchant,60000.0,60K+,Samut Prakan,2022-06-30,current,low
+A-1381,อรทัย ประเสริฐศรี,31,retired,60000.0,60K+,Phuket,2021-08-12,current,low
+A-1382,อัครพล ชูศรี,28,teacher,15000.0,15-30K,Bangkok,2025-07-14,savings,low
+A-1383,สุทธิพงศ์ ศรีสุข,59,engineer,20000.0,15-30K,Nakhon Ratchasima,2024-09-03,current,low
+A-1384,กิตติพงศ์ มงคลชัย,30,student,20000.0,15-30K,Nakhon Ratchasima,2022-11-16,savings,low
+A-1385,สุทธิพงศ์ ไชยวงค์,36,merchant,15000.0,15-30K,Chonburi,2019-08-26,current,medium
+A-1386,เบญจมาศ ชูศรี,44,driver,80000.0,60K+,Nonthaburi,2020-03-31,savings,low
+A-1387,กิตติพงศ์ เจริญผล,48,merchant,15000.0,15-30K,Chiang Mai,2022-06-01,current,low
+A-1388,วิภาวดี วัฒนา,44,teacher,20000.0,15-30K,Chiang Rai,2025-03-30,current,low
+A-1389,ประเสริฐ วัฒนา,47,student,25000.0,15-30K,Nakhon Ratchasima,2023-12-24,savings,medium
+A-1390,ประเสริฐ พงษ์สวัสดิ์,64,lawyer,45000.0,30-60K,Phuket,2022-04-08,current,low
+A-1391,กฤษณะ ศรีวิชัย,23,driver,15000.0,15-30K,Udon Thani,2023-11-27,savings,low
+A-1392,มาลี บุญมาก,21,engineer,25000.0,15-30K,Khon Kaen,2022-05-20,current,medium
+A-1393,จันทร์เพ็ญ ประเสริฐศรี,51,student,45000.0,30-60K,Songkhla,2020-02-18,current,low
+A-1394,กิตติพงศ์ พิทักษ์,31,accountant,15000.0,15-30K,Rayong,2022-01-23,current,low
+A-1395,เบญจมาศ พลอยแก้ว,29,retired,20000.0,15-30K,Phuket,2020-01-27,savings,low
+A-1396,ปวีณา สว่างวงศ์,44,lawyer,80000.0,60K+,Chiang Rai,2025-02-11,savings,medium
+A-1397,จุฑามาศ รุ่งเรือง,39,merchant,80000.0,60K+,Samut Prakan,2019-07-02,savings,low
+A-1398,เบญจมาศ วิไลวรรณ,68,accountant,25000.0,15-30K,Chonburi,2020-12-25,savings,medium
+A-1399,ลัดดา สิทธิชัย,25,student,80000.0,60K+,Rayong,2021-05-17,current,low
+A-1400,นิภา ธนาคม,66,merchant,20000.0,15-30K,Rayong,2023-06-18,current,medium
+A-1401,สมศักดิ์ ชูศรี,20,retired,80000.0,60K+,Chiang Rai,2020-05-15,savings,low
+A-1402,จุฑามาศ ไชยวงค์,56,merchant,45000.0,30-60K,Khon Kaen,2025-02-11,current,medium
+A-1403,ศุภกร สิทธิชัย,56,civil_servant,100000.0,60K+,Chiang Rai,2019-07-13,current,low
+A-1404,ปวีณา ศักดิ์สิทธิ์,45,driver,35000.0,30-60K,Lampang,2019-08-30,current,low
+A-1405,พรรณี เจริญผล,41,nurse,45000.0,30-60K,Rayong,2022-04-03,savings,low
+A-1406,ธีรภัทร ศรีวิชัย,39,retired,100000.0,60K+,Nonthaburi,2022-09-16,savings,low
+A-1407,พรรณี แซ่ตั้ง,48,engineer,80000.0,60K+,Rayong,2024-07-17,savings,low
+A-1408,วันดี ชูศรี,24,nurse,80000.0,60K+,Bangkok,2020-08-18,savings,low
+A-1409,สราวุธ แซ่ตั้ง,32,office_worker,35000.0,30-60K,Pathum Thani,2019-06-25,savings,low
+A-1410,พิมพ์ชนก แซ่ตั้ง,43,accountant,80000.0,60K+,Udon Thani,2020-07-01,current,low
+A-1411,วีรยุทธ สมบูรณ์,50,civil_servant,60000.0,60K+,Pathum Thani,2022-12-21,savings,low
+A-1412,ชุติมา มงคลชัย,21,chef,15000.0,15-30K,Rayong,2020-12-08,savings,low
+A-1413,พรรณี สุขสวัสดิ์,63,engineer,45000.0,30-60K,Udon Thani,2023-09-14,savings,low
+A-1414,ศิริพร ศักดิ์สิทธิ์,58,office_worker,35000.0,30-60K,Phuket,2021-12-09,current,low
+A-1415,ชาญวิทย์ เทพพิทักษ์,49,nurse,35000.0,30-60K,Phuket,2024-05-05,savings,low
+A-1416,พัชรี กิจเจริญ,52,student,60000.0,60K+,Khon Kaen,2025-05-28,savings,medium
+A-1417,ณัฐธิดา พานิชย์,24,driver,45000.0,30-60K,Nakhon Ratchasima,2022-10-03,savings,low
+A-1418,ดวงใจ ทองดี,23,civil_servant,80000.0,60K+,Nonthaburi,2022-09-11,current,low
+A-1419,อัจฉรา ชูศรี,36,chef,80000.0,60K+,Rayong,2023-06-19,savings,low
+A-1420,มาลี ลิ้มประเสริฐ,66,retired,35000.0,30-60K,Surat Thani,2025-02-07,current,low
+A-1421,สมศักดิ์ สมบูรณ์,62,lawyer,25000.0,15-30K,Pathum Thani,2022-05-28,savings,low
+A-1422,ปรัชญา พานิชย์,61,merchant,35000.0,30-60K,Phuket,2023-02-04,current,low
+A-1423,มาลี พงษ์สวัสดิ์,36,civil_servant,45000.0,30-60K,Rayong,2024-04-23,savings,medium
+A-1424,สุกัญญา พงษ์สวัสดิ์,32,lawyer,20000.0,15-30K,Rayong,2023-05-23,savings,low
+A-1425,รัตนา สิทธิชัย,32,driver,80000.0,60K+,Songkhla,2025-06-30,savings,low
+A-1426,สมหญิง แสงจันทร์,51,driver,25000.0,15-30K,Khon Kaen,2022-08-16,savings,low
+A-1427,ธีรภัทร คำแก้ว,56,teacher,100000.0,60K+,Phuket,2020-02-05,current,medium
+A-1428,จิรายุ สุขสวัสดิ์,44,office_worker,15000.0,15-30K,Lampang,2025-02-04,current,low
+A-1429,วีรยุทธ ลิ้มประเสริฐ,21,student,15000.0,15-30K,Khon Kaen,2021-11-25,savings,low
+A-1430,สุรชัย พานิชย์,44,lawyer,45000.0,30-60K,Khon Kaen,2020-12-25,current,low
+A-1431,มาลี ลิ้มประเสริฐ,47,student,25000.0,15-30K,Samut Prakan,2022-12-14,savings,low
+A-1432,กัญญา มงคลชัย,45,office_worker,35000.0,30-60K,Pathum Thani,2021-08-16,savings,low
+A-1433,ณัฐธิดา พลอยแก้ว,27,driver,15000.0,15-30K,Chiang Rai,2023-04-26,savings,low
+A-1434,สุกัญญา แสงจันทร์,62,merchant,15000.0,15-30K,Phuket,2019-08-26,savings,low
+A-1435,ลัดดา สุขสวัสดิ์,50,retired,25000.0,15-30K,Khon Kaen,2021-05-31,current,low
+A-1436,วีรยุทธ เจริญผล,62,lawyer,45000.0,30-60K,Surat Thani,2020-08-24,savings,low
+A-1437,ชุติมา สมบูรณ์,27,merchant,100000.0,60K+,Rayong,2021-05-03,savings,low
+A-1438,วรพล มงคลชัย,65,chef,45000.0,30-60K,Pathum Thani,2020-11-27,current,low
+A-1439,อรทัย ชูศรี,35,office_worker,15000.0,15-30K,Nonthaburi,2020-02-09,current,low
+A-1440,ลัดดา พิทักษ์,25,lawyer,20000.0,15-30K,Udon Thani,2020-03-30,current,low
+A-1441,พรรณี กิจเจริญ,49,office_worker,20000.0,15-30K,Songkhla,2021-01-25,current,medium
+A-1442,สมศักดิ์ ชัยสิทธิ์,67,merchant,20000.0,15-30K,Songkhla,2019-08-16,current,medium
+A-1443,ปิยะดา บุญมาก,59,nurse,20000.0,15-30K,Phuket,2023-04-16,current,medium
+A-1444,เบญจมาศ ชัยสิทธิ์,37,chef,100000.0,60K+,Chiang Mai,2023-11-03,savings,low
+A-1445,นพดล แสงจันทร์,30,merchant,80000.0,60K+,Chonburi,2025-09-25,current,low
+A-1446,นภาพร ไชยวงค์,59,office_worker,25000.0,15-30K,Udon Thani,2024-07-11,savings,low
+A-1447,สุวรรณา รุ่งเรือง,36,student,60000.0,60K+,Samut Prakan,2019-04-01,savings,low
+A-1448,พิมพ์ชนก สว่างวงศ์,53,lawyer,20000.0,15-30K,Songkhla,2023-12-18,current,low
+A-1449,ปิยะดา ตันติกุล,55,civil_servant,15000.0,15-30K,Rayong,2019-03-29,current,medium
+A-1450,กิตติพงศ์ พงษ์สวัสดิ์,30,merchant,100000.0,60K+,Surat Thani,2022-09-15,savings,medium
+A-1451,นพดล แสงจันทร์,45,engineer,20000.0,15-30K,Chiang Mai,2024-04-04,current,medium
+A-1452,ธีรภัทร แก้วมณี,40,merchant,100000.0,60K+,Surat Thani,2019-04-23,savings,low
+A-1453,ลัดดา ใจดี,70,civil_servant,45000.0,30-60K,Songkhla,2024-10-23,current,low
+A-1454,พัชรี สว่างวงศ์,34,accountant,60000.0,60K+,Pathum Thani,2025-05-23,current,medium
+A-1455,กฤษณะ กิจเจริญ,27,merchant,35000.0,30-60K,Surat Thani,2019-02-18,current,low
+A-1456,ดวงใจ ไชยวงค์,22,teacher,100000.0,60K+,Chiang Mai,2020-09-07,current,low
+A-1457,ธนวัฒน์ วิไลวรรณ,32,merchant,80000.0,60K+,Pathum Thani,2021-07-12,current,low
+A-1458,วีรยุทธ แสงจันทร์,68,chef,15000.0,15-30K,Udon Thani,2025-09-17,savings,medium
+A-1459,อรทัย อินทร์แก้ว,20,lawyer,15000.0,15-30K,Udon Thani,2025-04-25,savings,low
+A-1460,พัชรี ธนาคม,66,teacher,20000.0,15-30K,Surat Thani,2023-06-15,current,medium
+A-1461,พีรพัฒน์ กิจเจริญ,58,retired,35000.0,30-60K,Udon Thani,2022-03-06,savings,low
+A-1462,กมลวรรณ นาคสุข,46,civil_servant,45000.0,30-60K,Nonthaburi,2025-04-02,savings,low
+A-1463,กัญญา ประเสริฐศรี,33,civil_servant,45000.0,30-60K,Surat Thani,2022-12-25,current,low
+A-1464,สุวรรณา ไชยวงค์,68,driver,100000.0,60K+,Nonthaburi,2025-08-24,current,medium
+A-1465,สุรชัย พงษ์สวัสดิ์,20,lawyer,20000.0,15-30K,Nakhon Ratchasima,2019-05-24,current,low
+A-1466,กมลวรรณ กิจเจริญ,38,student,45000.0,30-60K,Nakhon Ratchasima,2020-10-01,savings,low
+A-1467,ชาญวิทย์ กิจเจริญ,48,merchant,35000.0,30-60K,Pathum Thani,2025-05-27,savings,medium
+A-1468,สุทธิพงศ์ สมบูรณ์,44,chef,60000.0,60K+,Nakhon Ratchasima,2025-04-20,current,low
+A-1469,พัชรี วิไลวรรณ,60,retired,60000.0,60K+,Samut Prakan,2025-09-16,savings,low
+A-1470,ดวงใจ ตันติกุล,48,teacher,20000.0,15-30K,Chiang Mai,2021-03-16,current,low
+A-1471,ปรัชญา สมบูรณ์,47,nurse,45000.0,30-60K,Bangkok,2020-07-26,current,medium
+A-1472,พัชรี พงษ์สวัสดิ์,65,teacher,15000.0,15-30K,Samut Prakan,2020-10-31,current,medium
+A-1473,อรุณี รุ่งเรือง,70,civil_servant,60000.0,60K+,Nakhon Ratchasima,2019-12-05,savings,low
+A-1474,จันทร์เพ็ญ วงศ์สกุล,70,lawyer,25000.0,15-30K,Songkhla,2023-10-10,savings,low
+A-1475,อัครพล เทพพิทักษ์,62,driver,60000.0,60K+,Surat Thani,2023-02-26,current,low
+A-1476,รัฐพล เทพพิทักษ์,27,student,60000.0,60K+,Lampang,2024-02-09,savings,low
+A-1477,เกียรติศักดิ์ กิจเจริญ,63,driver,80000.0,60K+,Bangkok,2020-05-19,current,medium
+A-1478,วิชัย เจริญผล,51,office_worker,45000.0,30-60K,Chonburi,2021-04-08,savings,low
+A-1479,ธนพร พลอยแก้ว,33,student,35000.0,30-60K,Rayong,2023-11-13,current,low
+A-1480,พีรพัฒน์ แก้วมณี,67,student,25000.0,15-30K,Chiang Mai,2019-05-18,savings,low
+A-1481,ปวีณา สมบูรณ์,31,nurse,20000.0,15-30K,Phuket,2025-07-23,current,medium
+A-1482,ชัยวัฒน์ บุญมาก,60,chef,80000.0,60K+,Surat Thani,2022-08-28,savings,low
+A-1483,ชาญวิทย์ เจริญผล,68,retired,15000.0,15-30K,Khon Kaen,2019-12-04,current,low
+A-1484,สมหญิง สว่างวงศ์,38,accountant,80000.0,60K+,Chonburi,2023-07-17,savings,low
+A-1485,วีรยุทธ แซ่ตั้ง,67,chef,45000.0,30-60K,Bangkok,2020-09-22,savings,low
+A-1486,วิภาวดี พานิชย์,22,office_worker,80000.0,60K+,Nakhon Ratchasima,2025-02-18,current,low
+A-1487,อภิสิทธิ์ สมบูรณ์,46,student,25000.0,15-30K,Nakhon Ratchasima,2020-11-30,savings,low
+A-1488,เกียรติศักดิ์ ศรีสุข,62,civil_servant,15000.0,15-30K,Khon Kaen,2025-04-07,savings,low
+A-1489,ชัยวัฒน์ อมรรัตน์,26,engineer,100000.0,60K+,Chiang Mai,2022-10-27,current,low
+A-1490,ชัยวัฒน์ พานิชย์,32,driver,100000.0,60K+,Pathum Thani,2024-02-29,savings,low
+A-1491,ธนวัฒน์ พิทักษ์,40,chef,25000.0,15-30K,Pathum Thani,2019-03-01,current,low
+A-1492,จิรายุ พานิชย์,43,teacher,60000.0,60K+,Udon Thani,2024-06-28,savings,low
+A-1493,กัญญา พลอยแก้ว,61,civil_servant,20000.0,15-30K,Nakhon Ratchasima,2022-04-04,current,low
+A-1494,อรทัย อินทร์แก้ว,66,merchant,15000.0,15-30K,Chiang Rai,2024-10-18,current,low
+A-1495,นิภา สว่างวงศ์,22,lawyer,45000.0,30-60K,Nonthaburi,2025-03-16,savings,low
+A-1310,ชัยวัฒน์ ภูวนาท,43,driver,35000.0,30-60K,Surat Thani,2024-03-29,current,medium
+A-1311,ปิยะ เทพพิทักษ์,59,chef,20000.0,15-30K,Chonburi,2023-01-05,current,low
+A-1312,ประเสริฐ ประเสริฐศรี,63,teacher,60000.0,60K+,Songkhla,2020-06-06,savings,medium
+A-1313,อนุชา ภูวนาท,46,civil_servant,25000.0,15-30K,Nonthaburi,2025-07-22,savings,low
+A-1314,ปิยะ เทพพิทักษ์,51,nurse,25000.0,15-30K,Bangkok,2021-03-17,current,low
+A-1315,วันดี ภูวนาท,51,teacher,35000.0,30-60K,Phuket,2023-06-01,current,medium
+A-1316,สมชาย พิทักษ์,65,accountant,100000.0,60K+,Khon Kaen,2020-12-26,savings,low
+A-1317,อัจฉรา ภูวนาท,34,lawyer,45000.0,30-60K,Surat Thani,2020-12-29,savings,low
+A-1318,สุภาพร แสงจันทร์,37,lawyer,60000.0,60K+,Surat Thani,2025-03-10,savings,medium
+A-1319,สุภาพร แสงจันทร์,26,retired,35000.0,30-60K,Khon Kaen,2022-06-13,current,low
+A-1320,อัจฉรา ลิ้มประเสริฐ,48,merchant,35000.0,30-60K,Rayong,2021-06-18,current,low
+A-1321,อัจฉรา ลิ้มประเสริฐ,59,teacher,35000.0,30-60K,Surat Thani,2021-06-06,current,low
+A-1322,พรรณี ตันติกุล,40,retired,45000.0,30-60K,Lampang,2022-05-10,savings,low
+A-1323,กัญญา รัตนกุล,68,chef,15000.0,15-30K,Nakhon Ratchasima,2022-03-21,savings,low
+A-1324,รัฐพล ศักดิ์สิทธิ์,35,student,80000.0,60K+,Nonthaburi,2024-08-06,current,medium
+A-1325,ณัฐธิดา แซ่ตั้ง,48,merchant,20000.0,15-30K,Udon Thani,2023-08-18,current,low
+A-1326,กมลวรรณ ลิ้มประเสริฐ,57,office_worker,20000.0,15-30K,Rayong,2024-04-01,savings,medium
+A-1327,กฤษณะ กิจเจริญ,33,chef,35000.0,30-60K,Songkhla,2024-08-28,savings,medium
+A-1328,ธนวัฒน์ ใจดี,70,driver,15000.0,15-30K,Bangkok,2019-08-17,savings,low
+A-1329,พงศ์พัฒน์ รัตนกุล,48,accountant,15000.0,15-30K,Lampang,2023-11-28,current,low
+A-1330,ชัยวัฒน์ ชัยสิทธิ์,37,merchant,60000.0,60K+,Bangkok,2021-12-01,current,low
+A-1331,กมลวรรณ เจริญผล,66,retired,35000.0,30-60K,Bangkok,2023-12-04,savings,medium
+A-1332,สมหญิง สุขสวัสดิ์,24,teacher,35000.0,30-60K,Pathum Thani,2024-12-07,current,low
+A-1333,ศุภกร วงศ์สกุล,47,retired,25000.0,15-30K,Pathum Thani,2024-06-19,savings,low
+A-1334,กฤษณะ รัตนกุล,40,driver,45000.0,30-60K,Nonthaburi,2020-08-24,savings,low
+A-1335,สุทธิพงศ์ มงคลชัย,53,civil_servant,15000.0,15-30K,Nonthaburi,2020-12-13,savings,medium
+A-1336,ประเสริฐ รัตนกุล,59,student,100000.0,60K+,Samut Prakan,2021-07-18,savings,medium
+A-1337,รัฐพล วงศ์สกุล,42,chef,60000.0,60K+,Nakhon Ratchasima,2020-09-04,current,low
+A-1338,ธนพร จงรักษ์,62,nurse,35000.0,30-60K,Khon Kaen,2024-11-30,savings,low
+A-1339,อภิสิทธิ์ ศรีสุข,51,chef,20000.0,15-30K,Surat Thani,2021-10-24,savings,low
+A-1340,เกียรติศักดิ์ ประเสริฐศรี,40,teacher,80000.0,60K+,Samut Prakan,2025-06-26,current,low
+A-1341,สุรชัย พงษ์สวัสดิ์,21,civil_servant,20000.0,15-30K,Samut Prakan,2019-04-07,current,low
+A-1342,วิภาวดี พลอยแก้ว,60,retired,80000.0,60K+,Surat Thani,2023-11-10,savings,low
+A-1343,เบญจมาศ สิทธิชัย,25,nurse,20000.0,15-30K,Surat Thani,2024-11-04,current,medium
+A-1344,ดวงใจ อมรรัตน์,57,student,20000.0,15-30K,Bangkok,2022-08-03,savings,low
+A-1345,สุทธิพงศ์ ประเสริฐศรี,47,merchant,100000.0,60K+,Chiang Mai,2019-09-23,savings,low
+A-1346,วันดี รุ่งเรือง,64,office_worker,25000.0,15-30K,Samut Prakan,2024-09-04,current,low
+A-1347,สมหญิง วัฒนา,43,teacher,45000.0,30-60K,Samut Prakan,2020-06-07,current,low
+A-1348,มาลี ใจดี,53,merchant,45000.0,30-60K,Surat Thani,2025-07-29,current,low
+A-1349,อัครพล เจริญผล,51,civil_servant,25000.0,15-30K,Lampang,2023-03-27,savings,low
+A-1350,สมหญิง อมรรัตน์,67,lawyer,15000.0,15-30K,Bangkok,2019-08-09,current,low
+A-1351,ปวีณา ไชยวงค์,44,teacher,25000.0,15-30K,Nakhon Ratchasima,2019-07-04,current,low
+A-1352,อัจฉรา แซ่ตั้ง,46,retired,60000.0,60K+,Chiang Mai,2022-02-25,savings,low
+A-1353,ปิยะ กิจเจริญ,34,lawyer,15000.0,15-30K,Samut Prakan,2023-08-10,current,low
+A-1354,ณัฐพล ชูศรี,25,lawyer,100000.0,60K+,Samut Prakan,2019-03-14,current,low
+A-1355,นิภา อมรรัตน์,49,driver,100000.0,60K+,Chonburi,2021-04-20,savings,medium
+A-1356,สมหญิง แซ่ลิ้ม,21,engineer,60000.0,60K+,Rayong,2019-03-21,current,low
+A-1357,สุรชัย สิทธิชัย,33,lawyer,35000.0,30-60K,Pathum Thani,2023-10-26,current,low
+A-1358,สุทธิพงศ์ วงศ์สกุล,22,engineer,80000.0,60K+,Chiang Rai,2023-04-15,savings,low
+A-1359,สุกัญญา รัตนกุล,60,chef,20000.0,15-30K,Nakhon Ratchasima,2025-09-30,current,low
+A-1360,ภูมิพัฒน์ ศรีสุข,40,chef,60000.0,60K+,Nakhon Ratchasima,2022-09-04,savings,low
+A-1361,ธีรภัทร บุญมาก,29,merchant,25000.0,15-30K,Surat Thani,2024-02-25,current,low
+A-1362,วิภาวดี ชัยสิทธิ์,48,nurse,100000.0,60K+,Samut Prakan,2022-01-30,current,low
+A-1363,พรทิพย์ จงรักษ์,33,driver,25000.0,15-30K,Surat Thani,2020-02-18,savings,low
+A-1364,นิภา นาคสุข,36,teacher,15000.0,15-30K,Nakhon Ratchasima,2023-08-24,savings,medium
+A-1365,อัครพล พิทักษ์,26,teacher,20000.0,15-30K,Chonburi,2019-03-30,savings,medium
+A-1366,ปวีณา ศรีสุข,43,student,20000.0,15-30K,Bangkok,2025-08-22,savings,low
+A-1367,อรทัย วัฒนา,61,accountant,25000.0,15-30K,Chiang Mai,2020-02-21,savings,medium
+A-1368,ศุภกร คำแก้ว,23,teacher,80000.0,60K+,Chonburi,2023-07-16,current,low
+A-1369,สุภาพร เทพพิทักษ์,31,nurse,45000.0,30-60K,Chiang Rai,2024-02-10,savings,low
+A-1370,ศุภกร รัตนกุล,51,chef,100000.0,60K+,Phuket,2019-10-17,savings,low
+A-1371,พรทิพย์ สว่างวงศ์,60,lawyer,15000.0,15-30K,Surat Thani,2023-05-26,current,low
+A-1620,วิภาวดี ประเสริฐศรี,37,chef,35000.0,30-60K,Lampang,2021-05-20,current,medium
+A-1621,อัครพล แก้วมณี,64,driver,100000.0,60K+,Chiang Rai,2021-11-16,current,low
+A-1622,ปิยะ แก้วมณี,45,civil_servant,15000.0,15-30K,Lampang,2024-12-12,savings,medium
+A-1623,สุภาพร วิไลวรรณ,67,office_worker,80000.0,60K+,Khon Kaen,2024-11-24,current,medium
+A-1624,อภิสิทธิ์ พงษ์สวัสดิ์,39,nurse,100000.0,60K+,Pathum Thani,2020-12-22,savings,medium
+A-1625,อัครพล อินทร์แก้ว,61,accountant,20000.0,15-30K,Lampang,2024-09-21,savings,medium
+A-1626,นพดล วิไลวรรณ,46,driver,100000.0,60K+,Lampang,2019-05-23,current,low
+A-1627,พงศ์พัฒน์ แสงจันทร์,36,driver,25000.0,15-30K,Nonthaburi,2020-06-30,current,low
+A-1628,ปิยะดา แซ่ลิ้ม,53,retired,80000.0,60K+,Surat Thani,2024-11-05,current,low
+A-1629,พรรณี สิทธิชัย,69,teacher,60000.0,60K+,Chonburi,2025-06-14,savings,low
+A-1630,สุทธิพงศ์ แสงจันทร์,69,retired,15000.0,15-30K,Khon Kaen,2023-10-25,savings,low
+A-1631,วรพล ภูวนาท,28,engineer,15000.0,15-30K,Surat Thani,2021-12-12,savings,medium
+A-1632,วิชัย ศรีวิชัย,35,engineer,100000.0,60K+,Chiang Rai,2024-03-13,savings,low
+A-1633,สุรชัย ลิ้มประเสริฐ,55,nurse,35000.0,30-60K,Bangkok,2019-08-29,savings,low
+A-1634,สุภาพร เจริญผล,62,civil_servant,45000.0,30-60K,Phuket,2022-10-28,savings,low
+A-1635,พรทิพย์ แก้วมณี,63,nurse,25000.0,15-30K,Chiang Mai,2024-03-20,current,low
+A-1636,วิภาวดี กิจเจริญ,43,chef,20000.0,15-30K,Udon Thani,2023-11-26,savings,low
+A-1637,ธนกฤต มงคลชัย,64,nurse,60000.0,60K+,Chiang Rai,2025-01-07,savings,low
+A-1638,พัชรี กิจเจริญ,56,retired,20000.0,15-30K,Phuket,2024-07-14,current,low
+A-1639,มาลี รุ่งเรือง,53,civil_servant,60000.0,60K+,Pathum Thani,2020-07-25,current,medium
+A-1640,สมหญิง บุญมาก,31,civil_servant,35000.0,30-60K,Bangkok,2022-05-14,current,low
+A-1641,จิรายุ นาคสุข,67,engineer,80000.0,60K+,Samut Prakan,2023-10-02,savings,low
+A-1642,ศิริพร พานิชย์,60,engineer,45000.0,30-60K,Surat Thani,2021-12-18,current,low
+A-1643,นพดล เทพพิทักษ์,27,student,60000.0,60K+,Bangkok,2022-12-09,savings,low
+A-1644,ลัดดา รัตนกุล,41,driver,100000.0,60K+,Udon Thani,2024-06-06,savings,medium
+A-1645,สุภาพร รุ่งเรือง,54,driver,100000.0,60K+,Khon Kaen,2023-10-02,current,low
+A-1646,สมศักดิ์ ศักดิ์สิทธิ์,33,civil_servant,60000.0,60K+,Rayong,2023-01-28,savings,low
+A-1647,ปิยะดา ศรีวิชัย,44,student,25000.0,15-30K,Chiang Mai,2025-07-06,current,low
+A-1648,วีรยุทธ อมรรัตน์,65,office_worker,45000.0,30-60K,Songkhla,2023-10-02,current,low
+A-1649,ธนวัฒน์ แก้วมณี,33,lawyer,45000.0,30-60K,Samut Prakan,2021-01-26,savings,low
+A-1650,กัญญา วิไลวรรณ,48,lawyer,15000.0,15-30K,Songkhla,2024-07-09,current,low
+A-1651,วันดี รัตนกุล,69,driver,25000.0,15-30K,Nakhon Ratchasima,2020-03-18,savings,medium
+A-1652,สุรชัย ศรีวิชัย,44,retired,20000.0,15-30K,Rayong,2019-02-26,savings,low
+A-1653,ดวงใจ พานิชย์,49,office_worker,20000.0,15-30K,Bangkok,2024-12-12,current,low
+A-1654,พีรพัฒน์ แสงจันทร์,40,engineer,35000.0,30-60K,Nonthaburi,2022-04-28,savings,low
+A-1655,อภิสิทธิ์ นาคสุข,29,teacher,45000.0,30-60K,Surat Thani,2020-05-23,savings,low
+A-1656,พงศ์พัฒน์ กิจเจริญ,54,driver,60000.0,60K+,Chiang Rai,2022-02-24,savings,low
+A-1657,สมศักดิ์ ทองดี,24,nurse,60000.0,60K+,Udon Thani,2025-03-04,savings,low
+A-1658,พงศ์พัฒน์ ศรีวิชัย,44,office_worker,20000.0,15-30K,Lampang,2023-11-22,current,low
+A-1659,สราวุธ ใจดี,39,driver,35000.0,30-60K,Chiang Rai,2025-02-03,savings,low
+A-1660,รัฐพล ใจดี,64,accountant,20000.0,15-30K,Udon Thani,2024-03-21,savings,low
+A-1661,พงศ์พัฒน์ วัฒนา,29,civil_servant,45000.0,30-60K,Samut Prakan,2023-03-09,current,medium
+A-1662,วรพล ใจดี,51,office_worker,20000.0,15-30K,Rayong,2024-06-09,savings,low
+A-1663,กฤษณะ เจริญผล,69,driver,25000.0,15-30K,Songkhla,2024-10-21,savings,low
+A-1664,อภิสิทธิ์ อมรรัตน์,54,accountant,80000.0,60K+,Surat Thani,2025-09-24,savings,medium
+A-1665,อัจฉรา คำแก้ว,44,merchant,60000.0,60K+,Samut Prakan,2021-06-11,current,low
+A-1666,วิภาวดี ชูศรี,54,retired,35000.0,30-60K,Rayong,2021-01-18,current,low
+A-1667,อรทัย แสงจันทร์,57,civil_servant,100000.0,60K+,Chonburi,2022-10-04,current,medium
+A-1668,รัฐพล พงษ์สวัสดิ์,24,civil_servant,20000.0,15-30K,Chiang Mai,2023-05-12,savings,low
+A-1669,รัตนา พลอยแก้ว,57,student,15000.0,15-30K,Khon Kaen,2020-10-02,current,medium
+A-1670,ปวีณา พานิชย์,32,engineer,60000.0,60K+,Lampang,2022-06-21,current,low
+A-1671,สมศักดิ์ กิจเจริญ,25,civil_servant,15000.0,15-30K,Bangkok,2024-10-31,current,low
+A-1672,พรรณี ทองดี,20,retired,60000.0,60K+,Nakhon Ratchasima,2020-05-04,current,medium
+A-1673,เกียรติศักดิ์ มงคลชัย,60,driver,80000.0,60K+,Nonthaburi,2023-08-31,savings,medium
+A-1674,กัญญา กิจเจริญ,28,engineer,80000.0,60K+,Rayong,2023-02-24,savings,low
+A-1675,มาลี คำแก้ว,20,merchant,15000.0,15-30K,Chonburi,2020-09-21,savings,low
+A-1676,รัตนา ตันติกุล,61,chef,100000.0,60K+,Phuket,2023-11-19,current,medium
+A-1677,อัจฉรา ภูวนาท,42,engineer,25000.0,15-30K,Rayong,2023-11-15,savings,low
+A-1678,อัจฉรา สว่างวงศ์,46,lawyer,60000.0,60K+,Pathum Thani,2019-06-27,current,low
+A-1679,วันดี ศักดิ์สิทธิ์,57,accountant,20000.0,15-30K,Udon Thani,2020-09-13,savings,low
+A-1680,ศิริพร เทพพิทักษ์,35,accountant,20000.0,15-30K,Bangkok,2025-02-26,current,low
+A-1681,สุกัญญา ลิ้มประเสริฐ,50,accountant,100000.0,60K+,Samut Prakan,2025-07-18,current,low
+A-1248,พงศ์พัฒน์ แซ่ตั้ง,63,civil_servant,20000.0,15-30K,Chiang Mai,2025-01-01,savings,low
+A-1249,ปิยะดา ธนาคม,55,lawyer,35000.0,30-60K,Rayong,2025-07-13,current,low
+A-1250,รัตนา พงษ์สวัสดิ์,63,engineer,100000.0,60K+,Udon Thani,2020-02-17,savings,medium
+A-1251,ธนวัฒน์ พานิชย์,49,civil_servant,15000.0,15-30K,Pathum Thani,2025-05-17,savings,medium
+A-1252,ธีรภัทร ลิ้มประเสริฐ,36,office_worker,35000.0,30-60K,Pathum Thani,2025-08-05,savings,low
+A-1253,อัครพล รัตนกุล,24,accountant,15000.0,15-30K,Samut Prakan,2022-04-30,current,low
+A-1254,ชัยวัฒน์ พลอยแก้ว,44,accountant,80000.0,60K+,Chonburi,2023-04-28,current,low
+A-1255,ภูมิพัฒน์ สุขสวัสดิ์,31,lawyer,80000.0,60K+,Samut Prakan,2025-01-15,savings,low
+A-1256,ภูมิพัฒน์ อมรรัตน์,49,student,80000.0,60K+,Udon Thani,2025-01-27,current,low
+A-1257,สุกัญญา เทพพิทักษ์,37,engineer,20000.0,15-30K,Samut Prakan,2019-06-21,savings,low
+A-1258,อภิสิทธิ์ พงษ์สวัสดิ์,33,merchant,20000.0,15-30K,Nakhon Ratchasima,2025-10-08,savings,medium
+A-1259,ณัฐพล พิทักษ์,48,engineer,35000.0,30-60K,Rayong,2019-09-29,current,low
+A-1260,ณัฐพล ศักดิ์สิทธิ์,35,nurse,25000.0,15-30K,Bangkok,2024-12-15,savings,medium
+A-1261,สุวรรณา แซ่ลิ้ม,55,accountant,15000.0,15-30K,Samut Prakan,2022-12-21,current,medium
+A-1262,เกียรติศักดิ์ สว่างวงศ์,46,teacher,45000.0,30-60K,Nakhon Ratchasima,2023-05-01,savings,low
+A-1263,สุกัญญา นาคสุข,65,teacher,100000.0,60K+,Surat Thani,2019-10-04,savings,medium
+A-1264,ปวีณา แสงจันทร์,35,nurse,35000.0,30-60K,Rayong,2022-10-24,current,low
+A-1265,ชัยวัฒน์ ศรีวิชัย,54,retired,35000.0,30-60K,Chiang Rai,2019-09-09,savings,low
+A-1266,สราวุธ วัฒนา,32,civil_servant,35000.0,30-60K,Khon Kaen,2024-06-26,savings,low
+A-1267,กมลวรรณ ศรีวิชัย,32,retired,20000.0,15-30K,Pathum Thani,2024-06-24,savings,medium
+A-1268,เกียรติศักดิ์ ลิ้มประเสริฐ,35,lawyer,60000.0,60K+,Khon Kaen,2022-04-14,current,low
+A-1269,ดวงใจ สว่างวงศ์,52,accountant,100000.0,60K+,Samut Prakan,2020-03-19,current,low
+A-1270,พิมพ์ชนก สิทธิชัย,43,driver,80000.0,60K+,Bangkok,2019-08-16,current,medium
+A-1271,นพดล อมรรัตน์,38,teacher,35000.0,30-60K,Udon Thani,2022-10-23,current,low
+A-1272,ธนวัฒน์ ลิ้มประเสริฐ,68,accountant,100000.0,60K+,Chonburi,2024-04-11,savings,medium
+A-1273,ปรัชญา ศรีสุข,31,lawyer,15000.0,15-30K,Rayong,2024-12-26,savings,low
+A-1274,สมหญิง มงคลชัย,46,teacher,35000.0,30-60K,Surat Thani,2019-11-15,current,low
+A-1275,เกียรติศักดิ์ นาคสุข,23,civil_servant,100000.0,60K+,Phuket,2024-07-31,savings,low
+A-1276,สมหญิง ตันติกุล,53,retired,45000.0,30-60K,Rayong,2025-02-12,current,low
+A-1277,ชาญวิทย์ สมบูรณ์,26,merchant,25000.0,15-30K,Rayong,2021-10-24,current,low
+A-1278,รัตนา ชูศรี,70,chef,20000.0,15-30K,Nakhon Ratchasima,2023-04-18,savings,low
+A-1279,ศุภกร นาคสุข,63,merchant,15000.0,15-30K,Udon Thani,2020-02-27,savings,low
+A-1280,ลัดดา วัฒนา,64,teacher,20000.0,15-30K,Chiang Rai,2024-09-18,savings,low
+A-1281,วิชัย ศักดิ์สิทธิ์,34,engineer,100000.0,60K+,Lampang,2022-02-24,savings,low
+A-1282,กฤษณะ จงรักษ์,40,office_worker,35000.0,30-60K,Lampang,2025-09-10,savings,low
+A-1283,จันทร์เพ็ญ พลอยแก้ว,30,civil_servant,35000.0,30-60K,Songkhla,2025-06-19,current,low
+A-1284,พรทิพย์ พงษ์สวัสดิ์,70,retired,20000.0,15-30K,Chiang Mai,2024-09-22,current,low
+A-1285,กิตติพงศ์ แสงจันทร์,24,driver,80000.0,60K+,Udon Thani,2022-10-08,savings,low
+A-1286,สุวรรณา แซ่ลิ้ม,55,chef,80000.0,60K+,Chiang Mai,2021-03-11,current,low
+A-1287,พงศ์พัฒน์ สิทธิชัย,65,merchant,20000.0,15-30K,Pathum Thani,2022-02-11,current,low
+A-1288,รัตนา แซ่ตั้ง,43,merchant,20000.0,15-30K,Samut Prakan,2019-03-03,current,low
+A-1289,เกียรติศักดิ์ ตันติกุล,28,merchant,25000.0,15-30K,Phuket,2023-12-11,savings,low
+A-1290,สมหญิง กิจเจริญ,25,driver,20000.0,15-30K,Phuket,2022-09-30,current,low
+A-1291,สุวรรณา แซ่ลิ้ม,66,lawyer,35000.0,30-60K,Chonburi,2025-07-10,savings,low
+A-1292,ธีรภัทร ศักดิ์สิทธิ์,39,nurse,100000.0,60K+,Phuket,2020-09-29,current,medium
+A-1293,ดวงใจ ภูวนาท,70,merchant,60000.0,60K+,Chiang Rai,2021-12-06,savings,medium
+A-1294,อรุณี เทพพิทักษ์,26,teacher,45000.0,30-60K,Phuket,2019-03-09,current,medium
+A-1295,พงศ์พัฒน์ วิไลวรรณ,41,chef,25000.0,15-30K,Udon Thani,2022-06-24,current,low
+A-1296,เบญจมาศ อมรรัตน์,45,driver,45000.0,30-60K,Songkhla,2024-08-13,current,low
+A-1297,ธนพร อินทร์แก้ว,70,chef,60000.0,60K+,Surat Thani,2020-05-21,savings,low
+A-1298,อรทัย ศรีสุข,66,accountant,35000.0,30-60K,Rayong,2024-01-10,current,medium
+A-1299,สมศักดิ์ คำแก้ว,28,student,45000.0,30-60K,Samut Prakan,2021-10-28,current,low
+A-1300,ชาญวิทย์ ไชยวงค์,48,civil_servant,100000.0,60K+,Surat Thani,2025-08-21,savings,low
+A-1301,สุวรรณา ลิ้มประเสริฐ,64,lawyer,20000.0,15-30K,Chonburi,2020-05-02,savings,medium
+A-1302,กิตติพงศ์ พิทักษ์,68,driver,80000.0,60K+,Surat Thani,2020-04-18,savings,medium
+A-1303,กัญญา ลิ้มประเสริฐ,43,chef,100000.0,60K+,Bangkok,2025-09-16,current,low
+A-1304,ดวงใจ สิทธิชัย,38,chef,20000.0,15-30K,Songkhla,2020-05-30,current,low
+A-1305,ปิยะ แสงจันทร์,49,engineer,100000.0,60K+,Songkhla,2023-01-06,savings,low
+A-1306,ลัดดา เจริญผล,22,retired,20000.0,15-30K,Nonthaburi,2019-05-13,savings,low
+A-1307,รัตนา พิทักษ์,53,teacher,25000.0,15-30K,Samut Prakan,2022-10-27,current,low
+A-1308,อภิสิทธิ์ วิไลวรรณ,31,student,80000.0,60K+,Udon Thani,2023-07-19,current,medium
+A-1309,พงศ์พัฒน์ ศรีสุข,20,retired,35000.0,30-60K,Chiang Rai,2021-06-01,savings,low
+A-1744,ชัยวัฒน์ พลอยแก้ว,53,student,15000.0,15-30K,Lampang,2022-05-25,savings,medium
+A-1745,วิชัย ทองดี,42,chef,100000.0,60K+,Rayong,2019-05-08,savings,low
+A-1746,ชัยวัฒน์ รุ่งเรือง,46,civil_servant,60000.0,60K+,Rayong,2022-10-08,current,medium
+A-1747,กิตติพงศ์ พิทักษ์,39,civil_servant,25000.0,15-30K,Udon Thani,2022-07-19,current,low
+A-1748,อนุชา เทพพิทักษ์,69,office_worker,25000.0,15-30K,Lampang,2023-01-26,savings,low
+A-1749,สุรชัย ธนาคม,31,teacher,25000.0,15-30K,Chiang Rai,2020-12-01,savings,medium
+A-1750,สุภาพร ธนาคม,36,driver,25000.0,15-30K,Songkhla,2021-05-30,savings,low
+A-1751,สราวุธ ทองดี,48,lawyer,25000.0,15-30K,Phuket,2025-02-03,current,low
+A-1752,นิภา ตันติกุล,49,driver,25000.0,15-30K,Songkhla,2019-02-27,current,medium
+A-1753,ปวีณา แสงจันทร์,38,civil_servant,25000.0,15-30K,Songkhla,2025-06-13,savings,medium
+A-1754,อภิสิทธิ์ พิทักษ์,22,teacher,20000.0,15-30K,Udon Thani,2022-07-25,current,low
+A-1755,เบญจมาศ ศักดิ์สิทธิ์,40,office_worker,35000.0,30-60K,Nakhon Ratchasima,2025-08-26,savings,low
+A-1756,วรพล ธนาคม,54,accountant,20000.0,15-30K,Chiang Rai,2024-11-06,savings,low
+A-1757,สมชาย กิจเจริญ,45,teacher,80000.0,60K+,Songkhla,2023-04-04,current,low
+A-1758,รัตนา ไชยวงค์,48,lawyer,20000.0,15-30K,Samut Prakan,2021-07-12,current,low
+A-1759,นพดล ศรีวิชัย,30,retired,80000.0,60K+,Chiang Mai,2023-10-03,savings,low
+A-1760,อัจฉรา แซ่ลิ้ม,39,accountant,60000.0,60K+,Chiang Mai,2019-11-07,savings,medium
+A-1761,กมลวรรณ ชูศรี,60,nurse,80000.0,60K+,Samut Prakan,2021-01-26,savings,low
+A-1762,กฤษณะ พานิชย์,31,chef,45000.0,30-60K,Rayong,2025-04-27,current,medium
+A-1763,สมชาย สิทธิชัย,55,retired,100000.0,60K+,Khon Kaen,2021-08-17,current,medium
+A-1764,สราวุธ อมรรัตน์,27,student,45000.0,30-60K,Bangkok,2023-10-15,savings,low
+A-1765,ธีรภัทร สมบูรณ์,51,merchant,60000.0,60K+,Nonthaburi,2025-08-17,current,low
+A-1766,สุรชัย สิทธิชัย,43,lawyer,15000.0,15-30K,Songkhla,2022-01-08,current,low
+A-1767,รัฐพล ลิ้มประเสริฐ,42,teacher,15000.0,15-30K,Bangkok,2022-03-02,current,low
+A-1768,รัฐพล ประเสริฐศรี,53,student,20000.0,15-30K,Samut Prakan,2024-11-14,savings,low
+A-1769,พงศ์พัฒน์ แซ่ตั้ง,54,driver,60000.0,60K+,Chiang Mai,2022-06-27,current,low
+A-1770,สุกัญญา วัฒนา,20,teacher,45000.0,30-60K,Lampang,2023-04-17,savings,low
+A-1771,นิภา เทพพิทักษ์,33,teacher,35000.0,30-60K,Pathum Thani,2021-03-22,savings,medium
+A-1772,มาลี ลิ้มประเสริฐ,49,merchant,20000.0,15-30K,Khon Kaen,2020-07-31,current,low
+A-1773,สมหญิง บุญมาก,48,civil_servant,60000.0,60K+,Nakhon Ratchasima,2021-01-15,savings,low
+A-1774,วิชัย คำแก้ว,64,engineer,45000.0,30-60K,Pathum Thani,2020-07-07,savings,low
+A-1775,สุรชัย ตันติกุล,21,accountant,80000.0,60K+,Chiang Rai,2019-08-03,savings,medium
+A-1776,สมชาย เจริญผล,27,nurse,15000.0,15-30K,Samut Prakan,2019-11-08,savings,low
+A-1777,สมศักดิ์ ศักดิ์สิทธิ์,57,engineer,25000.0,15-30K,Chiang Rai,2023-01-19,current,low
+A-1778,นภาพร อินทร์แก้ว,30,lawyer,35000.0,30-60K,Samut Prakan,2024-10-09,savings,low
+A-1779,นิภา สุขสวัสดิ์,65,engineer,45000.0,30-60K,Pathum Thani,2021-01-13,savings,low
+A-1780,ปิยะดา แสงจันทร์,52,retired,100000.0,60K+,Nonthaburi,2023-03-22,savings,low
+A-1781,สุกัญญา บุญมาก,42,chef,80000.0,60K+,Samut Prakan,2021-07-06,current,low
+A-1782,กมลวรรณ กิจเจริญ,49,merchant,25000.0,15-30K,Surat Thani,2024-09-01,savings,low
+A-1783,อภิสิทธิ์ พานิชย์,40,accountant,20000.0,15-30K,Nonthaburi,2023-06-05,current,low
+A-1784,วิชัย สว่างวงศ์,55,chef,45000.0,30-60K,Nonthaburi,2023-11-28,current,low
+A-1785,ชาญวิทย์ วงศ์สกุล,20,student,100000.0,60K+,Chiang Mai,2020-04-15,savings,medium
+A-1786,ธนกฤต วัฒนา,45,retired,20000.0,15-30K,Nakhon Ratchasima,2021-01-01,current,low
+A-1787,ชุติมา อินทร์แก้ว,34,chef,100000.0,60K+,Chiang Rai,2022-03-26,current,medium
+A-1788,กัญญา ใจดี,42,accountant,80000.0,60K+,Chiang Mai,2024-07-17,savings,low
+A-1789,สุทธิพงศ์ พงษ์สวัสดิ์,51,accountant,35000.0,30-60K,Rayong,2020-08-14,savings,medium
+A-1790,อรุณี สิทธิชัย,63,office_worker,25000.0,15-30K,Khon Kaen,2023-05-27,savings,low
+A-1791,ชัยวัฒน์ ภูวนาท,62,lawyer,100000.0,60K+,Udon Thani,2024-05-02,current,low
+A-1792,จุฑามาศ บุญมาก,54,lawyer,15000.0,15-30K,Phuket,2019-06-19,current,low
+A-1793,เกียรติศักดิ์ พานิชย์,44,accountant,100000.0,60K+,Lampang,2019-07-07,savings,medium
+A-1794,ประเสริฐ ชูศรี,47,teacher,45000.0,30-60K,Nonthaburi,2023-06-22,current,medium
+A-1795,กิตติพงศ์ ภูวนาท,50,lawyer,25000.0,15-30K,Chiang Rai,2024-10-16,current,low
+A-1796,สุรชัย รัตนกุล,69,nurse,60000.0,60K+,Rayong,2019-10-19,current,low
+A-1797,ธีรภัทร ลิ้มประเสริฐ,67,civil_servant,15000.0,15-30K,Songkhla,2022-12-08,current,low
+A-1798,ณัฐพล อินทร์แก้ว,23,student,35000.0,30-60K,Chiang Mai,2021-11-20,savings,low
+A-1799,สุภาพร ใจดี,27,driver,25000.0,15-30K,Nonthaburi,2019-05-01,current,medium
+A-1800,พีรพัฒน์ แซ่ลิ้ม,37,office_worker,100000.0,60K+,Chiang Rai,2025-09-14,current,low
+A-1801,ธนพร วัฒนา,56,merchant,100000.0,60K+,Udon Thani,2020-03-25,current,low
+A-1802,รัฐพล ศรีสุข,59,nurse,60000.0,60K+,Rayong,2023-12-31,savings,low
+A-1803,ภูมิพัฒน์ เทพพิทักษ์,36,office_worker,45000.0,30-60K,Pathum Thani,2025-07-17,savings,low
+A-1804,วันดี สว่างวงศ์,57,driver,45000.0,30-60K,Phuket,2019-11-12,savings,low
+A-1805,สุกัญญา พลอยแก้ว,70,merchant,45000.0,30-60K,Songkhla,2024-10-08,savings,medium
+A-1682,รัฐพล สว่างวงศ์,30,office_worker,45000.0,30-60K,Chiang Rai,2025-06-06,savings,low
+A-1683,สมศักดิ์ ตันติกุล,62,nurse,15000.0,15-30K,Chiang Mai,2022-04-29,current,low
+A-1684,สมหญิง บุญมาก,28,civil_servant,45000.0,30-60K,Chiang Rai,2022-03-13,savings,low
+A-1685,พงศ์พัฒน์ อมรรัตน์,62,accountant,60000.0,60K+,Udon Thani,2021-01-28,savings,low
+A-1686,กัญญา ภูวนาท,41,merchant,25000.0,15-30K,Samut Prakan,2025-10-15,current,medium
+A-1687,สุทธิพงศ์ ลิ้มประเสริฐ,35,student,100000.0,60K+,Bangkok,2020-12-26,current,low
+A-1688,วรพล พลอยแก้ว,23,teacher,100000.0,60K+,Nakhon Ratchasima,2023-08-01,current,medium
+A-1689,สมหญิง กิจเจริญ,50,nurse,25000.0,15-30K,Lampang,2025-01-21,current,medium
+A-1690,ลัดดา ลิ้มประเสริฐ,63,driver,15000.0,15-30K,Rayong,2020-03-14,current,low
+A-1691,นพดล จงรักษ์,41,nurse,45000.0,30-60K,Udon Thani,2020-03-18,savings,low
+A-1692,สุวรรณา สุขสวัสดิ์,53,driver,25000.0,15-30K,Rayong,2022-08-16,savings,low
+A-1693,สุทธิพงศ์ กิจเจริญ,46,merchant,20000.0,15-30K,Khon Kaen,2024-02-10,savings,low
+A-1694,สุวรรณา มงคลชัย,21,civil_servant,20000.0,15-30K,Chiang Rai,2019-09-30,savings,low
+A-1695,จุฑามาศ ชูศรี,25,civil_servant,25000.0,15-30K,Samut Prakan,2023-04-29,savings,low
+A-1696,สราวุธ ศรีสุข,64,teacher,45000.0,30-60K,Nonthaburi,2022-05-31,current,low
+A-1697,วิชัย ศักดิ์สิทธิ์,69,chef,60000.0,60K+,Samut Prakan,2021-12-30,savings,medium
+A-1698,ณัฐธิดา ประเสริฐศรี,44,driver,15000.0,15-30K,Udon Thani,2022-01-02,savings,medium
+A-1699,นภาพร สิทธิชัย,32,civil_servant,80000.0,60K+,Surat Thani,2021-02-09,current,low
+A-1700,นภาพร แก้วมณี,59,student,20000.0,15-30K,Chiang Mai,2024-01-23,savings,low
+A-1701,รัฐพล สุขสวัสดิ์,69,accountant,15000.0,15-30K,Lampang,2024-09-09,savings,medium
+A-1702,วันดี ภูวนาท,37,teacher,60000.0,60K+,Udon Thani,2023-07-01,current,medium
+A-1703,พงศ์พัฒน์ สว่างวงศ์,66,merchant,35000.0,30-60K,Chiang Mai,2019-02-23,current,low
+A-1704,ลัดดา วงศ์สกุล,63,nurse,80000.0,60K+,Songkhla,2019-09-24,current,low
+A-1705,จันทร์เพ็ญ วิไลวรรณ,49,nurse,35000.0,30-60K,Khon Kaen,2021-02-02,current,low
+A-1706,รัฐพล แสงจันทร์,60,retired,60000.0,60K+,Pathum Thani,2024-07-25,savings,low
+A-1707,ศุภกร ศรีสุข,22,engineer,15000.0,15-30K,Samut Prakan,2025-10-04,current,medium
+A-1708,พีรพัฒน์ แก้วมณี,54,accountant,15000.0,15-30K,Phuket,2019-07-11,savings,low
+A-1709,นพดล พิทักษ์,61,student,100000.0,60K+,Lampang,2025-02-15,savings,low
+A-1710,สราวุธ เทพพิทักษ์,67,teacher,100000.0,60K+,Bangkok,2019-04-29,savings,low
+A-1711,นภาพร ใจดี,20,teacher,15000.0,15-30K,Chiang Rai,2022-07-22,savings,low
+A-1712,พิมพ์ชนก ศรีสุข,26,merchant,100000.0,60K+,Samut Prakan,2025-10-13,savings,medium
+A-1713,ชัยวัฒน์ ชูศรี,41,retired,80000.0,60K+,Surat Thani,2022-09-30,savings,low
+A-1714,วิชัย บุญมาก,70,engineer,15000.0,15-30K,Khon Kaen,2025-10-05,savings,medium
+A-1715,ภูมิพัฒน์ อินทร์แก้ว,30,retired,60000.0,60K+,Bangkok,2025-04-25,savings,low
+A-1716,วรพล วงศ์สกุล,70,student,80000.0,60K+,Bangkok,2020-11-17,savings,low
+A-1717,เบญจมาศ สว่างวงศ์,25,retired,45000.0,30-60K,Pathum Thani,2023-10-11,savings,low
+A-1718,ภูมิพัฒน์ ประเสริฐศรี,29,student,45000.0,30-60K,Chiang Rai,2024-12-22,savings,low
+A-1719,สมชาย นาคสุข,65,accountant,20000.0,15-30K,Nakhon Ratchasima,2022-06-27,savings,low
+A-1720,รัตนา มงคลชัย,53,merchant,60000.0,60K+,Khon Kaen,2025-02-28,savings,low
+A-1721,ชัยวัฒน์ แก้วมณี,27,teacher,100000.0,60K+,Bangkok,2024-09-08,current,low
+A-1722,จุฑามาศ ใจดี,33,chef,45000.0,30-60K,Bangkok,2022-11-10,savings,low
+A-1723,ประเสริฐ ศรีสุข,54,teacher,25000.0,15-30K,Lampang,2019-06-09,savings,medium
+A-1724,ชัยวัฒน์ ธนาคม,57,civil_servant,60000.0,60K+,Nakhon Ratchasima,2023-10-23,savings,low
+A-1725,จันทร์เพ็ญ พิทักษ์,34,merchant,35000.0,30-60K,Chiang Mai,2023-09-26,current,medium
+A-1726,รัตนา ประเสริฐศรี,23,chef,25000.0,15-30K,Phuket,2021-07-14,current,low
+A-1727,ธนพร วัฒนา,49,retired,35000.0,30-60K,Chonburi,2023-02-17,savings,low
+A-1728,อนุชา วัฒนา,37,teacher,20000.0,15-30K,Nakhon Ratchasima,2024-04-30,current,low
+A-1729,พรรณี พิทักษ์,70,student,25000.0,15-30K,Chiang Mai,2025-08-04,current,medium
+A-1730,สุทธิพงศ์ คำแก้ว,33,civil_servant,100000.0,60K+,Pathum Thani,2024-04-19,savings,low
+A-1731,ปวีณา ชูศรี,40,chef,35000.0,30-60K,Lampang,2025-09-29,savings,medium
+A-1732,ชาญวิทย์ จงรักษ์,22,office_worker,100000.0,60K+,Udon Thani,2024-10-06,savings,medium
+A-1733,กมลวรรณ ไชยวงค์,51,engineer,20000.0,15-30K,Nakhon Ratchasima,2025-05-16,savings,low
+A-1734,ณัฐพล ชัยสิทธิ์,38,engineer,20000.0,15-30K,Pathum Thani,2019-04-16,current,low
+A-1735,ปรัชญา แซ่ตั้ง,49,accountant,25000.0,15-30K,Nonthaburi,2023-08-28,current,low
+A-1736,ศิริพร คำแก้ว,60,merchant,80000.0,60K+,Samut Prakan,2022-11-04,current,low
+A-1737,สุภาพร ตันติกุล,70,student,20000.0,15-30K,Lampang,2022-11-16,current,low
+A-1738,พรทิพย์ แซ่ตั้ง,27,chef,60000.0,60K+,Chonburi,2024-04-30,savings,low
+A-1739,วรพล อินทร์แก้ว,28,driver,35000.0,30-60K,Rayong,2025-02-28,savings,low
+A-1740,ณัฐธิดา พงษ์สวัสดิ์,40,driver,45000.0,30-60K,Chiang Mai,2024-10-03,current,low
+A-1741,สุวรรณา พลอยแก้ว,48,accountant,20000.0,15-30K,Lampang,2024-05-19,current,medium
+A-1742,รัตนา วงศ์สกุล,59,driver,20000.0,15-30K,Chiang Mai,2021-03-22,current,low
+A-1743,พงศ์พัฒน์ สิทธิชัย,38,merchant,20000.0,15-30K,Udon Thani,2020-12-15,savings,low
+A-1558,พงศ์พัฒน์ แซ่ลิ้ม,46,lawyer,80000.0,60K+,Rayong,2023-07-15,current,low
+A-1559,เบญจมาศ เทพพิทักษ์,36,merchant,80000.0,60K+,Samut Prakan,2021-10-18,current,low
+A-1560,วิชัย ประเสริฐศรี,61,retired,45000.0,30-60K,Chonburi,2023-09-28,current,low
+A-1561,มาลี วิไลวรรณ,60,accountant,100000.0,60K+,Songkhla,2022-02-28,savings,low
+A-1562,ศิริพร ศักดิ์สิทธิ์,23,lawyer,15000.0,15-30K,Chonburi,2021-03-12,current,low
+A-1563,พีรพัฒน์ ไชยวงค์,34,merchant,25000.0,15-30K,Khon Kaen,2019-04-11,current,low
+A-1564,อัครพล สิทธิชัย,49,retired,15000.0,15-30K,Bangkok,2022-10-24,current,medium
+A-1565,กฤษณะ สมบูรณ์,24,lawyer,100000.0,60K+,Rayong,2021-02-22,current,low
+A-1566,รัตนา อมรรัตน์,27,retired,35000.0,30-60K,Pathum Thani,2023-06-05,savings,low
+A-1567,ธนพร สว่างวงศ์,49,retired,20000.0,15-30K,Phuket,2024-12-14,current,low
+A-1568,ณัฐธิดา สว่างวงศ์,30,student,15000.0,15-30K,Nonthaburi,2025-04-10,current,low
+A-1569,ธีรภัทร ธนาคม,43,office_worker,35000.0,30-60K,Bangkok,2020-05-17,savings,low
+A-1570,สุรชัย อินทร์แก้ว,57,merchant,80000.0,60K+,Samut Prakan,2021-11-01,current,low
+A-1571,ชัยวัฒน์ เทพพิทักษ์,43,merchant,35000.0,30-60K,Songkhla,2020-11-16,savings,low
+A-1572,กัญญา ภูวนาท,42,student,25000.0,15-30K,Nakhon Ratchasima,2025-02-14,current,low
+A-1573,พรทิพย์ รัตนกุล,48,retired,35000.0,30-60K,Khon Kaen,2019-05-08,savings,medium
+A-1574,ธนพร ชูศรี,65,accountant,45000.0,30-60K,Chonburi,2025-03-13,current,low
+A-1575,ชาญวิทย์ สิทธิชัย,66,accountant,45000.0,30-60K,Udon Thani,2025-04-30,current,low
+A-1576,วันดี แซ่ลิ้ม,54,driver,100000.0,60K+,Pathum Thani,2019-02-12,savings,low
+A-1577,สุวรรณา พลอยแก้ว,59,driver,35000.0,30-60K,Rayong,2022-09-15,current,low
+A-1578,ณัฐพล ธนาคม,53,student,100000.0,60K+,Phuket,2025-04-17,current,low
+A-1579,กัญญา ประเสริฐศรี,26,lawyer,20000.0,15-30K,Rayong,2019-08-08,savings,low
+A-1580,รัฐพล แซ่ลิ้ม,26,accountant,35000.0,30-60K,Nonthaburi,2020-03-20,current,low
+A-1581,สราวุธ มงคลชัย,23,driver,35000.0,30-60K,Nonthaburi,2019-11-27,current,low
+A-1582,จุฑามาศ ไชยวงค์,49,student,15000.0,15-30K,Rayong,2023-02-27,current,low
+A-1583,วิภาวดี มงคลชัย,59,nurse,15000.0,15-30K,Surat Thani,2019-11-25,savings,low
+A-1584,ชัยวัฒน์ อมรรัตน์,66,engineer,80000.0,60K+,Chiang Rai,2021-03-27,savings,medium
+A-1585,สุกัญญา เจริญผล,67,merchant,60000.0,60K+,Chonburi,2024-04-02,savings,medium
+A-1586,รัตนา ลิ้มประเสริฐ,52,driver,25000.0,15-30K,Lampang,2025-02-04,current,low
+A-1587,อัจฉรา พลอยแก้ว,43,chef,80000.0,60K+,Nakhon Ratchasima,2022-09-26,current,low
+A-1588,สุรชัย กิจเจริญ,43,accountant,100000.0,60K+,Chiang Rai,2023-07-25,savings,low
+A-1589,พีรพัฒน์ ทองดี,39,office_worker,45000.0,30-60K,Samut Prakan,2021-08-06,current,low
+A-1590,กิตติพงศ์ แซ่ตั้ง,26,office_worker,100000.0,60K+,Lampang,2023-02-05,savings,low
+A-1591,สราวุธ มงคลชัย,36,nurse,20000.0,15-30K,Pathum Thani,2025-07-04,savings,low
+A-1592,กมลวรรณ ชูศรี,70,accountant,25000.0,15-30K,Rayong,2024-08-01,savings,low
+A-1593,ปวีณา วัฒนา,22,retired,80000.0,60K+,Songkhla,2019-12-28,current,medium
+A-1594,ชาญวิทย์ แก้วมณี,27,engineer,15000.0,15-30K,Songkhla,2023-05-26,savings,low
+A-1595,สุทธิพงศ์ จงรักษ์,52,retired,35000.0,30-60K,Udon Thani,2020-10-29,savings,low
+A-1596,วิชัย สว่างวงศ์,47,nurse,80000.0,60K+,Chiang Rai,2020-10-08,savings,medium
+A-1597,พงศ์พัฒน์ รัตนกุล,36,merchant,80000.0,60K+,Samut Prakan,2024-09-26,savings,medium
+A-1598,ธนพร นาคสุข,55,engineer,100000.0,60K+,Chiang Rai,2023-07-18,savings,low
+A-1599,อัจฉรา วงศ์สกุล,24,nurse,80000.0,60K+,Chiang Mai,2022-09-26,current,medium
+A-1600,รัฐพล ทองดี,43,driver,35000.0,30-60K,Samut Prakan,2022-09-15,current,low
+A-1601,สราวุธ พิทักษ์,42,civil_servant,100000.0,60K+,Nakhon Ratchasima,2020-09-29,current,low
+A-1602,พิมพ์ชนก เทพพิทักษ์,68,retired,20000.0,15-30K,Lampang,2020-05-15,savings,low
+A-1603,สมชาย วัฒนา,20,driver,20000.0,15-30K,Nakhon Ratchasima,2022-07-13,savings,low
+A-1604,สุทธิพงศ์ สิทธิชัย,54,lawyer,45000.0,30-60K,Pathum Thani,2025-04-06,savings,medium
+A-1605,ณัฐพล วิไลวรรณ,57,student,15000.0,15-30K,Samut Prakan,2021-12-22,current,low
+A-1606,กิตติพงศ์ แซ่ตั้ง,49,student,15000.0,15-30K,Rayong,2019-11-09,savings,low
+A-1607,วันดี เจริญผล,38,student,80000.0,60K+,Lampang,2021-09-13,current,medium
+A-1608,ปิยะ นาคสุข,58,lawyer,20000.0,15-30K,Lampang,2021-03-14,savings,low
+A-1609,สุทธิพงศ์ ชัยสิทธิ์,35,lawyer,45000.0,30-60K,Bangkok,2022-11-07,current,low
+A-1610,วันดี ศักดิ์สิทธิ์,42,student,45000.0,30-60K,Samut Prakan,2021-10-04,savings,low
+A-1611,วีรยุทธ จงรักษ์,44,office_worker,45000.0,30-60K,Nonthaburi,2021-08-21,savings,low
+A-1612,สมศักดิ์ คำแก้ว,66,chef,35000.0,30-60K,Khon Kaen,2023-10-16,current,medium
+A-1613,สุวรรณา วิไลวรรณ,54,teacher,35000.0,30-60K,Rayong,2020-08-30,savings,low
+A-1614,ชุติมา สิทธิชัย,64,retired,25000.0,15-30K,Nonthaburi,2023-12-07,savings,low
+A-1615,วีรยุทธ สิทธิชัย,24,lawyer,20000.0,15-30K,Pathum Thani,2021-03-05,savings,low
+A-1616,อรทัย ศักดิ์สิทธิ์,46,chef,45000.0,30-60K,Chonburi,2024-01-29,savings,low
+A-1617,พัชรี พิทักษ์,28,teacher,15000.0,15-30K,Chiang Rai,2022-02-07,savings,low
+A-1618,มาลี รัตนกุล,63,office_worker,60000.0,60K+,Surat Thani,2020-01-01,current,low
+A-1619,ธนกฤต พิทักษ์,31,chef,100000.0,60K+,Bangkok,2024-06-03,current,low
+A-1806,สมชาย รุ่งเรือง,45,nurse,100000.0,60K+,Rayong,2025-04-01,savings,medium
+A-1807,นิภา เทพพิทักษ์,33,student,100000.0,60K+,Rayong,2022-02-11,current,low
+A-1808,สมศักดิ์ พานิชย์,53,engineer,60000.0,60K+,Rayong,2024-04-18,current,medium
+A-1809,ณัฐพล ชัยสิทธิ์,40,merchant,35000.0,30-60K,Khon Kaen,2023-09-26,savings,medium
+A-1810,ธนวัฒน์ พานิชย์,35,merchant,25000.0,15-30K,Udon Thani,2021-04-06,current,medium
+A-1811,สมศักดิ์ ทองดี,47,student,15000.0,15-30K,Khon Kaen,2021-05-17,current,low
+A-1812,วีรยุทธ วงศ์สกุล,61,office_worker,100000.0,60K+,Songkhla,2019-05-02,current,low
+A-1813,ดวงใจ รัตนกุล,46,driver,20000.0,15-30K,Nakhon Ratchasima,2023-07-24,savings,low
+A-1814,พิมพ์ชนก ศรีวิชัย,53,student,45000.0,30-60K,Chiang Mai,2024-09-04,current,low
+A-1815,ธนพร สิทธิชัย,57,retired,80000.0,60K+,Chiang Mai,2021-10-03,savings,low
+A-1816,สุภาพร ภูวนาท,37,accountant,80000.0,60K+,Surat Thani,2021-12-17,current,low
+A-1817,ณัฐธิดา สิทธิชัย,40,lawyer,80000.0,60K+,Songkhla,2024-06-08,current,low
+A-1818,เบญจมาศ อมรรัตน์,39,office_worker,15000.0,15-30K,Khon Kaen,2019-09-21,current,low
+A-1819,พิมพ์ชนก แสงจันทร์,60,retired,60000.0,60K+,Phuket,2020-06-23,savings,medium
+A-1820,ปรัชญา ชัยสิทธิ์,36,nurse,20000.0,15-30K,Lampang,2021-10-01,current,low
+A-1821,วิชัย ภูวนาท,69,student,80000.0,60K+,Udon Thani,2019-06-28,current,low
+A-1822,วันดี ศรีสุข,65,chef,20000.0,15-30K,Songkhla,2020-11-27,current,low
+A-1823,ปิยะดา แสงจันทร์,49,retired,15000.0,15-30K,Samut Prakan,2019-09-11,savings,low
+A-1824,นภาพร ชัยสิทธิ์,45,engineer,45000.0,30-60K,Nakhon Ratchasima,2022-08-18,savings,medium
+A-1825,กัญญา สมบูรณ์,70,driver,100000.0,60K+,Chonburi,2024-06-22,current,low
+A-1826,วีรยุทธ แซ่ลิ้ม,32,merchant,80000.0,60K+,Rayong,2023-03-26,savings,low
+A-1827,ธนพร สมบูรณ์,21,lawyer,35000.0,30-60K,Pathum Thani,2020-02-09,savings,low
+A-1828,จิรายุ ชัยสิทธิ์,45,civil_servant,80000.0,60K+,Chiang Rai,2022-01-10,savings,low
+A-1829,มาลี บุญมาก,65,lawyer,80000.0,60K+,Nakhon Ratchasima,2024-03-13,savings,low
+A-1830,ธีรภัทร มงคลชัย,70,nurse,45000.0,30-60K,Chiang Rai,2024-08-26,savings,low
+A-1831,ธนวัฒน์ สิทธิชัย,66,student,35000.0,30-60K,Bangkok,2023-10-20,current,low
+A-1832,ชัยวัฒน์ ใจดี,35,civil_servant,100000.0,60K+,Chiang Mai,2021-11-23,savings,medium
+A-1833,กมลวรรณ คำแก้ว,28,driver,80000.0,60K+,Pathum Thani,2021-06-28,current,low
+A-1834,ภูมิพัฒน์ สว่างวงศ์,26,lawyer,15000.0,15-30K,Lampang,2019-09-11,current,low
+A-1835,สุวรรณา แซ่ตั้ง,20,nurse,80000.0,60K+,Chonburi,2022-07-03,savings,low
+A-1836,กัญญา วงศ์สกุล,36,teacher,100000.0,60K+,Songkhla,2022-11-30,current,low
+A-1837,มาลี ศักดิ์สิทธิ์,36,merchant,60000.0,60K+,Pathum Thani,2019-08-09,current,medium
+A-1838,วีรยุทธ ชัยสิทธิ์,38,nurse,45000.0,30-60K,Songkhla,2024-11-27,current,low
+A-1839,สุรชัย พิทักษ์,55,student,100000.0,60K+,Chonburi,2019-09-15,savings,medium
+A-1840,วีรยุทธ ภูวนาท,36,teacher,100000.0,60K+,Bangkok,2024-01-02,current,low
+A-1841,ปรัชญา สิทธิชัย,65,lawyer,100000.0,60K+,Chiang Mai,2024-03-29,current,low
+A-1842,อรทัย ศักดิ์สิทธิ์,33,nurse,25000.0,15-30K,Chiang Rai,2020-12-30,savings,low
+A-1843,พิมพ์ชนก ภูวนาท,53,civil_servant,25000.0,15-30K,Nonthaburi,2023-10-12,savings,low
+A-1844,สราวุธ เจริญผล,21,nurse,20000.0,15-30K,Rayong,2023-07-13,current,low
+A-1845,กิตติพงศ์ ศรีวิชัย,21,merchant,100000.0,60K+,Nonthaburi,2024-06-28,savings,low
+A-1846,ดวงใจ ชูศรี,22,student,100000.0,60K+,Chonburi,2022-10-02,savings,low
+A-1847,นิภา ศรีวิชัย,61,nurse,60000.0,60K+,Phuket,2019-09-25,savings,medium
+A-1848,ปรัชญา มงคลชัย,36,teacher,35000.0,30-60K,Chonburi,2023-08-01,current,medium
+A-1849,ธนวัฒน์ คำแก้ว,38,student,25000.0,15-30K,Pathum Thani,2020-06-17,current,low
+A-1850,มาลี แสงจันทร์,42,student,20000.0,15-30K,Lampang,2023-03-26,current,medium
+A-1851,เบญจมาศ แซ่ตั้ง,37,civil_servant,80000.0,60K+,Chiang Rai,2020-02-14,savings,medium
+A-1852,รัตนา พิทักษ์,60,chef,20000.0,15-30K,Nonthaburi,2019-07-25,savings,medium
+A-1853,วิชัย สว่างวงศ์,53,student,20000.0,15-30K,Khon Kaen,2022-05-15,savings,low
+A-1854,นพดล พงษ์สวัสดิ์,63,nurse,35000.0,30-60K,Surat Thani,2024-12-22,savings,low
+A-1855,ชัยวัฒน์ ชูศรี,52,merchant,80000.0,60K+,Rayong,2023-09-28,current,low
+A-1856,สุทธิพงศ์ ใจดี,36,civil_servant,20000.0,15-30K,Chonburi,2024-10-03,savings,medium
+A-1857,สุทธิพงศ์ ใจดี,22,merchant,80000.0,60K+,Samut Prakan,2022-06-13,current,low
+A-1858,อภิสิทธิ์ สมบูรณ์,41,teacher,35000.0,30-60K,Rayong,2021-03-09,savings,medium
+A-1859,อนุชา สว่างวงศ์,54,office_worker,15000.0,15-30K,Udon Thani,2023-07-16,current,medium
+A-1860,วิภาวดี รัตนกุล,39,civil_servant,60000.0,60K+,Chonburi,2023-07-16,savings,low
+A-1861,รัฐพล สิทธิชัย,27,office_worker,35000.0,30-60K,Nonthaburi,2019-05-30,savings,medium
+A-1862,ปิยะ สิทธิชัย,60,lawyer,35000.0,30-60K,Udon Thani,2020-01-28,current,low
+A-1863,มาลี ทองดี,27,teacher,25000.0,15-30K,Rayong,2024-02-07,current,low
+A-1864,ประเสริฐ คำแก้ว,32,nurse,80000.0,60K+,Phuket,2019-09-06,current,low
+A-1865,ดวงใจ เทพพิทักษ์,22,accountant,80000.0,60K+,Lampang,2024-07-24,current,low
+A-1866,นิภา ศรีสุข,65,office_worker,15000.0,15-30K,Khon Kaen,2023-11-04,current,medium
+A-1867,สมหญิง ชัยสิทธิ์,27,accountant,60000.0,60K+,Khon Kaen,2024-02-20,savings,medium
+A-1868,สราวุธ วัฒนา,42,accountant,35000.0,30-60K,Lampang,2024-10-20,current,low
+A-1869,สุวรรณา แซ่ตั้ง,38,retired,80000.0,60K+,Samut Prakan,2023-10-14,current,low
+A-1870,กัญญา ประเสริฐศรี,59,engineer,45000.0,30-60K,Nakhon Ratchasima,2020-01-29,savings,medium
+A-1871,เกียรติศักดิ์ พงษ์สวัสดิ์,26,chef,100000.0,60K+,Bangkok,2022-07-07,current,low
+A-1872,จุฑามาศ ตันติกุล,42,student,25000.0,15-30K,Bangkok,2021-01-25,savings,low
+A-1873,มาลี สมบูรณ์,47,merchant,35000.0,30-60K,Songkhla,2020-06-18,current,low
+A-1874,พรรณี ตันติกุล,69,lawyer,45000.0,30-60K,Chiang Rai,2020-10-21,savings,low
+A-1875,พัชรี เจริญผล,48,accountant,20000.0,15-30K,Rayong,2020-04-18,savings,low
+A-1876,ปิยะดา กิจเจริญ,30,student,20000.0,15-30K,Pathum Thani,2021-05-31,current,medium
+A-1877,สมศักดิ์ บุญมาก,66,merchant,25000.0,15-30K,Rayong,2023-03-10,savings,medium
+A-1878,ชาญวิทย์ ชัยสิทธิ์,46,office_worker,35000.0,30-60K,Chiang Mai,2024-06-03,current,low
+A-1879,อัครพล รุ่งเรือง,65,chef,60000.0,60K+,Phuket,2021-11-11,savings,low
+A-1880,วันดี แซ่ตั้ง,47,chef,80000.0,60K+,Bangkok,2024-04-03,current,low
+A-1881,ศุภกร ชัยสิทธิ์,69,office_worker,20000.0,15-30K,Phuket,2020-01-23,savings,medium
+A-1882,รัฐพล รุ่งเรือง,68,office_worker,25000.0,15-30K,Khon Kaen,2025-07-21,current,medium
+A-1883,สมหญิง ศักดิ์สิทธิ์,63,retired,45000.0,30-60K,Lampang,2022-08-17,savings,medium
+A-1884,พัชรี แสงจันทร์,48,student,35000.0,30-60K,Pathum Thani,2025-03-19,current,medium
+A-1885,พีรพัฒน์ แซ่ลิ้ม,69,engineer,45000.0,30-60K,Pathum Thani,2020-01-21,savings,low
+A-1886,รัฐพล ชัยสิทธิ์,33,merchant,45000.0,30-60K,Bangkok,2024-12-15,savings,low
+A-1887,สุรชัย แซ่ตั้ง,35,nurse,80000.0,60K+,Khon Kaen,2024-10-10,current,low
+A-1888,สุทธิพงศ์ สุขสวัสดิ์,23,student,20000.0,15-30K,Udon Thani,2024-02-22,current,low
+A-1889,ชัยวัฒน์ ชูศรี,67,civil_servant,35000.0,30-60K,Nonthaburi,2023-01-14,savings,medium
+A-1890,นพดล วิไลวรรณ,53,retired,35000.0,30-60K,Rayong,2020-04-16,current,medium
+A-1891,สุรชัย คำแก้ว,26,teacher,80000.0,60K+,Lampang,2023-09-24,savings,medium
+A-1892,จันทร์เพ็ญ อินทร์แก้ว,33,accountant,20000.0,15-30K,Surat Thani,2023-04-02,current,low
+A-1893,มาลี ไชยวงค์,57,accountant,80000.0,60K+,Rayong,2024-01-17,savings,low
+A-1894,พงศ์พัฒน์ ตันติกุล,52,teacher,100000.0,60K+,Rayong,2024-03-29,savings,low
+A-1895,พรทิพย์ บุญมาก,49,accountant,15000.0,15-30K,Chiang Rai,2020-11-13,current,low
+A-1896,นภาพร แซ่ตั้ง,27,driver,45000.0,30-60K,Khon Kaen,2019-07-24,current,low
+A-1897,นพดล ไชยวงค์,38,accountant,15000.0,15-30K,Bangkok,2020-09-17,current,low
+A-1898,จิรายุ ศรีสุข,33,teacher,100000.0,60K+,Rayong,2019-02-18,savings,medium
+A-1899,พีรพัฒน์ แซ่ลิ้ม,50,civil_servant,45000.0,30-60K,Udon Thani,2025-06-15,savings,low
+A-1900,กัญญา ธนาคม,52,student,100000.0,60K+,Chiang Mai,2024-02-26,current,medium
+A-1901,ชัยวัฒน์ แสงจันทร์,34,chef,60000.0,60K+,Pathum Thani,2025-03-05,current,low
+A-1902,ชุติมา พานิชย์,30,retired,15000.0,15-30K,Surat Thani,2025-07-10,savings,low
+A-1903,ชุติมา สว่างวงศ์,32,civil_servant,15000.0,15-30K,Surat Thani,2025-07-03,savings,low
+A-1904,ธนกฤต อมรรัตน์,62,lawyer,25000.0,15-30K,Rayong,2019-04-28,current,low
+A-1905,มาลี ทองดี,54,civil_servant,60000.0,60K+,Songkhla,2023-08-13,current,low
+A-1906,ประเสริฐ เจริญผล,46,office_worker,60000.0,60K+,Surat Thani,2023-05-24,savings,low
+A-1907,ธีรภัทร ชัยสิทธิ์,29,teacher,45000.0,30-60K,Bangkok,2020-02-12,current,low
+A-1908,พีรพัฒน์ สิทธิชัย,21,retired,15000.0,15-30K,Phuket,2022-06-14,current,low
+A-1909,อภิสิทธิ์ อินทร์แก้ว,44,merchant,15000.0,15-30K,Nakhon Ratchasima,2021-05-19,current,medium
+A-1910,ธีรภัทร ศรีสุข,27,nurse,15000.0,15-30K,Udon Thani,2022-09-05,savings,medium
+A-1911,อัจฉรา เจริญผล,60,engineer,15000.0,15-30K,Nakhon Ratchasima,2022-02-16,savings,low
+A-1912,วันดี มงคลชัย,56,chef,100000.0,60K+,Samut Prakan,2020-01-19,savings,low
+A-1913,ปวีณา นาคสุข,54,teacher,35000.0,30-60K,Udon Thani,2025-02-19,savings,low
+A-1914,สราวุธ สว่างวงศ์,49,civil_servant,45000.0,30-60K,Khon Kaen,2020-12-26,current,medium
+A-1915,ศิริพร แก้วมณี,42,student,35000.0,30-60K,Chonburi,2025-09-02,savings,low
+A-1916,ณัฐธิดา คำแก้ว,25,chef,20000.0,15-30K,Nakhon Ratchasima,2020-09-04,current,low
+A-1917,พีรพัฒน์ วัฒนา,60,nurse,100000.0,60K+,Nakhon Ratchasima,2022-03-04,current,low
+A-1918,สมหญิง สุขสวัสดิ์,21,retired,25000.0,15-30K,Nonthaburi,2019-02-18,savings,medium
+A-1919,เบญจมาศ ศรีสุข,55,retired,100000.0,60K+,Surat Thani,2023-07-07,savings,medium
+A-1920,พรทิพย์ แซ่ลิ้ม,63,merchant,60000.0,60K+,Chonburi,2023-05-01,savings,low
+A-1921,สุทธิพงศ์ ทองดี,49,driver,35000.0,30-60K,Samut Prakan,2024-02-04,current,low
+A-1922,วรพล แซ่ตั้ง,32,merchant,45000.0,30-60K,Bangkok,2021-08-03,current,medium
+A-1923,กฤษณะ จงรักษ์,65,retired,35000.0,30-60K,Chiang Mai,2019-03-11,current,medium
+A-1924,พัชรี ชูศรี,30,lawyer,35000.0,30-60K,Chonburi,2025-06-15,savings,low
+A-1925,พรรณี พิทักษ์,67,merchant,25000.0,15-30K,Lampang,2022-01-08,current,low
+A-1926,สมหญิง คำแก้ว,63,office_worker,45000.0,30-60K,Nonthaburi,2025-05-23,savings,low
+A-1927,รัตนา ภูวนาท,47,chef,45000.0,30-60K,Songkhla,2020-06-22,savings,low
+A-1928,สมชาย จงรักษ์,23,nurse,80000.0,60K+,Nakhon Ratchasima,2025-01-29,current,low
+A-1929,ปวีณา อมรรัตน์,56,office_worker,35000.0,30-60K,Nakhon Ratchasima,2023-11-11,savings,low
+A-1124,ภูมิพัฒน์ จงรักษ์,46,merchant,60000.0,60K+,Rayong,2021-06-13,current,low
+A-1125,รัตนา แซ่ตั้ง,30,chef,25000.0,15-30K,Nonthaburi,2022-07-05,current,low
+A-1126,ภูมิพัฒน์ สว่างวงศ์,62,chef,120000.0,60K+,Bangkok,2023-02-09,current,low
+A-1127,รัตนา พานิชย์,64,engineer,120000.0,60K+,Nonthaburi,2021-05-19,current,low
+A-1128,วรพล บุญมาก,32,teacher,25000.0,15-30K,Chiang Mai,2021-03-27,savings,low
+A-1129,สุทธิพงศ์ พลอยแก้ว,59,teacher,60000.0,60K+,Phuket,2023-07-28,savings,low
+A-1130,กิตติพงศ์ แก้วมณี,51,merchant,60000.0,60K+,Pathum Thani,2024-06-23,current,low
+A-1131,นภาพร แซ่ตั้ง,38,accountant,60000.0,60K+,Surat Thani,2022-05-08,current,low
+A-1132,พรรณี ใจดี,28,chef,45000.0,30-60K,Chiang Mai,2022-02-02,savings,low
+A-1133,พิมพ์ชนก รัตนกุล,65,civil_servant,25000.0,15-30K,Samut Prakan,2021-04-23,savings,low
+A-1134,ปรัชญา พิทักษ์,29,lawyer,35000.0,30-60K,Songkhla,2024-04-24,savings,low
+A-1135,นิภา สมบูรณ์,63,office_worker,45000.0,30-60K,Samut Prakan,2021-11-02,savings,low
+A-1136,ธนวัฒน์ อมรรัตน์,32,office_worker,35000.0,30-60K,Chiang Rai,2021-02-09,current,low
+A-1137,ธีรภัทร รุ่งเรือง,26,teacher,45000.0,30-60K,Chiang Mai,2021-04-27,savings,low
+A-1138,รัตนา ตันติกุล,55,accountant,45000.0,30-60K,Nakhon Ratchasima,2023-11-27,savings,low
+A-1139,สุภาพร สว่างวงศ์,58,nurse,60000.0,60K+,Rayong,2024-08-19,current,low
+A-1140,วิชัย ธนาคม,52,merchant,60000.0,60K+,Chiang Rai,2023-07-07,savings,low
+A-1141,นิภา ธนาคม,29,teacher,45000.0,30-60K,Phuket,2024-07-11,current,low
+A-1142,พงศ์พัฒน์ บุญมาก,54,lawyer,80000.0,60K+,Rayong,2023-06-10,savings,low
+A-1143,ปิยะ จงรักษ์,52,accountant,35000.0,30-60K,Phuket,2023-05-07,savings,low
+A-1144,สมศักดิ์ สว่างวงศ์,45,chef,45000.0,30-60K,Chiang Mai,2024-10-03,savings,low
+A-1145,พรทิพย์ รัตนกุล,30,merchant,60000.0,60K+,Surat Thani,2021-07-26,savings,low
+A-1146,สุกัญญา ลิ้มประเสริฐ,62,lawyer,80000.0,60K+,Rayong,2022-11-16,current,low
+A-1147,นพดล ตันติกุล,28,nurse,80000.0,60K+,Nakhon Ratchasima,2022-10-11,savings,low
+A-1148,พรทิพย์ บุญมาก,55,engineer,25000.0,15-30K,Samut Prakan,2022-12-28,current,low
+A-1149,อรทัย เทพพิทักษ์,61,engineer,60000.0,60K+,Chiang Rai,2024-03-03,savings,low
+A-1150,อัครพล พานิชย์,63,nurse,25000.0,15-30K,Lampang,2022-01-14,current,low
+A-1151,จันทร์เพ็ญ ศรีสุข,47,office_worker,35000.0,30-60K,Chonburi,2021-10-30,savings,low
+A-1152,พีรพัฒน์ ชัยสิทธิ์,30,lawyer,35000.0,30-60K,Songkhla,2023-02-19,current,low
+A-1153,กัญญา ชัยสิทธิ์,45,civil_servant,80000.0,60K+,Samut Prakan,2021-07-02,savings,low
+A-1154,อภิสิทธิ์ แสงจันทร์,30,nurse,60000.0,60K+,Phuket,2024-09-26,current,low
+A-1155,ณัฐพล อินทร์แก้ว,38,lawyer,25000.0,15-30K,Udon Thani,2022-12-17,current,low
+A-1156,ธนกฤต พานิชย์,27,engineer,60000.0,60K+,Nakhon Ratchasima,2024-05-21,savings,low
+A-1157,สุทธิพงศ์ คำแก้ว,41,nurse,45000.0,30-60K,Chonburi,2021-09-12,savings,low
+A-1158,อรทัย ลิ้มประเสริฐ,49,lawyer,120000.0,60K+,Chiang Mai,2022-04-26,current,low
+A-1159,พรรณี ธนาคม,27,chef,25000.0,15-30K,Chiang Rai,2023-08-09,current,low
+A-1160,สมชาย ธนาคม,56,chef,80000.0,60K+,Chonburi,2022-05-10,current,low
+A-1161,ศุภกร รุ่งเรือง,25,chef,20000.0,15-30K,Chiang Mai,2021-11-02,current,low
+A-1162,วิภาวดี ตันติกุล,67,driver,35000.0,30-60K,Nonthaburi,2022-11-05,savings,low
+A-1163,สมศักดิ์ สมบูรณ์,69,driver,60000.0,60K+,Nakhon Ratchasima,2020-10-06,savings,low
+A-1164,ลัดดา ภูวนาท,68,student,20000.0,15-30K,Udon Thani,2021-02-04,current,low
+A-1165,ปิยะ พานิชย์,60,driver,25000.0,15-30K,Samut Prakan,2024-01-16,current,low
+A-1166,สุรชัย พงษ์สวัสดิ์,42,lawyer,20000.0,15-30K,Songkhla,2022-08-04,current,low
+A-1167,เบญจมาศ แก้วมณี,61,merchant,80000.0,60K+,Udon Thani,2024-04-19,savings,low
+A-1168,ธนวัฒน์ วัฒนา,58,accountant,25000.0,15-30K,Pathum Thani,2019-10-21,savings,low
+A-1169,พัชรี ชัยสิทธิ์,22,engineer,100000.0,60K+,Songkhla,2024-01-14,current,low
+A-1170,ลัดดา วัฒนา,44,chef,60000.0,60K+,Chiang Mai,2019-09-12,current,low
+A-1171,ปรัชญา ศรีวิชัย,55,student,80000.0,60K+,Rayong,2022-04-18,savings,low
+A-1172,รัฐพล จงรักษ์,25,civil_servant,25000.0,15-30K,Chonburi,2023-01-12,savings,low
+A-1173,อรทัย รุ่งเรือง,55,chef,60000.0,60K+,Chiang Mai,2020-07-17,current,low
+A-1174,อรุณี ภูวนาท,21,driver,45000.0,30-60K,Nakhon Ratchasima,2021-02-17,savings,low
+A-1175,นิภา รุ่งเรือง,29,merchant,45000.0,30-60K,Bangkok,2020-03-30,current,low
+A-1176,พงศ์พัฒน์ เทพพิทักษ์,58,chef,25000.0,15-30K,Samut Prakan,2020-12-05,savings,medium
+A-1177,พัชรี กิจเจริญ,22,chef,60000.0,60K+,Samut Prakan,2021-10-09,current,low
+A-1178,ธนพร แซ่ตั้ง,54,engineer,45000.0,30-60K,Nonthaburi,2024-05-15,current,medium
+A-1179,ปิยะดา วิไลวรรณ,69,nurse,80000.0,60K+,Samut Prakan,2024-09-30,savings,low
+A-1180,นภาพร รุ่งเรือง,23,student,100000.0,60K+,Rayong,2023-04-10,savings,low
+A-1181,กัญญา คำแก้ว,25,teacher,45000.0,30-60K,Chiang Mai,2024-02-24,savings,medium
+A-1182,จิรายุ อมรรัตน์,42,office_worker,80000.0,60K+,Phuket,2019-09-16,savings,low
+A-1183,ลัดดา วัฒนา,34,office_worker,60000.0,60K+,Samut Prakan,2020-03-21,savings,low
+A-1184,มาลี แสงจันทร์,22,nurse,100000.0,60K+,Chiang Rai,2020-08-31,savings,low
+A-1185,ดวงใจ ศรีวิชัย,21,nurse,35000.0,30-60K,Surat Thani,2020-10-14,current,low
+A-1062,สุภาพร ลิ้มประเสริฐ,41,merchant,60000.0,60K+,Nakhon Ratchasima,2021-02-18,savings,low
+A-1063,พัชรี สิทธิชัย,27,office_worker,35000.0,30-60K,Nakhon Ratchasima,2022-02-22,savings,low
+A-1064,กิตติพงศ์ แซ่ตั้ง,55,merchant,80000.0,60K+,Chonburi,2022-04-01,savings,low
+A-1065,ณัฐพล ชูศรี,35,nurse,25000.0,15-30K,Nonthaburi,2024-04-09,current,low
+A-1066,ลัดดา อมรรัตน์,50,engineer,25000.0,15-30K,Chiang Mai,2024-05-06,current,low
+A-1067,ธีรภัทร แซ่ตั้ง,63,merchant,80000.0,60K+,Chiang Mai,2021-04-04,current,low
+A-1068,จิรายุ ใจดี,25,chef,60000.0,60K+,Pathum Thani,2021-08-14,savings,low
+A-1069,ณัฐธิดา เทพพิทักษ์,52,teacher,120000.0,60K+,Samut Prakan,2023-12-14,current,low
+A-1070,ปรัชญา อมรรัตน์,54,chef,120000.0,60K+,Rayong,2024-05-07,savings,low
+A-1071,สุวรรณา แซ่ลิ้ม,42,accountant,35000.0,30-60K,Songkhla,2023-08-19,savings,low
+A-1072,ธนวัฒน์ สมบูรณ์,56,driver,35000.0,30-60K,Songkhla,2023-10-05,current,low
+A-1073,ธนพร วงศ์สกุล,63,nurse,80000.0,60K+,Nakhon Ratchasima,2021-01-30,current,low
+A-1074,พงศ์พัฒน์ ภูวนาท,56,lawyer,35000.0,30-60K,Udon Thani,2024-11-24,savings,low
+A-1075,ศิริพร อินทร์แก้ว,30,nurse,35000.0,30-60K,Songkhla,2023-04-18,current,low
+A-1076,นิภา วัฒนา,60,lawyer,45000.0,30-60K,Songkhla,2023-05-31,current,low
+A-1077,ธนกฤต ธนาคม,42,nurse,45000.0,30-60K,Chiang Mai,2022-04-27,savings,low
+A-1078,นพดล รุ่งเรือง,37,engineer,120000.0,60K+,Chiang Rai,2023-09-28,current,low
+A-1079,ณัฐพล สุขสวัสดิ์,31,engineer,45000.0,30-60K,Pathum Thani,2022-04-20,savings,low
+A-1080,สมศักดิ์ ภูวนาท,42,office_worker,25000.0,15-30K,Chiang Mai,2024-02-17,savings,low
+A-1081,อนุชา พงษ์สวัสดิ์,61,nurse,60000.0,60K+,Khon Kaen,2023-09-17,current,low
+A-1082,รัฐพล พงษ์สวัสดิ์,32,merchant,60000.0,60K+,Chonburi,2023-10-14,savings,low
+A-1083,อัครพล ไชยวงค์,61,nurse,25000.0,15-30K,Chiang Rai,2022-06-02,savings,low
+A-1084,นพดล คำแก้ว,58,chef,60000.0,60K+,Khon Kaen,2023-07-05,savings,low
+A-1085,ชัยวัฒน์ วงศ์สกุล,64,merchant,35000.0,30-60K,Chonburi,2024-07-14,savings,low
+A-1086,ปิยะ ศรีวิชัย,36,lawyer,25000.0,15-30K,Udon Thani,2021-11-26,current,low
+A-1087,รัตนา ศรีสุข,27,engineer,45000.0,30-60K,Nonthaburi,2022-08-12,savings,low
+A-1088,เกียรติศักดิ์ พิทักษ์,41,civil_servant,120000.0,60K+,Nonthaburi,2022-02-19,savings,low
+A-1089,ณัฐพล ศรีวิชัย,42,teacher,25000.0,15-30K,Pathum Thani,2021-05-12,current,low
+A-1090,ศุภกร ศักดิ์สิทธิ์,53,merchant,60000.0,60K+,Surat Thani,2024-11-20,current,low
+A-1091,ดวงใจ ธนาคม,53,merchant,80000.0,60K+,Chiang Rai,2021-04-01,current,low
+A-1092,อัจฉรา อินทร์แก้ว,26,merchant,35000.0,30-60K,Bangkok,2024-10-21,current,low
+A-1093,รัตนา ศักดิ์สิทธิ์,61,office_worker,35000.0,30-60K,Chonburi,2023-08-31,current,low
+A-1094,พีรพัฒน์ ธนาคม,65,accountant,25000.0,15-30K,Nonthaburi,2023-08-30,savings,low
+A-1095,ชัยวัฒน์ จงรักษ์,35,driver,60000.0,60K+,Rayong,2024-11-30,savings,low
+A-1096,อัครพล จงรักษ์,54,merchant,45000.0,30-60K,Rayong,2022-06-10,savings,low
+A-1097,จิรายุ เทพพิทักษ์,59,accountant,60000.0,60K+,Samut Prakan,2021-05-01,current,low
+A-1098,สมศักดิ์ กิจเจริญ,65,accountant,25000.0,15-30K,Udon Thani,2022-03-02,current,low
+A-1099,กมลวรรณ ชัยสิทธิ์,32,office_worker,120000.0,60K+,Khon Kaen,2024-06-09,savings,low
+A-1100,ปวีณา บุญมาก,60,chef,25000.0,15-30K,Udon Thani,2022-04-15,savings,low
+A-1101,ณัฐธิดา ไชยวงค์,34,accountant,120000.0,60K+,Rayong,2022-08-30,current,low
+A-1102,ธนกฤต ศรีวิชัย,55,engineer,60000.0,60K+,Surat Thani,2024-02-12,savings,low
+A-1103,วันดี ศักดิ์สิทธิ์,29,nurse,60000.0,60K+,Rayong,2022-12-07,savings,low
+A-1104,มาลี สิทธิชัย,43,nurse,80000.0,60K+,Udon Thani,2024-04-11,current,low
+A-1105,สราวุธ ธนาคม,47,driver,80000.0,60K+,Rayong,2024-01-27,savings,low
+A-1106,สุกัญญา แก้วมณี,40,civil_servant,60000.0,60K+,Songkhla,2022-05-03,current,low
+A-1107,มาลี แก้วมณี,49,chef,120000.0,60K+,Chonburi,2024-09-06,current,low
+A-1108,สมหญิง สิทธิชัย,31,accountant,25000.0,15-30K,Phuket,2023-12-23,savings,low
+A-1109,จันทร์เพ็ญ วงศ์สกุล,29,accountant,45000.0,30-60K,Rayong,2022-12-04,current,low
+A-1110,ชุติมา ภูวนาท,59,chef,45000.0,30-60K,Rayong,2024-07-16,savings,low
+A-1111,ศิริพร พิทักษ์,64,merchant,35000.0,30-60K,Pathum Thani,2024-07-25,savings,low
+A-1112,พงศ์พัฒน์ พานิชย์,52,merchant,120000.0,60K+,Lampang,2021-08-03,savings,low
+A-1113,ธีรภัทร สิทธิชัย,27,driver,25000.0,15-30K,Nakhon Ratchasima,2022-09-02,current,low
+A-1114,ปรัชญา แซ่ลิ้ม,61,teacher,35000.0,30-60K,Chiang Rai,2022-01-03,savings,low
+A-1115,กิตติพงศ์ ใจดี,56,civil_servant,35000.0,30-60K,Khon Kaen,2022-04-30,savings,low
+A-1116,ปิยะ ลิ้มประเสริฐ,54,nurse,120000.0,60K+,Chiang Rai,2024-02-03,current,low
+A-1117,ณัฐพล วิไลวรรณ,65,chef,120000.0,60K+,Phuket,2022-06-06,current,low
+A-1118,ณัฐพล กิจเจริญ,31,engineer,60000.0,60K+,Bangkok,2024-03-26,current,low
+A-1119,สุภาพร ศรีวิชัย,42,office_worker,80000.0,60K+,Pathum Thani,2024-11-14,current,low
+A-1120,ธนกฤต เทพพิทักษ์,43,engineer,80000.0,60K+,Khon Kaen,2023-01-01,savings,low
+A-1121,ธนวัฒน์ แสงจันทร์,65,merchant,120000.0,60K+,Bangkok,2024-08-25,current,low
+A-1122,ปิยะดา วิไลวรรณ,33,merchant,45000.0,30-60K,Chonburi,2022-11-10,current,low
+A-1123,กฤษณะ สว่างวงศ์,58,lawyer,45000.0,30-60K,Samut Prakan,2021-12-12,current,low
+A-1000,ประเสริฐ พลอยแก้ว,18,freelance,10000.0,<15K,Bangkok,2025-08-14,savings,low
+A-1001,สมหญิง นาคสุข,18,student,10000.0,<15K,Bangkok,2025-08-16,savings,low
+A-1002,ปรัชญา สุขสวัสดิ์,24,unemployed,15000.0,<15K,Chonburi,2025-11-15,savings,low
+A-1003,อรุณี เจริญผล,23,freelance,10000.0,<15K,Bangkok,2025-08-12,savings,low
+A-1004,ปวีณา แซ่ลิ้ม,23,freelance,8000.0,<15K,Bangkok,2025-10-13,savings,low
+A-1005,ชุติมา กิจเจริญ,23,unemployed,8000.0,<15K,Rayong,2025-06-29,savings,low
+A-1006,พรทิพย์ ชัยสิทธิ์,19,part_time_worker,12000.0,<15K,Bangkok,2025-10-12,savings,low
+A-1007,ปิยะดา ใจดี,22,student,10000.0,<15K,Bangkok,2025-11-01,savings,low
+A-1008,สุรชัย ธนาคม,34,unemployed,12000.0,<15K,Bangkok,2025-07-02,savings,low
+A-1009,ลัดดา ใจดี,23,unemployed,15000.0,<15K,Bangkok,2025-09-27,savings,low
+A-1010,สมศักดิ์ ตันติกุล,22,part_time_worker,15000.0,<15K,Bangkok,2025-09-18,savings,low
+A-1011,จันทร์เพ็ญ แซ่ลิ้ม,27,unemployed,10000.0,<15K,Bangkok,2025-10-04,savings,low
+A-1012,ชุติมา วัฒนา,22,student,8000.0,<15K,Bangkok,2025-11-02,savings,low
+A-1013,วันดี เจริญผล,25,student,12000.0,<15K,Khon Kaen,2025-10-24,savings,low
+A-1014,นิภา รุ่งเรือง,34,unemployed,10000.0,<15K,Chiang Rai,2025-09-21,savings,low
+A-1015,ภูมิพัฒน์ ชูศรี,18,student,12000.0,<15K,Chiang Mai,2025-09-04,savings,low
+A-1016,ปิยะดา สมบูรณ์,27,unemployed,10000.0,<15K,Bangkok,2025-10-17,savings,low
+A-1017,ลัดดา แซ่ตั้ง,21,unemployed,12000.0,<15K,Bangkok,2025-09-28,savings,low
+A-1018,นพดล นาคสุข,19,unemployed,10000.0,<15K,Chiang Mai,2025-07-04,savings,low
+A-1019,พรรณี วัฒนา,19,student,10000.0,<15K,Chiang Mai,2025-07-05,savings,low
+A-1020,พิมพ์ชนก สว่างวงศ์,25,unemployed,10000.0,<15K,Nakhon Ratchasima,2025-11-11,savings,low
+A-1021,สุทธิพงศ์ พงษ์สวัสดิ์,24,freelance,15000.0,<15K,Nonthaburi,2025-10-01,savings,low
+A-1022,เกียรติศักดิ์ แสงจันทร์,24,freelance,8000.0,<15K,Chiang Mai,2025-08-20,savings,low
+A-1023,พรรณี นาคสุข,25,unemployed,8000.0,<15K,Chiang Mai,2025-10-09,savings,low
+A-1024,วรพล มงคลชัย,18,student,10000.0,<15K,Lampang,2025-07-30,savings,low
+A-1025,เบญจมาศ ใจดี,24,student,15000.0,<15K,Chiang Mai,2025-08-24,savings,low
+A-1026,สุรชัย อินทร์แก้ว,25,unemployed,10000.0,<15K,Bangkok,2025-09-01,savings,low
+A-1027,วันดี ชัยสิทธิ์,26,student,15000.0,<15K,Chiang Mai,2025-10-24,savings,low
+A-1028,วีรยุทธ ชูศรี,20,student,8000.0,<15K,Chiang Mai,2025-08-17,savings,low
+A-1029,พงศ์พัฒน์ ธนาคม,19,part_time_worker,12000.0,<15K,Chiang Mai,2025-08-23,savings,low
+A-1030,อภิสิทธิ์ ชูศรี,22,part_time_worker,12000.0,<15K,Chiang Mai,2025-07-06,savings,low
+A-1031,พรทิพย์ กิจเจริญ,22,unemployed,12000.0,<15K,Chiang Mai,2025-07-05,savings,low
+A-1032,กัญญา สมบูรณ์,30,student,12000.0,<15K,Chiang Mai,2025-07-14,savings,low
+A-1033,ธนพร สมบูรณ์,20,freelance,12000.0,<15K,Chiang Mai,2025-08-10,savings,low
+A-1034,พีรพัฒน์ รัตนกุล,18,student,15000.0,<15K,Khon Kaen,2025-08-27,savings,low
+A-1035,วีรยุทธ สิทธิชัย,25,part_time_worker,8000.0,<15K,Chonburi,2025-07-16,savings,low
+A-1036,จิรายุ แก้วมณี,35,unemployed,15000.0,<15K,Nakhon Ratchasima,2025-07-20,savings,low
+A-1037,พิมพ์ชนก ชัยสิทธิ์,19,freelance,15000.0,<15K,Samut Prakan,2025-07-27,savings,low
+A-1038,สุกัญญา อมรรัตน์,24,student,10000.0,<15K,Chonburi,2025-09-11,savings,low
+A-1039,กฤษณะ ใจดี,27,part_time_worker,8000.0,<15K,Chonburi,2025-10-16,savings,low
+A-1040,กิตติพงศ์ ศรีสุข,29,unemployed,8000.0,<15K,Khon Kaen,2025-08-06,savings,low
+A-1041,ณัฐธิดา ประเสริฐศรี,24,freelance,8000.0,<15K,Chonburi,2025-07-17,savings,low
+A-1042,อรุณี คำแก้ว,26,student,15000.0,<15K,Surat Thani,2025-09-14,savings,low
+A-1043,สราวุธ พลอยแก้ว,21,freelance,8000.0,<15K,Pathum Thani,2025-10-07,savings,low
+A-1044,ปวีณา วัฒนา,29,freelance,15000.0,<15K,Nonthaburi,2025-07-05,savings,low
+A-1045,ณัฐพล นาคสุข,30,freelance,15000.0,<15K,Chonburi,2025-09-09,savings,low
+A-1046,สมหญิง พานิชย์,24,unemployed,12000.0,<15K,Chonburi,2025-09-29,savings,low
+A-1047,วันดี สว่างวงศ์,23,part_time_worker,15000.0,<15K,Samut Prakan,2025-10-09,savings,low
+A-1048,ชุติมา อมรรัตน์,27,freelance,12000.0,<15K,Nakhon Ratchasima,2025-07-11,savings,low
+A-1049,พัชรี ศรีสุข,28,student,8000.0,<15K,Khon Kaen,2025-08-19,savings,low
+A-1050,สมศักดิ์ สุขสวัสดิ์,35,unemployed,15000.0,<15K,Rayong,2025-10-22,savings,low
+A-1051,กมลวรรณ รุ่งเรือง,27,part_time_worker,10000.0,<15K,Khon Kaen,2025-08-02,savings,low
+A-1052,นิภา ศรีวิชัย,19,part_time_worker,10000.0,<15K,Khon Kaen,2025-10-14,savings,low
+A-1053,มาลี แสงจันทร์,33,part_time_worker,15000.0,<15K,Khon Kaen,2025-07-28,savings,low
+A-1054,พงศ์พัฒน์ กิจเจริญ,22,part_time_worker,10000.0,<15K,Khon Kaen,2025-08-27,savings,low
+A-1055,สมศักดิ์ มงคลชัย,19,unemployed,10000.0,<15K,Khon Kaen,2025-08-16,savings,low
+A-1056,จันทร์เพ็ญ อินทร์แก้ว,25,part_time_worker,8000.0,<15K,Bangkok,2025-08-09,savings,low
+A-1057,ศิริพร แซ่ลิ้ม,35,part_time_worker,15000.0,<15K,Rayong,2025-06-19,savings,low
+A-1058,สมชาย แซ่ลิ้ม,21,part_time_worker,10000.0,<15K,Khon Kaen,2025-08-26,savings,low
+A-1059,นิภา ทองดี,24,unemployed,15000.0,<15K,Chiang Rai,2025-07-20,savings,low
+A-1060,ปรัชญา ใจดี,61,office_worker,25000.0,15-30K,Chonburi,2024-08-18,savings,low
+A-1061,พีรพัฒน์ แซ่ลิ้ม,41,chef,45000.0,30-60K,Khon Kaen,2022-03-19,current,low
