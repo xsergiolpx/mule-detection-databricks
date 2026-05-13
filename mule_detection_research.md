@@ -241,7 +241,451 @@ The exploited-account problem is the residual after rules + anomaly + supervised
 
 ---
 
-## 8. Cross-cutting design choices that the literature is unanimous on
+## 8. Technical deep-dives
+
+This section answers the questions customers ask when the slide deck ends. Each subsection is self-contained — point to it during PoC scoping.
+
+### 8.1 How PU-learning actually works (and why HR-03 demands it)
+
+**The problem.** When a Thai bank trains a supervised mule classifier, it has:
+
+- A set of confirmed mules (BOT HR-03, internal SAR confirmations, CFR feedback) — these are reliable positives.
+- A much larger set of accounts *not* on any list. These are **unlabeled**, not negative. Many of them are real customers, but some are mules that simply haven't been caught yet.
+
+Treating "not on the list" as `y = 0` and training a normal classifier (XGBoost, logistic regression) is a documented failure mode: the model learns to predict "looks like HR-03 *paperwork*" rather than "is a mule". It systematically under-predicts on novel mule typologies because they were silently labelled negative during training.
+
+**The theory** — *Elkan & Noto (2008), "Learning Classifiers from Only Positive and Unlabeled Data"*. The key result is that under the **Selected Completely At Random (SCAR)** assumption (positives are a uniform random sample of all true positives), a classifier trained on positive-vs-unlabeled data is **proportional** to the true positive-vs-negative classifier by a constant `c = P(s=1 | y=1)` that you can estimate from a held-out positive set. So:
+
+```
+P(y = 1 | x) = P(s = 1 | x) / c
+```
+
+In plain English: train as if unlabeled = negative, then divide the score by `c` to get a calibrated probability. SCAR is rarely literally true in banking (HR-03 over-represents certain typologies), so practitioners use extensions — **nnPU** (non-negative PU, Kiryo et al. 2017) is the modern default because it stabilises training under high class imbalance.
+
+**Python — the `pulearn` library.** Drop-in scikit-learn-compatible wrappers around an XGBoost base classifier:
+
+```python
+import numpy as np
+from pulearn import ElkanotoPuClassifier
+from xgboost import XGBClassifier
+
+# y_pu convention for pulearn:
+#   +1 = confirmed mule (HR-03 / SAR)
+#   -1 = unlabeled (everyone else, NOT "confirmed clean")
+y_pu = np.where(df["bot_confirmed_mule"], 1, -1)
+
+base = XGBClassifier(
+    n_estimators=600, max_depth=6, learning_rate=0.05,
+    tree_method="hist", eval_metric="aucpr",
+)
+
+pu_clf = ElkanotoPuClassifier(estimator=base, hold_out_ratio=0.2)
+pu_clf.fit(X_train.values, y_pu_train)
+
+# Calibrated mule probability — already corrected for the c factor.
+proba = pu_clf.predict_proba(X_test.values)
+```
+
+For more aggressive use cases (lots of HR-03 labels, expectation that mules in the unlabeled set are common):
+
+```python
+from pulearn import BaggingPuClassifier  # Mordelet & Vert (2014)
+
+pu_clf = BaggingPuClassifier(
+    base_estimator=base,
+    n_estimators=15,           # bootstrap a balanced negative subsample per tree
+    max_samples=sum(y_pu_train == 1),
+    n_jobs=-1,
+)
+pu_clf.fit(X_train.values, y_pu_train)
+```
+
+Or **nnPU** if you have a calibrated estimate of class prior `π = P(y = 1)`:
+
+```python
+from pulearn import NonNegativePUClassifier
+pu_clf = NonNegativePUClassifier(estimator=base, prior=0.003)  # 0.3% mule prior
+pu_clf.fit(X_train.values, y_pu_train)
+```
+
+**Sister libraries** — for research and benchmarking: `pu-learning` (Bekker & Davis lab, <https://github.com/aldro61/pu-learning>), TensorFlow / PyTorch implementations of nnPU for neural networks, and `LibPU` for graph-PU. On Databricks, all of these run unchanged in a Mosaic AI cluster — wrap the trained classifier with MLflow's `pyfunc` and serve through Model Serving.
+
+**What this buys the bank.** Two concrete wins:
+
+1. **Higher recall on unseen typologies** — the model stops being fooled into thinking "unlabeled = clean".
+2. **Calibrated probabilities** — Precision@Capacity becomes a meaningful operating point because the score is genuinely `P(mule)`, not an arbitrary rank.
+
+---
+
+### 8.2 What a GNN actually is (and why graphs beat trees on rings)
+
+**The motivation.** Two accounts can look identical at the row level — same KYC age, same monthly volume, same device — yet one is a hub of a 50-account mule ring and the other is a yoga instructor. The difference is **who they transact with**. Trees and rules see one row at a time; a graph neural network sees a node *and the embeddings of its neighbours*.
+
+**The math, in one paragraph.** A GNN stacks layers of **message passing**. At each layer, every node `v` builds a new embedding by:
+
+1. Collecting messages from its neighbours `N(v)` (each message is a function of the neighbour's current embedding and the edge attributes — e.g., transaction amount, timestamp).
+2. Aggregating the messages (mean, sum, max, attention-weighted — the choice is what differentiates GCN vs GraphSAGE vs GAT vs PNA).
+3. Combining the aggregated message with its own current embedding via a small MLP.
+
+After `k` layers, every node's embedding contains information from accounts up to `k` hops away. For mule detection, `k = 2` or `k = 3` is usually enough — you want the receive-and-forward pattern, not the entire chain of custody.
+
+**The popular architectures, ranked by what real banks use:**
+
+| Architecture | Aggregation | When to use |
+|---|---|---|
+| **GraphSAGE** (Hamilton et al. 2017) | Mean or LSTM aggregator over a sampled neighbourhood | Default for very large graphs (DNB Norway used this on 5M nodes / 10M edges). Cheap, scales. |
+| **GAT** (Veličković et al. 2018) | Attention-weighted | When some counterparties matter more than others (e.g., new + high-value). |
+| **PNA / Multi-PNA** (Corso et al. 2020 / Egressy et al. 2023) | Multiple aggregators concatenated | State of the art on IBM AMLworld — **+30% minority-class F1** over standard MPNN. |
+| **TGN** (Rossi et al. 2020) | Temporal — uses memory state per node | When transaction *order* matters (pass-through within hours). +17.7 P@20R in published fraud benchmarks. |
+| **R-GCN** (Schlichtkrull et al. 2018) | Per-edge-type weights | When edges have semantics — payment vs shared-device vs shared-IP. |
+
+**Python — minimal GraphSAGE for mule scoring with PyTorch Geometric:**
+
+```python
+import torch
+import torch.nn.functional as F
+from torch_geometric.data import Data
+from torch_geometric.nn import SAGEConv
+
+# Build the graph once:
+#   x          : float tensor [num_accounts, num_features]  (rolling window features)
+#   edge_index : long tensor  [2, num_edges]                (transaction edges A -> B)
+#   y          : long tensor  [num_accounts]                (1 if HR-03, 0 if unlabeled)
+data = Data(x=x, edge_index=edge_index, y=y)
+
+class MuleSAGE(torch.nn.Module):
+    def __init__(self, in_dim, hidden=64, out=2):
+        super().__init__()
+        self.conv1 = SAGEConv(in_dim, hidden)
+        self.conv2 = SAGEConv(hidden, hidden)
+        self.head  = torch.nn.Linear(hidden, out)
+
+    def forward(self, x, edge_index):
+        x = F.relu(self.conv1(x, edge_index))
+        x = F.dropout(x, p=0.3, training=self.training)
+        x = F.relu(self.conv2(x, edge_index))
+        return self.head(x)  # logits per node
+
+model = MuleSAGE(in_dim=data.x.size(1)).to("cuda")
+opt = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)
+
+for epoch in range(50):
+    model.train()
+    opt.zero_grad()
+    out = model(data.x.cuda(), data.edge_index.cuda())
+    loss = F.cross_entropy(out[train_mask], data.y[train_mask].cuda())
+    loss.backward(); opt.step()
+```
+
+For inference you simply call `model(data.x, data.edge_index)` and take `softmax(...)[:, 1]` as the per-account mule score. On Databricks, this runs on a single GPU node for any Thai bank's graph (typically <50M accounts / <500M edges per quarter); for larger graphs use neighbour sampling (`NeighborLoader`) or move to DGL's distributed trainer.
+
+**Don't skip the cheap option.** Before training a full GNN, run the **Graph Feature Preprocessor** pattern (ACM 2024): compute classical graph features (PageRank, community ID, k-core, two-hop ratio, triangle count, shared-device count) in GraphFrames, *feed them as columns into XGBoost*. Published lift is **+46% F1** over the same XGBoost on raw features. Most banks get 80% of the value here and only need a GNN for the residual.
+
+---
+
+### 8.3 What MuleTrack is (and why the deck mentions it)
+
+**MuleTrack** is the *Lightweight Temporal Learning Framework for Money Mule Detection in Digital Payments* by Jambhrunkar, Sharma, Singla and Kailasam, published in **Springer LNCS as part of IWANN 2025 proceedings (2026)**. It is the most recent named, peer-reviewed mule-specific paper, which is why the ASEAN deck calls it out as a maturity-tier example.
+
+**What it actually is.** Despite the deck pairing "MuleTrack / LSTM sequences", the paper's headline model is a **Markov chain over discretised account states**, not an LSTM:
+
+1. Each account's daily / weekly activity is bucketed into a small set of behavioural states (e.g., `dormant`, `low-activity`, `burst-inbound`, `pass-through`, `cash-out`).
+2. The paper learns a per-account state-transition matrix from the historical sequence.
+3. Steady-state distributions and transition probabilities are compared against the population-level Markov chain of normal accounts. Deviations score as mule-likelihood.
+4. Domain heuristics (UPI-specific: per-day transfer count, fan-out, beneficiary diversity) are blended in as additional features.
+
+**Why the authors chose Markov over LSTM** — three things matter on the Indian UPI rail (and the same applies to PromptPay):
+
+- **Inference latency**: 28-minute batch over the full UPI population, no GPUs, no DL retraining cycle.
+- **Interpretability**: a state-transition matrix is auditable; an LSTM cell is not.
+- **Cold-start**: works on accounts with very short histories — important for the *recruited* mule archetype where the syndicate activates the account after weeks of dormancy.
+
+**Where this fits in a Thai-bank stack.** MuleTrack is the bridge between Tier 3 (XGBoost) and Tier 5 (deep sequence models). It captures the **temporal regime change** (dormant → burst → pass-through) that a pointwise XGBoost row will miss, without requiring the GPU and training pipeline of an LSTM or TGN. Treat it as a **complementary feature generator**: compute Markov state-transition deviations per account on a daily Lakeflow job, write them as columns into the Feature Store, and let the supervised tier consume them. The same lift, far cheaper than a sequence neural net.
+
+**Reference:** Jambhrunkar et al., *MuleTrack*, Springer LNCS, IWANN 2025 (2026). <https://link.springer.com/chapter/10.1007/978-3-032-02725-2_30>
+
+---
+
+### 8.4 The incomplete-graph problem: how to do graph detection when most mules leave your bank
+
+Every Thai bank's graph is **structurally incomplete**:
+
+- A mule receives funds from a customer of Bank A, parks them for 15 minutes, and sends them to a Bank B account, then a Bank C account, then a crypto exchange, then offshore. Bank A sees one outbound edge. The rest is dark.
+- Cifas UK data: roughly **half of mule pass-through hops cross bank boundaries** within 24 hours.
+- Once funds leave the country (USDT-on-Tron is the typical Thai off-ramp), no domestic bank ever sees them again.
+
+**Naively trained, a GNN inside one bank's silo only learns the leaves of the network, never the hubs.** The literature and the deployed-vendor practice have converged on **five complementary mitigations**:
+
+**1. Lean on the partial signal that you do have.** Most mule rings have *some* intra-bank density — recruits often onboard at the same bank, herders test with internal accounts first. Even a 10% intra-bank density makes community detection and PageRank meaningful. Don't let the perfect be the enemy of the good.
+
+**2. Use HR-03 (and equivalents) as 1-hop counterparty features.** You don't need to *see* a mule's transactions to know that a customer sent THB 200k to a HR-03-listed account at another bank. The BOT CFR / HR-03 list, joined onto the counterparty side of every outbound transaction, yields the highest-signal feature most banks have access to. This works *today*, no consortium needed.
+
+**3. Subscribe to a network operator's cross-bank view.** **Mastercard TRACE** is the operative example: 21 UK institutions and **~90% of UK Faster Payments**; APAC launched Feb 2025 in the Philippines with BancNet (36 banks). TRACE consumes the inter-bank rail directly and emits per-account risk scores that any participating bank can ingest as features. The Thai analogue would be a BOT-CFR feed enriched with rail-level signal — exactly the gap a Databricks-native consortium platform fills.
+
+**4. Privacy-preserving cross-bank collaboration (Delta Sharing + Clean Rooms).** What can be shared legally under PDPA:
+- Hashed counterparty IDs and risk scores.
+- Aggregated subgraph fingerprints (ring size, age, fan-out distribution) without individual identities.
+- Federated GNN gradients — train one model on partitioned graphs without ever moving the raw edges (see *Privacy-Preserving Graph-Based ML with Fully Homomorphic Encryption*, arXiv 2411.02926, 2024).
+- Bloom-filter or PSI-based "is this account on your watchlist?" queries.
+Databricks Clean Rooms is the productisation of this pattern. TMNL Netherlands, Singapore COSMIC, and FinCEN 314(b) are precedents that the regulator already understands.
+
+**5. Treat the cross-border / crypto tail as a different problem.** Once funds reach a VASP or leave the country, on-chain analytics vendors (Chainalysis, Elliptic, TRM Labs) take over — banks should ingest **outbound risk scores from those vendors** as another feature column rather than try to extend the bank graph onto chain.
+
+**Net guidance for a Thai bank starting today.** Sequence: (1) intra-bank graph with HR-03 as a counterparty feature → (2) BOT-CFR ingestion as a global label feed → (3) Mastercard-TRACE-style operator data when available → (4) bilateral or consortium Clean Room with one or two peer banks for the highest-density cross-bank corridors → (5) on-chain feed for the off-ramp tail. Each step is independently shippable; nothing requires a regulator-driven utility to start working.
+
+---
+
+### 8.5 Data sources and where Thai banks typically have them
+
+This maps the deck's data-domain table to the actual systems a Thai-bank SA team will encounter on day one of a discovery.
+
+| Data domain | What it contains | Where it typically lives in a Thai major bank | How it lands in the Lakehouse |
+|---|---|---|---|
+| **Core banking — accounts** | Account master, open/close date, type, branch, status, daily balance snapshots | IBM mainframe (`z/OS` + DB2), occasionally Oracle Exadata for newer banks; the Big Five almost universally run DB2 | Lakeflow Connect (DB2 CDC) → Bronze Delta; daily reconciliation for balance snapshots |
+| **Payments — domestic transfers** | PromptPay (NITMX rail), BAHTNET (high-value RTGS), ATM withdrawals, intra-bank transfers | Switch systems (BCMS / EPS / proprietary) writing to messaging queues (typically IBM MQ); ITMX produces near-real-time event streams; ATM via switch journals | Lakeflow + Kafka / Auto Loader → Bronze; <1 min freshness achievable |
+| **Payments — international & cards** | SWIFT, Visa / Mastercard authorisations and clearing | SWIFT alliance, card switch (Tieto / TSYS / FIS depending on bank), settlement systems | Batch (clearing) + streaming (auth) — typical SLA 5-15 min |
+| **KYC / onboarding** | Declared income, occupation, nationality, address, ID documents, FATCA, eKYC selfie + liveness | Dedicated KYC platform (Fenergo, NICE Actimize KYC, in-house Java) backed by Oracle or DB2; documents in object storage or a content mgmt system (FileNet / Documentum) | Lakeflow CDC from KYC DB; documents land via volume mount; OCR / embeddings on demand |
+| **Digital channels / sessions** | Login events, device fingerprint, IP, geolocation, session duration, in-app navigation, failed-auth events | Mobile / internet-banking platform — typically Hadoop / Cloudera, Elastic, or a modern stream platform; device intelligence from a vendor (BioCatch, ThreatMetrix, NuData) | Auto Loader from log buckets; vendor APIs as silver tables |
+| **Cards** | Card-level activity, MCC, chargeback history, dispute outcomes | Card-processor systems (Tieto, FIS, in-house); often siloed from current account data | Batch nightly + streaming auth via Kafka |
+| **CRM / contact** | Phone, email, address history, customer-service notes, complaint records | Salesforce or in-house CRM; complaint cases in ServiceNow | API connectors / Lakeflow |
+| **Credit bureau / external** | NCB (National Credit Bureau Thailand) reports, credit score, total outstanding debt, query history | Procured per-customer via NCB API; cached internally | Lakeflow / DLT with explicit consent log |
+| **BOT / regulator feeds** | **HR-03 high-risk register**, dark-brown / brown / orange / yellow account categories, Central Fraud Registry (CFR) entries | Distributed by the Thai Bankers' Association to member banks; typically delivered as encrypted batch files or via a secure portal API | Daily Lakeflow ingestion into a Unity-Catalog-governed Silver table; lineage tracked back to BOT for audit |
+| **Investigator / case management** | SAR drafts, fraud confirmations, freezing actions, customer escalations | ServiceNow or an in-house case-mgmt system; SAR submissions via DataPro / BOT eForm | API or DB sync into a Silver case table; closes the loop for label generation |
+| **Alternative data** | Telco signals, geolocation, behavioural biometrics scores | Per-vendor APIs (AIS/dtac/Truemove for telco signals via licensed brokers; BioCatch / Feedzai BB for biometrics) | API → Silver |
+
+**Three structural observations** that come up in every Thai-bank discovery:
+
+1. **The mainframe is real and not going away in the next 24 months.** Plan for DB2 CDC or batch unloads, not for "migrate the core to cloud first" — that conversation kills the project.
+2. **The biggest single source of fragmentation is the digital-channel platform.** Mobile banking sessions are where the *exploited mule* (account-takeover) shows itself, and they typically live on a separate Hadoop cluster from payments. Unifying these two domains in one Lakehouse is the single highest-ROI integration.
+3. **The BOT CFR / HR-03 feed is your label generator.** Treat it as a first-class data product — versioned, lineage-tracked, with explicit point-in-time semantics for model training (always train on what was knowable as of `t`, not on labels that arrived later — temporal leakage is the most common mistake in supervised AML modelling).
+
+---
+
+### 8.6 The investigator experience — today vs Lakehouse-native
+
+The investigator's productivity is where the ROI actually lands. A bank can have a 0.99 AUC model and still lose the war if the analyst takes 45 minutes to clear each alert.
+
+**How it looks today at a Thai major bank (typical workflow):**
+
+1. Alert lands in **NICE Actimize / SAS AML / in-house rules engine** queue.
+2. Analyst opens 4–8 tabs to assemble context:
+   - Core banking screen (DB2 — slow, separate AS/400-style green screen on some banks)
+   - KYC system for declared occupation / income
+   - CRM for contact and complaint history
+   - Mobile-banking session log (sometimes a separate Splunk dashboard)
+   - Call-centre notes (ServiceNow)
+   - Counterparty bank's published HR-03 status (manual lookup)
+   - Excel sheet with the analyst's own running list of "accounts I've seen before"
+3. Stitch a working narrative in Excel or a Word doc. **30 minutes to several hours per case** depending on complexity.
+4. Decide: file SAR, freeze, escalate, or close. File via DataPro / BOT eForm.
+5. Repeat. Typical analyst load in a Thai major bank: **15–40 alerts/day**, of which **>99% are false positives** by pre-ML baselines.
+
+**Why this is the binding constraint:**
+
+- The BOT 4-hour unfreeze SLA is *physically impossible* in a multi-tab manual workflow during a scam surge.
+- Wrongful freezes happen because analysts under time pressure default to the cautious decision.
+- The same true-positive ring is investigated 6–10 times by different analysts who each see only their account in isolation — no ring-level off-boarding.
+
+**How it should look on a Databricks-native stack (`mule-explorer` is the first cut of this):**
+
+A single-pane-of-glass Databricks App, backed by Lakebase (managed Postgres) for sub-50ms reads of the 360 view, with Genie for natural-language drill-down:
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│ Alert #4192 — account THB-12...8821 — risk 0.94 — ring R-302    │
+├──────────────────────────────────────────────────────────────────┤
+│ 360 view (Lakebase, <50ms):                                      │
+│   KYC: student, 22yo, declared income 15k THB/mo, onboarded 11d │
+│   Recent: 87 inbound (THB 4.2M) and 84 outbound (THB 4.1M) /3d  │
+│   Devices: 3 new devices in 24h, all from same IP /24            │
+│   Top SHAP drivers: pass_through_ratio (0.98), age_vs_volume     │
+├──────────────────────────────────────────────────────────────────┤
+│ Ring view (GraphFrames + cached layout):                         │
+│   [interactive graph — 14 accounts, 2 HR-03 hits, 1 cross-bank] │
+│   Hover any node for its 360. Click to expand 1 more hop.        │
+├──────────────────────────────────────────────────────────────────┤
+│ Ask Genie:                                                       │
+│   "Show me every counterparty in this ring that received >50k    │
+│    from a new device in the last 7 days"                         │
+│   [executes SQL against gold tables, renders inline]             │
+├──────────────────────────────────────────────────────────────────┤
+│ Actions:                                                         │
+│   [ Freeze account ]  [ Off-board entire ring ]  [ Draft SAR ]   │
+│   [ Escalate to L2 ]  [ Mark false positive — feeds AL queue ]   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**The architecture behind that one screen:**
+
+- **Lakehouse Bronze → Gold** pipelines unify every data source from §8.5 into one governed 360 table per account.
+- **Lakebase** (managed Postgres on Databricks) holds the *hot serving copy* of the 360 table + ring memberships + score history. Synced from the Lakehouse via reverse-ETL synced tables. Read latency for the app: **<50 ms**.
+- **Databricks App** (Plotly Dash, in this repo as `mule-explorer/`) renders the layout, talks to Lakebase for facts and to MLflow Model Serving for live re-scoring.
+- **Genie** sits on top of the same Gold tables — analysts get NL-to-SQL for the long tail of "I just want to ask this one thing without raising a ticket to the data team".
+- **Active learning loop** — every "Mark false positive" and "Confirm mule" decision is written back to a Silver table that feeds the next PU-learning retrain.
+
+**What this changes operationally:**
+
+| Metric | Today | Lakehouse-native |
+|---|---|---|
+| Cases / analyst / day | 15–40 | 80–150 (Quantexa / HSBC band) |
+| Time per case | 20–60 min | 3–10 min |
+| Off-boarding granularity | Per account | Per ring (Quantexa pattern) |
+| BOT 4-hour unfreeze | Best-effort | Default — alerts arrive pre-explained |
+| Label feedback to model | Spreadsheet → quarterly retrain | Real-time → weekly retrain |
+
+This is the part of the demo that wins the room. The model lift numbers are abstract; **a working 360 screen with the customer's actual logo at the top of it is concrete**, and it is exactly what no point-vendor (Quantexa, Actimize, BioCatch) can hand the customer because none of them owns the data foundation underneath.
+
+---
+
+### 8.7 "We already pay for Actimize / Quantexa / Featurespace. Why migrate?"
+
+The honest answer is: **don't migrate. Re-layer.** The Lakehouse becomes the platform; the specialist vendors become *features* into it.
+
+**What gets replaced vs what stays.**
+
+| Layer | Today (typical Thai bank) | After Lakehouse |
+|---|---|---|
+| Rules engine on Hadoop / proprietary store | **NICE Actimize SAM / SAS AML** — locked-in store, slow batch | **Replaced.** Rules run in DLT / SQL against the Lakehouse, with full lineage. |
+| Anomaly detection | **ThetaRay** (OCBC's vendor), in-house | **Either-or.** Keep as feature provider (ingest scores) or rebuild on Mosaic AI — most banks find rebuild is faster than the renewal cycle. |
+| Supervised ML scoring | Vendor's hosted GBT, opaque | **Replaced.** XGBoost / LightGBM with PU-learning, MLflow versioning, Unity Catalog lineage — better than the vendor on every axis. |
+| Graph analytics | **Quantexa** | **Complementary.** Quantexa's entity resolution and visual investigator UX are still best-in-class. Plug it in as a feature source: ingest entity-resolution edges into Delta, consume its risk scores as columns; let the Lakehouse own the data plane and the ensemble. |
+| Behavioural biometrics | **BioCatch / NuData / Feedzai BB** | **Complementary.** No reason to rebuild; ingest their per-session scores via API into Silver and feature-engineer on top. |
+| Cross-bank network signal | **Mastercard TRACE** (where available) | **Complementary.** Ingest TRACE risk scores per account as features. |
+| Case management / SAR | ServiceNow or vendor case mgmt | **Either-or.** Most banks keep ServiceNow for workflow + audit and bolt a Databricks App on top of it for the actual investigation work. |
+
+**Why "re-layer" wins over "rip and replace" on every dimension the customer cares about:**
+
+1. **Risk.** No big-bang migration. Vendor stays live; Lakehouse runs in parallel and overtakes on detection metrics one tier at a time.
+2. **Cost.** The expensive vendor contracts that are easy to drop are the rules engines and the supervised-ML black boxes — exactly the tiers the Lakehouse handles natively. The expensive contracts that are *hard* to drop (Quantexa, BioCatch) are the ones you keep, plugged in as features.
+3. **Lock-in.** Today: 5 vendors, 5 data copies, 5 governance regimes. After: 1 platform (Unity Catalog), N feature providers — the bank can swap any of them out without re-platforming.
+4. **Speed.** Building a new feature inside the Lakehouse is a notebook + Feature Store entry. Building a new feature inside Actimize is a vendor SOW.
+5. **Regulatory defence.** BOT's model-risk expectations land cleanly on MLflow + Unity Catalog lineage. A black-box vendor scoring service is a much harder MRM conversation.
+
+**TCO crossover heuristic.** Per-event vendor pricing (typical AML/fraud vendor: USD 0.001–0.005 per transaction scored) crosses serverless Databricks compute at roughly **10–30 million transactions per day**. Every Thai major bank is above that volume on PromptPay alone. Mid-tier banks cross it within 18 months at current PromptPay growth.
+
+**The one-line answer to the customer:** *"You don't fire Quantexa. You stop paying NICE Actimize to be your data platform. Quantexa becomes a feature provider into a platform you actually own."*
+
+---
+
+### 8.8 Scaling graph feature computation at production volumes (the "500M-node" question)
+
+**The premise.** Most published graph-AML papers run on graphs that fit on one machine — DNB Norway used **5M nodes / 10M edges**; even the *large* AMLworld benchmark tops out at **~50M nodes / 180M transactions**. A Thai major bank's PromptPay-plus-corporate graph routinely sits at **~500M nodes and several billion edges per quarter** (~30–50M individual customers, plus all their counterparties at other banks, plus merchants, plus historical edges). A 12-month rolling window pushes that past 1B edges. Naïve PageRank on a single driver dies; naïve Louvain on the same graph runs for days; a 3-layer GraphSAGE forward pass over the full neighbourhood is computationally infeasible because the receptive field explodes combinatorially.
+
+This subsection summarises the **seven proven scaling strategies** banks and the literature have converged on. Most production deployments combine **three or four of them simultaneously**.
+
+#### Strategy 1 — Prune before you compute
+
+The cheapest order-of-magnitude reduction is to remove nodes that cannot meaningfully contribute to mule signal. The literature on **graph reduction** and **k-core decomposition** (Batagelj & Zaveršnik, 2003) is the formal backing; in practice, banks apply heuristics that drop **60–85% of nodes** with negligible signal loss:
+
+- **Degree pruning**: drop accounts with `degree < 2` over the rolling window. These are terminal leaves — they cannot route money and therefore cannot be mules in the structural sense.
+- **k-core extraction**: compute the **2-core** or **3-core** of the graph. A k-core is the maximal subgraph where every node has degree ≥ k. Mule rings exhibit reinforcing connectivity (every node in the ring has multiple ring-neighbours), so they survive k-core filtering; legitimate retail customers with one occasional bill-pay relationship do not. Empirically, the 2-core of a retail-banking transaction graph is **~10–25% of the original nodes**.
+- **Dormancy filtering**: drop accounts with zero activity in the last `T` days from the *graph for graph-feature purposes* (they remain in the rules-and-XGBoost pipeline). Mule activation is bursty; dormant nodes do not need real-time graph scoring.
+- **Amount-thresholded edges**: collapse very-low-value edges (e.g., `< THB 100`) into aggregated weights or drop them entirely. Mule passes are by design above structuring thresholds.
+- **Bot / merchant masking**: large merchants and government agencies act as graph "supernodes" with millions of incoming edges — their PageRank dominates spuriously. Mask them out (or compute a *masked* PageRank where supernode contributions are zeroed); this is the standard treatment in published AML PageRank work.
+
+For a Thai major bank, this stack of filters typically reduces a 500M-node working graph to a **75–150M-node analytically-relevant graph** — the point at which the next strategies become tractable.
+
+#### Strategy 2 — Partition the graph
+
+Once you must distribute, the question is *how* you split the graph across workers. Two paradigms:
+
+- **Edge-cut partitioning** (METIS — Karypis & Kumar, 1998; Spinner — Martella et al., 2017): split *vertices* across machines, replicate edges that cross. Good for graphs with bounded degree.
+- **Vertex-cut partitioning** (PowerGraph — Gonzalez et al., OSDI 2012; "PowerLyra" — Chen et al. 2015): split *edges* across machines, replicate high-degree vertices. **This is the right default for banking graphs** because transaction degree distributions are heavy-tailed (a handful of hub accounts — PromptPay aggregators, payroll accounts, e-wallet bridges — have millions of edges; most accounts have <10). PowerGraph's empirical finding is that vertex-cut reduces communication by **>10× on power-law graphs** vs edge-cut.
+
+In Databricks the practical realisations are:
+- **GraphFrames** on Spark — edge-cut by default; for very-skewed graphs use the `aggregateMessages` Pregel API with custom partitioning on `srcId % N` after **degree-aware skew handling** (broadcast the top-100 supernodes and process them separately).
+- **NVIDIA cuGraph** for vertex-cut on a single multi-GPU node — handles 1B-edge graphs comfortably on a single 4×GPU machine; integrates with Databricks GPU runtimes.
+
+**Streaming partitioners** like **LDG** (Stanton & Kliot, KDD 2012) and **HDRF** (Petroni et al., CIKM 2015) are useful when the graph arrives as an edge stream from Lakeflow — partition assignments are computed online with no upfront global view, with locality only **~5% worse than offline METIS**.
+
+#### Strategy 3 — Sample rather than enumerate
+
+For GNN training and inference on giant graphs, **neighbourhood sampling** is the dominant technique. Four canonical methods, in order of bank-deployment maturity:
+
+| Method | Paper | What it does | Trade-off |
+|---|---|---|---|
+| **GraphSAGE neighbour sampling** | Hamilton et al., NeurIPS 2017 | At each layer, sample a fixed `k` neighbours per node | Simple, scales linearly with number of nodes. Used in DNB Norway production. |
+| **FastGCN** | Chen et al., ICLR 2018 | Importance-sample nodes per layer (not per node) | Faster training; some variance penalty |
+| **ClusterGCN** | Chiang et al., KDD 2019 | METIS-partition the graph, train on one cluster per mini-batch | Memory-efficient; loses some inter-cluster edges. Strong empirical performance on benchmarks. |
+| **GraphSAINT** | Zeng et al., ICLR 2020 | Subgraph-sample whole subgraphs each mini-batch (with bias correction) | Best published accuracy / speed trade-off at the time |
+
+For **classical graph features** (not GNNs), the equivalent is **personalised PageRank from a seed set**: don't compute global PageRank, compute Personalised PageRank seeded at HR-03 confirmed mules — the result is a *proximity-to-known-mule* score per account, computed via the **local push algorithm** (Andersen, Chung & Lang, FOCS 2006) in roughly `O(1/ε)` work *independent of graph size*. This is the single most impactful approximate-algorithm idea for mule detection: you only ever need the part of the graph that is reachable from known mules.
+
+#### Strategy 4 — Use approximate algorithms with provable error bounds
+
+Exact graph algorithms are wasteful when a 1–5% error is operationally invisible:
+
+- **Approximate PageRank** — push algorithm (Andersen et al. 2006); Monte Carlo PageRank (Bahmani et al. VLDB 2011) — `O(n log n)` work for ε-approximate ranks.
+- **HyperLogLog** for cardinality of neighbours / unique counterparties — `O(1)` memory per node for ≤2% error. Already a first-class function in Spark SQL (`approx_count_distinct`).
+- **MinHash / LSH** for Jaccard similarity between account neighbourhoods — detects "two accounts that transact with nearly the same set of counterparties" (a strong shared-controller signal) without `O(n²)` pairwise comparisons.
+- **HyperBall** (Boldi, Rosa & Vigna, 2011) for approximate closeness / harmonic centrality — orders of magnitude faster than exact.
+- **Local clustering / Nibble** (Spielman & Teng, STOC 2004) — find the community around a seed node in time proportional to the *community* size, not the graph size. The cluster around an HR-03 node is exactly the mule ring.
+
+These belong in a **two-tier compute pattern**: approximate everywhere by default, exact computation only on the candidate set surfaced by the approximate pass.
+
+#### Strategy 5 — Compute incrementally, not from scratch
+
+The single biggest waste in many production stacks is recomputing all graph features daily. Mules change slowly; the graph is mostly stable; most nodes' features don't move day-to-day. Three incremental patterns:
+
+- **Snapshot + delta**: compute the full feature set weekly, then maintain it incrementally with edge insertions/deletions. **Dynamic PageRank** algorithms (Bahmani, Chowdhury, Goel, VLDB 2010) update ranks in time proportional to the changed subgraph, not the whole graph.
+- **Streaming community detection**: incremental Louvain (Cordeiro et al., 2016) keeps community labels stable across updates — important because investigators rely on consistent ring identifiers.
+- **Event-driven recompute**: subscribe to "interesting" graph events (a new edge to/from an HR-03 node, a new shared-device link) and recompute features *only* for the affected egonet (~2-hop). This is the Lakeflow + Streaming Table pattern.
+
+For Thai banks specifically, **the daily fresh-compute target shrinks from "500M nodes" to "the few percent of nodes that changed materially since yesterday"** — typically <5M nodes.
+
+#### Strategy 6 — Use the right hardware
+
+Compute density matters at this scale:
+
+- **GPU acceleration via NVIDIA cuGraph / RAPIDS** — Louvain on **1B-edge graphs in <60 seconds** on a single 8×GPU node (published cuGraph benchmarks). PageRank, BFS, connected components similarly accelerated by **50–500×** vs CPU-only Spark.
+- **Photon / serverless Spark** for the wide-scan operations (edge counting, degree calculation, group-bys) — Photon's vectorised execution is 3–10× faster than vanilla Spark on the same compute budget.
+- **DGL-distributed / PyTorch-Geometric distributed** for multi-GPU GNN training — DGL's distributed trainer scales near-linearly to ≥8 nodes.
+
+On Databricks the practical recipe is: **Spark/Photon for ingestion + pruning + classical aggregations; GPU cluster with cuGraph for the heavy global algorithms (PageRank, Louvain, k-core, connected components); GPU GNN nodes for model training/inference.**
+
+#### Strategy 7 — Cache aggressively in a feature store
+
+Once a graph feature is computed, it should not be recomputed for read traffic. Two layers:
+
+1. **Databricks Feature Store** (Delta-backed) — the system of record for per-account graph features (PageRank, community ID, two-hop ratio, k-core number, shared-device count). Versioned, lineage-tracked, joinable in MLflow training.
+2. **Lakebase** (managed Postgres) — the hot serving copy synced from Feature Store via reverse-ETL synced tables. Read latency **<50 ms** for the Databricks App / investigator workflow.
+
+This decouples **producer cadence** (heavy graph compute on a daily/hourly schedule on GPU) from **consumer latency** (sub-second reads from Lakebase during investigator drill-down). It is the same two-tier OLAP/OLTP pattern that Quantexa, Feedzai and Featurespace each implement internally; the Lakehouse exposes it as a first-class platform capability.
+
+#### Putting it together for a 500M-node Thai-bank graph
+
+The deployable recipe, in roughly the order a customer should adopt it:
+
+1. **Ingest the full edge stream** into Bronze Delta with Lakeflow. Don't filter at ingest — keep the raw record for audit.
+2. **Build the analytical graph in Silver** with the Strategy-1 pruning stack (degree, k-core, dormancy, supernode masking). Typical reduction: **500M → ~100M nodes**.
+3. **Compute classical features** (degree, in/out ratio, two-hop ratio, HyperLogLog distinct counterparties, MinHash sketches) in Photon SQL — these are the cheapest and account for most of the lift via the Graph Feature Preprocessor pattern (**+46% F1** on downstream XGBoost).
+4. **Run global algorithms on GPU**: Louvain via cuGraph for community assignment; approximate PageRank for centrality; connected components for ring discovery. Weekly snapshot, daily incremental updates.
+5. **Run Personalised PageRank seeded at HR-03 nodes** via the push algorithm — proximity-to-known-mule per account.
+6. **Train a GNN** (GraphSAGE with neighbour sampling, or ClusterGCN if the cluster structure is informative) for the residual signal that classical features miss. Use the pruned analytical graph, not the raw 500M-node one.
+7. **Materialise the per-account feature vector** into the Feature Store, sync to Lakebase. The investigator app reads from Lakebase with <50 ms latency; the training pipeline reads from the Feature Store with point-in-time correctness.
+8. **Drive recomputation incrementally** — Lakeflow streaming tables propagate new edges into affected egonets only; nightly batch reconciles drift.
+
+This recipe is consistent with the published practice at HSBC + Quantexa (graph entity resolution + classical features dominate; GNN is the residual), DNB Norway's heterogeneous GNN paper (GraphSAGE neighbour-sampling), and the cuGraph reference deployments at NVIDIA fraud-detection customers. It is what makes the "500M nodes" question a routine engineering exercise rather than a research problem.
+
+#### References (added to §12)
+
+- Karypis & Kumar, "METIS: A Software Package for Partitioning Unstructured Graphs", 1998.
+- Gonzalez et al., "PowerGraph: Distributed Graph-Parallel Computation on Natural Graphs", OSDI 2012.
+- Andersen, Chung & Lang, "Local Graph Partitioning using PageRank Vectors", FOCS 2006.
+- Bahmani, Chakrabarti & Xin, "Fast Personalized PageRank on MapReduce", SIGMOD 2011.
+- Bahmani, Chowdhury & Goel, "Fast Incremental and Personalized PageRank", VLDB 2010.
+- Spielman & Teng, "Nearly-linear time algorithms for graph partitioning, graph sparsification, and solving linear systems", STOC 2004.
+- Hamilton, Ying & Leskovec, "Inductive Representation Learning on Large Graphs (GraphSAGE)", NeurIPS 2017.
+- Chiang et al., "Cluster-GCN: An Efficient Algorithm for Training Deep and Large GCNs", KDD 2019.
+- Zeng et al., "GraphSAINT: Graph Sampling Based Inductive Learning Method", ICLR 2020.
+- Batagelj & Zaveršnik, "An O(m) Algorithm for Cores Decomposition of Networks", 2003.
+- Boldi, Rosa & Vigna, "HyperANF: Approximating the Neighbourhood Function of Very Large Graphs", 2011.
+- NVIDIA cuGraph documentation and benchmarks: <https://docs.rapids.ai/api/cugraph/stable/>.
+- GraphFrames (Databricks-maintained): <https://graphframes.io/>.
+
+---
+
+## 9. Cross-cutting design choices that the literature is unanimous on
 
 1. **Rolling-window features** (1-day, 7-day, 30-day) are universally used; mule activation timescales are bursty.
 2. **Ratio features** (in/out, balance/volume) outperform raw amounts.
@@ -253,7 +697,7 @@ The exploited-account problem is the residual after rules + anomaly + supervised
 
 ---
 
-## 9. Comparator-bank summary table
+## 10. Comparator-bank summary table
 
 | Bank / regulator | Tech stack | Headline number | Source |
 |---|---|---|---|
@@ -278,7 +722,7 @@ The exploited-account problem is the residual after rules + anomaly + supervised
 
 ---
 
-## 10. Recommended target architecture for a Thai bank
+## 11. Recommended target architecture for a Thai bank
 
 The literature converges on a single design — and it is the same one the reference ASEAN deck advocates:
 
@@ -294,7 +738,7 @@ The literature converges on a single design — and it is the same one the refer
 
 ---
 
-## 11. Sources
+## 12. Sources
 
 ### Regulators and national programmes
 
@@ -353,6 +797,11 @@ The literature converges on a single design — and it is the same one the refer
 - "Positive-Unlabeled Learning from Imbalanced Data", IJCAI 2021: <https://www.ijcai.org/proceedings/2021/0412.pdf>
 - "Applications of Positive Unlabeled (PU) and Negative Unlabeled (NU) Learning in Cybersecurity", arXiv 2412.06203: <https://arxiv.org/abs/2412.06203>
 - "Enhancing Anti-Money Laundering by Money Mules Detection on Transaction Graphs" (ACM 2025): <https://dl.acm.org/doi/10.1145/3766918.3766933>
+- Jambhrunkar, Sharma, Singla, Kailasam, "MuleTrack: A Lightweight Temporal Learning Framework for Money Mule Detection in Digital Payments", Springer LNCS / IWANN 2025 (2026): <https://link.springer.com/chapter/10.1007/978-3-032-02725-2_30>
+- "Privacy-Preserving Graph-Based ML with Fully Homomorphic Encryption for Collaborative AML", arXiv 2411.02926 (2024): <https://arxiv.org/html/2411.02926v2>
+- `pulearn` Python library — Elkan-Noto, nnPU, Bagging-PU wrappers for scikit-learn: <https://pulearn.github.io/pulearn/>; GitHub: <https://github.com/pulearn/pulearn>
+- `pu-learning` (Bekker & Davis lab): <https://github.com/aldro61/pu-learning>
+- PyTorch Geometric documentation: <https://pytorch-geometric.readthedocs.io/>; DGL: <https://www.dgl.ai/>
 - Feedzai, "Behavioral Biometrics for Money Mule Account Detection": <https://feedzai.com/blog/behavioral-biometrics-for-money-mule-account-detection/>
 - Feedzai, "Inbound Payment Fraud Detection and Mule Risk Modelling" (Bank Negara Malaysia, PDF): <https://www.feedzai.com/wp-content/uploads/2024/11/Feedzai-Inbound-Payment-Fraud-Detection-and-Mule-Risk-Modeling-Complying-with-Bank-Negara-Malaysia-Recommendations.pdf>
 
