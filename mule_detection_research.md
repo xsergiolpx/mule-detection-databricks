@@ -1,34 +1,32 @@
 # Money-Mule Detection in Banking: Proven Techniques, Maturity Ladder, and Real-World Outcomes
 
-**Audience:** financial-crime, data-science, and architecture stakeholders evaluating where to invest along the mule-detection maturity curve.
-**Scope:** rules → unsupervised anomaly → supervised ML (with central-list labels) → graph & GNN → behavioral biometrics, sequence and deep-learning models.
-**Method:** synthesis of regulator publications, peer-reviewed and arXiv papers, and named-bank deployments. Vendor-reported figures are flagged as such; numbers are quoted with the source so the reader can verify before customer-facing use.
+**Audience:** financial-crime, data-science and architecture leaders evaluating where to invest along the mule-detection maturity curve.
+**Scope:** rules → unsupervised anomaly detection → supervised ML (with central-list labels) → graph and graph neural networks → behavioural biometrics, sequence and deep-learning models.
+**Method:** synthesis of regulator publications, peer-reviewed and arXiv papers, and publicly disclosed bank deployments. Every numerical claim is sourced; vendor-published figures are noted as such so they can be cross-checked against the primary source.
 
 ---
 
 ## 1. Why mule detection has become a Tier-1 problem
 
-The mule account is the **bottleneck of every modern scam**: authorised push payments (APP), call-centre scams, romance fraud, business-email-compromise, investment scams, and crypto off-ramps all require a mule to receive and disperse funds before they can be cashed-out. Killing the mule node therefore disproportionately reduces criminal yield.
+The mule account is the bottleneck of every modern scam. Authorised push payments (APP), call-centre scams, romance fraud, business-email-compromise, investment scams and crypto off-ramps all require a mule to receive and disperse funds before they can be cashed out. Disrupting the mule node therefore disproportionately reduces criminal yield, which is why regulators worldwide have shifted from prosecuting individual scams to systematically dismantling the mule layer.
 
-Regulators have responded with directives that change the economics of detection:
+Recent regulatory and operational signals across the regions most relevant to ASEAN financial institutions:
 
-- **Bank of Thailand (BOT) and AMLO** maintain the **HR-03 high-risk register** — by mid-2025 it lists roughly **700,000 individuals**. Banks must restrict all incoming and outgoing transactions for HR-03-flagged corporates, refuse new accounts, and unfreeze innocent customers within 4 hours. The Thai Bankers' Association's **Central Fraud Registry (CFR)** has already led to the **suspension of more than 1.8 million mule accounts**.
-- **UK** — Cifas' National Fraud Database recorded more than **34,000 suspected mule filings in 2024** and more than **22,000 in 2025** (after a category change); roughly **65% of UK mules are under 30** and **23% under 21**.
-- **Europol's EMMA** (European Money Mule Action) operations identified **10,759 mules**, **474 herders**, and led to **1,013 arrests** in their most recent reported wave; EMMA 7 included Western Union, Microsoft and Fourthline as private-sector partners.
-- **Singapore** launched the **COSMIC** information-sharing platform on 1 April 2024 with DBS, OCBC, UOB, SCB Singapore, Citibank and HSBC.
-- **Netherlands** — five banks (ABN AMRO, ING, Rabobank, de Volksbank, Triodos) operate **TMNL** for cross-bank transaction-monitoring of human-trafficking, VAT fraud and drug typologies.
-- **Australia** — AUSTRAC's **Fintel Alliance** (public-private hub since 2017) has issued specific mule guidance focused on foreign students and temporary residents; Operation Pegasus alone yielded 6 arrests, **$2M in tainted assets**, **8 kg of gold bullion (~$600k)**, **$600k in cash** and **$636,176 in crypto**.
-- **United States** — FinCEN Section 314(b) is the inter-bank info-sharing safe harbour; only ~**7,000 of 14,000 institutions** were registered in 2020, with privacy and data-security cited by >50% of non-participants — a measure of how much consortium-based mule signal is left on the table.
+- **Thailand** — the **Bank of Thailand (BOT)** and **AMLO** maintain the **HR-03 high-risk register**, which by mid-2025 listed roughly **700,000 individuals**. Banks must restrict all incoming and outgoing transactions for HR-03-flagged corporates, refuse new accounts, and unfreeze innocent customers within **4 hours**. The Thai Bankers' Association's **Central Fraud Registry (CFR)** has driven the **suspension of more than 1.8 million mule accounts** through cross-bank data sharing.
+- **United Kingdom** — Cifas' National Fraud Database recorded more than **34,000 suspected mule filings in 2024** and more than **22,000 in 2025** (after a category change). Approximately **65% of UK mules are under 30** and **23% under 21**.
+- **European Union** — Europol's **EMMA** (European Money Mule Action) operations identified **10,759 mules** and **474 herders**, and led to **1,013 arrests** in their most recent reported wave. EMMA 7 onboarded Western Union, Microsoft and Fourthline as private-sector partners.
+- **Singapore** — the **COSMIC** information-sharing platform launched on 1 April 2024 with DBS, OCBC, UOB, Standard Chartered Singapore, Citibank and HSBC.
+- **Netherlands** — five banks (ABN AMRO, ING, Rabobank, de Volksbank, Triodos) operate **TMNL** for cross-bank transaction-monitoring of human-trafficking, VAT-fraud and drug typologies.
+- **Australia** — AUSTRAC's **Fintel Alliance** (public-private partnership since 2017) has issued specific mule guidance focused on foreign students and temporary residents. Operation Pegasus alone yielded **6 arrests**, **AUD 2M in tainted assets**, **8 kg of gold bullion (~AUD 600k)**, **AUD 600k in cash** and **AUD 636,176 in crypto**.
+- **United States** — FinCEN Section 314(b) provides an inter-bank information-sharing safe harbour. As of 2020 only ~**7,000 of 14,000 institutions** were registered, with privacy and data-security concerns cited by more than 50% of non-participants — an indicator of how much consortium-based mule signal remains untapped.
 
-Sources for this section are listed at the end (BOT, Cifas, Europol, MAS, TMNL, AUSTRAC, FinCEN).
+All primary sources are listed in §12.
 
 ---
 
 ## 2. The maturity ladder
 
-The reference ASEAN deck frames mule detection as a five-tier ladder of cumulative detection power versus implementation difficulty:
-
-As detection power grows up the ladder, so does implementation effort:
+Mule-detection capability tends to evolve through a recognisable sequence of analytical tiers. Each tier adds detection power but also requires more data, more engineering and stronger governance. The relationship is shown below.
 
 | Level | Maturity tier | Implementation effort | Cumulative detection power |
 |---|---|---|---|
@@ -39,229 +37,231 @@ As detection power grows up the ladder, so does implementation effort:
 | 5 | Graph ML / GNN / typologies | `██████░░░░` | `███████░░░` |
 | 6 | MuleTrack / sequence models | `███████░░░` | `████████░░` |
 | 7 | Autoencoders / deep learning | `████████░░` | `█████████░` |
-| 8 | Behavioral biometrics | `██████████` | `██████████` |
+| 8 | Behavioural biometrics | `██████████` | `██████████` |
 
-Each tier addresses a failure mode of the previous one:
+Each tier addresses a residual failure mode of the previous one:
 
-| Tier | What it adds | What it can't do alone |
+| Tier | What it adds | What it cannot do alone |
 |---|---|---|
-| 1. Rules | Cheap, explainable, regulator-defensible | High FP, miss networks, miss novel typologies |
-| 2. Unsupervised | Detects unknowns and concept drift | Hard to threshold; weak on adversarial behaviour |
-| 3. Supervised | Highest precision when labels exist (BOT list!) | Needs labels; covariate-shift fragile |
-| 4. Graph / GNN | Captures rings, multi-hop flows, shared-device cohorts | Compute heavy; ring-level labels scarce |
-| 5. Sequence + biometrics | Detects exploited / coerced mules where account behaviour looks normal | Vendor-dependent; data licensing |
+| 1. Rules | Cheap, explainable, regulator-defensible | High false-positive rate; cannot see networks; brittle to novel typologies |
+| 2. Unsupervised | Detects unknowns and concept drift | Harder to threshold; weaker against adversarial drift |
+| 3. Supervised | Highest precision when positive labels exist (e.g. BOT HR-03) | Requires labels; sensitive to covariate shift |
+| 4. Graph / GNN | Captures rings, multi-hop flows, shared-device cohorts | Compute-intensive; ring-level labels scarce |
+| 5. Sequence + biometrics | Detects exploited or coerced mules where account behaviour looks normal | Often vendor-dependent; data-licensing considerations |
 
-The right answer is not "pick one"; it is to operate **all tiers simultaneously, calibrated and combined** — exactly the "weak-supervision + supervised + unsupervised + graph + biometrics" stack the deck depicts.
+Mature programmes do not pick a tier — they operate all of them in parallel, calibrate them against one another, and combine them via a final decisioning layer. This ensemble approach is the design point of every named-bank deployment cited in §3–§7.
 
 ---
 
 ## 3. Tier 1 — Business-logic rules and typologies
 
-### What is in production
+### What is in production today
 
-Rules remain the regulator-defensible core. The published red-flag set is convergent across jurisdictions:
+Rules remain the regulator-defensible core of any mule-detection programme. The published red-flag set is highly convergent across jurisdictions:
 
 - **Pass-through ratio** (inflow ≈ outflow within 24–72 h, near-zero retained balance).
 - **Velocity spikes** versus account history; **dormancy-to-activity** transitions.
 - **Structuring** below CTR / PromptPay reporting thresholds.
-- **Multi-account-per-device**, VPN, emulator, geolocation jumps.
-- **KYC mismatch** (declared occupation vs flow size — the canonical "student moving ฿100M" pattern).
+- **Multi-account-per-device**, VPN usage, emulator detection, geolocation jumps.
+- **KYC mismatch** — declared occupation vs flow size (the canonical "student moving ฿100M" pattern).
 - **Counterparty fan-in / fan-out** asymmetry.
 
-These rules are codified in:
+These rules are codified across several authoritative sources:
 
-- **FATF** *Professional Money Laundering* (July 2018) — the canonical typology document with a dedicated mule-network section.
-- **AUSTRAC** student-mule guidance (2024) and red-flag indicator papers via the Fintel Alliance.
-- **BOT** circulars on dark-brown / brown / orange / yellow account categories and HR-03 handling.
+- **FATF** — *Professional Money Laundering* (July 2018) is the canonical typology document, with a dedicated mule-network section.
+- **AUSTRAC** — student-mule guidance (2024) and red-flag indicator papers via the Fintel Alliance.
+- **BOT** — circulars on the dark-brown / brown / orange / yellow account categories and HR-03 handling.
 
 ### Documented outcomes
 
-- **Thailand** — BOT + Thai Bankers' Association CFR: **>1.8M mule accounts suspended** under rule-based sharing; more than **1,000 new scam cases per day** still reported.
-- **Europol EMMA 7–10** — **10,759 mules**, **1,013 arrests** in the latest wave; cumulative across multi-year operations: **2,469 mules in one year**; another wave **228 arrests / 3,800 mules**; and **422 arrests / 4,031 mules** in another.
-- **TSB UK** — when Mastercard's Consumer Fraud Risk score (rules + ML hybrid) went live, fraud detection improved **+20% in four months**, with industry-wide projected savings **~£100M/year** if all UK banks matched TSB.
+- **Thailand** — the BOT and Thai Bankers' Association CFR have driven **>1.8M mule-account suspensions** through rule-based data sharing; more than **1,000 new scam cases per day** continue to be reported.
+- **Europol EMMA 7–10** — most recent wave identified **10,759 mules** and led to **1,013 arrests**. Earlier waves: **2,469 mules** in one year; **228 arrests / 3,800 mules** in another; **422 arrests / 4,031 mules** in another.
+- **TSB (UK)** — after deploying Mastercard's Consumer Fraud Risk score (a rules + ML hybrid), TSB reported a **+20% increase in fraud detection within four months**. If extrapolated across all UK banks, the indicative system-wide saving is **~£100M/year**.
 
-### Limits — and why every mature programme moves up the stack
+### Limits of rules alone — and why mature programmes move up the stack
 
-- **Static rules are blind to the network**. The reference deck is correct: mule networks are graph-shaped, not transactional.
-- **High FP rate**. Danske Bank's pre-ML monitoring generated **~1,200 false positives per day, of which 99.5% were unrelated to fraud** — i.e. **6 true positives per 1,200 alerts**.
-- **Brittle to adversarial drift** — when herders change PromptPay format, account-age threshold, or amount distribution, rules need to be re-authored.
+- **Network blindness.** Static rules see one account at a time. Mule networks are graph-shaped — multi-hop pass-throughs, shared devices, and herder rings are invisible to threshold-based detection.
+- **False-positive load.** Pre-ML transaction monitoring at one major European bank (Danske Bank) generated approximately **1,200 false positives per day, of which 99.5% were unrelated to fraud** — roughly **6 true positives per 1,200 alerts**.
+- **Adversarial drift.** When criminal syndicates change PromptPay format, account-age behaviour, or amount distributions, rules must be re-authored manually. Detection lags the typology by weeks.
 
 ---
 
-## 4. Tier 2 — Unsupervised ML / anomaly detection
+## 4. Tier 2 — Unsupervised machine learning and anomaly detection
 
-The point of unsupervised methods is to flag "this account doesn't look like the population" without needing labels — important because:
+Unsupervised methods identify accounts that deviate from the population without requiring labels. This matters for two structural reasons:
 
-- Confirmed-mule lists (HR-03, Cifas, Europol) cover only what has *already* been caught.
-- Newly recruited and exploited mules (see §7 archetypes) have no positive label yet.
+- Confirmed-mule lists (HR-03, Cifas, Europol registers) cover only what has *already* been caught.
+- Newly recruited and exploited mules (see §7) have no positive label at the point detection is needed.
 
 ### Methods used in banking
 
 | Method | Original paper | Use in mule / AML |
 |---|---|---|
-| **Isolation Forest** | Liu et al., 2008 (ICDM) | Per-account outlier scoring on amount, velocity, ratio features |
-| **One-Class SVM** | Schölkopf et al., 2001 | Stricter boundary; better than IF on highly imbalanced AML — see below |
-| **Local Outlier Factor / DBSCAN** | Breunig et al., 2000 | Density-based outlier flagging |
+| **Isolation Forest** | Liu et al., 2008 (ICDM) | Per-account outlier scoring on amount, velocity and ratio features |
+| **One-Class SVM** | Schölkopf et al., 2001 | Stricter boundary; in published benchmarks outperforms Isolation Forest on highly imbalanced AML data |
+| **Local Outlier Factor / DBSCAN** | Breunig et al., 2000 | Density-based outlier identification |
 | **Autoencoders / Variational AE** | Kingma & Welling, 2013 | Reconstruction-error scoring on transaction sequences |
 | **Markov / behavioural-state models** | Various | Detects abrupt regime shifts (dormant → active) |
 
 ### Documented results
 
-- **OCBC Singapore** + **ThetaRay** (the first ML-based AML deployment by a Singaporean bank) — analysed one year of corporate-banking transactions; reduced **non-actionable alerts by 35%** and increased **accuracy of suspicious-transaction identification by more than 4x**. ThetaRay is unsupervised by design.
-- **East-African commercial bank** (research deployment, 54,258 cross-border records) — hybrid unsupervised deep-learning framework processed **1,000 transactions per second** with high-priority alert triage.
-- **Variational autoencoders** in published AML evaluations — **halved the false-positive rate** versus prior baseline.
-- **AutoEncoder + LightGBM** (PMC 11623290) — **AUC 96.83%, F1 80.27%** with SMOTE on imbalanced fraud dataset.
-- **Comparative evaluation**: One-Class SVM achieved **99.63% precision in the top-5% prioritised alerts**, beating Isolation Forest and LOF on the same AML benchmark.
+- **OCBC Singapore + ThetaRay** — the first ML-based AML deployment by a Singaporean bank. Analysing one year of corporate-banking transactions, OCBC reported a **35% reduction in non-actionable alerts** and a **4× improvement in suspicious-transaction identification accuracy**. ThetaRay is unsupervised by design.
+- **East-African commercial bank** (research deployment on 54,258 cross-border records) — a hybrid unsupervised deep-learning framework processed **1,000 transactions per second** with high-priority alert triage.
+- **Variational autoencoders** in published AML evaluations have **halved the false-positive rate** versus prior baselines.
+- **AutoEncoder + LightGBM** (PMC 11623290) — **AUC 96.83%, F1 80.27%** with SMOTE on an imbalanced fraud dataset.
+- **Comparative evaluation**: One-Class SVM achieved **99.63% precision in the top-5% prioritised alerts**, outperforming Isolation Forest and LOF on the same AML benchmark.
 
-### Limits
+### Limits of unsupervised methods
 
-- Threshold tuning is dataset-specific; without calibration the alert volume is unstable.
-- Explainability is weaker than rules or trees — investigators ask "why did this score 0.97?" and reconstruction error is not a satisfying answer for SAR documentation.
-- Concept drift requires periodic retraining; the IF / AE assumption that "normal = majority" breaks during scam surges.
+- Threshold tuning is dataset-specific; without calibration, alert volume is unstable.
+- Explainability is weaker than rules or trees — investigators benefit from a clear narrative for SAR documentation, and reconstruction error alone is rarely sufficient.
+- Concept drift requires periodic retraining; the assumption that "normal = majority" weakens during scam surges.
 
-**Why it matters for Thailand:** unsupervised models are the right second layer on top of HR-03 rules — they catch the "not-yet-on-the-list" mule before it crystallises into a confirmed case.
+### Implication for the BOT / Thailand context
+
+Unsupervised models are the natural second layer above HR-03 rules — they surface accounts that exhibit mule-like behaviour but have not yet been added to any confirmed-mule list.
 
 ---
 
-## 5. Tier 3 — Supervised ML, especially gradient boosting (XGBoost) and PU learning
+## 5. Tier 3 — Supervised ML, especially gradient boosting (XGBoost) and PU-learning
 
-Supervised learning is the single biggest accuracy lift available **whenever positive labels exist** — and the BOT HR-03 list, AMLO confirmed-mule register, and intra-bank confirmed-fraud cases give Thai banks exactly that. This is the tier where the reference deck's curve steepens.
+Supervised learning typically provides the single largest accuracy improvement available **whenever positive labels exist**. The combination of the BOT HR-03 list, the AMLO confirmed-mule register and intra-bank confirmed-fraud cases provides exactly that label foundation for institutions in Thailand. This is the tier at which detection power begins to step-change.
 
-### Why XGBoost dominates in deployed AML
+### Why gradient-boosted trees are the dominant choice in deployed AML
 
-- Tabular financial features (amounts, ratios, velocities, KYC fields) are exactly what GBT excels at.
-- Built-in feature importance — defensible to compliance, regulators, and model-risk-management.
-- Strong with class imbalance via `scale_pos_weight`, focal loss, or SMOTE/ADASYN sampling.
-- Efficient on CPU, easy to MLOps, well-supported in Databricks.
+- Tabular financial features (amounts, ratios, velocities, KYC fields) are well-suited to gradient-boosted trees.
+- Built-in feature importance is defensible to compliance, regulators and internal model-risk management.
+- Class imbalance is handled through `scale_pos_weight`, focal loss, or sampling techniques (SMOTE / ADASYN).
+- Models train efficiently on CPU and integrate well with MLOps tooling.
 
 ### Published quantitative results
 
-- **Springer / Information Systems Frontiers (Hajek et al., 2022)** — "Fraud Detection in Mobile Payment Systems using an XGBoost-based Framework". The **45.2% feature-importance** number cited in your reference deck for "payment format / channel pattern" matches this family of mobile-payment XGBoost papers — the original peer-reviewed source.
-- **Nature *Scientific Reports* (2022)** — "Feature generation and contribution comparison for electronic fraud detection": XGBoost with engineered features yields **F1 = 78.3%** with strong interpretability.
-- **IJSRED 2025**, "Fighting Money Laundering with Statistics and Machine Learning" — XGBoost outperformed alternatives with **precision = 94%, AUC-ROC = 0.97**; SHAP showed *large frequent international transfers from a low-income profile* as the top driver — directly the BOT-style "student moving ฿100M" pattern.
-- **The Journal of Supercomputing 2023** — ASXAML framework (XGBoost + RFECV + Optuna) automatically suppresses false-positive alerts.
-- **Medium/practitioner summary (Candir, 2025)** of an industry deployment — **AUC 97.5%** processing >5M transactions, **0.1% true laundering rate**.
-- **ACM 2024** *Graph Feature Preprocessor* — XGBoost on **graph-derived** features achieves **+46% F1** over the same XGBoost on basic features. Graph features as inputs to a gradient boosted tree is a high-leverage architectural choice.
+- **Hajek et al., 2022 (Information Systems Frontiers)** — *Fraud Detection in Mobile Payment Systems using an XGBoost-based Framework*. This is the peer-reviewed source for the often-cited **~45% feature importance** for the "payment format / channel pattern" feature.
+- **Nature *Scientific Reports* (2022)** — *Feature generation and contribution comparison for electronic fraud detection*: XGBoost with engineered features achieves **F1 = 78.3%** with strong interpretability.
+- **IJSRED 2025**, *Fighting Money Laundering with Statistics and Machine Learning* — XGBoost outperforms alternatives with **precision = 94%, AUC-ROC = 0.97**. SHAP analysis identifies *large, frequent international transfers from a low-income profile* as the top driver — directly the BOT-style pattern.
+- **Journal of Supercomputing 2023** — the ASXAML framework (XGBoost + RFECV + Optuna) automatically suppresses false-positive alerts.
+- **Industry summary (Candir, 2025)** — production-scale deployment reports **AUC 97.5%** while processing more than 5M transactions at a 0.1% true laundering rate.
+- **ACM 2024** — *Graph Feature Preprocessor*: XGBoost on **graph-derived** features achieves **+46% F1** over the same XGBoost on basic features. Graph features feeding a gradient-boosted tree is a high-leverage architectural pattern that most institutions can adopt before training a full GNN.
 
-### Real bank deployments
+### Publicly disclosed bank deployments
 
-- **Stripe Radar** — gradient-boosted core, with neural ensembles. Stripe reports **+20% YoY ML performance**; **+1.3 percentage point payment-success-rate** with adaptive rules; **>30% fraud reduction** on eligible transactions for early adopters; **17% reduction in dispute rates** even as industry e-commerce fraud grew 15%; **42% SEPA / 20% ACH fraud reduction**.
-- **Itaú Unibanco (Brazil) + FICO Falcon** — cloud migration of fraud management is reported by FICO to **avoid >US$20M/month in fraud losses**, with **15% lower per-account cost** and **+20% CNP fraud detection**. Itaú additionally cut ML deployment time **from up to 6 months to 3–5 days** on AWS SageMaker — relevant for any bank operationalising mule scoring.
-- **UOB Singapore** — first SG bank to apply AI to both transaction-monitoring and name-screening simultaneously. Published metrics: **96% true-positive rate** in the high-priority queue, **+5% TP and −50% FP** in transaction-monitoring, **−70% FP for individual** and **−60% FP for corporate** name-screening, with **<1% misclassification**.
-- **Danske Bank (Denmark) + Teradata Think Big** — ML ensembles cut **false positives 20–30%** in 12-week DevOps sprints; deep-learning models (TensorFlow) showed **double-digit further detection improvement** in pre-prod.
+- **Stripe Radar** — gradient-boosted core with neural-network ensembles. Stripe reports **+20% YoY ML performance**, a **+1.3 percentage-point payment-success-rate** lift from adaptive rules, **>30% fraud reduction** on eligible transactions for early adopters, a **17% reduction in dispute rates** as industry e-commerce fraud grew 15%, and **42% SEPA / 20% ACH** fraud reduction.
+- **Itaú Unibanco (Brazil) + FICO Falcon** — cloud migration of fraud management is reported by FICO to **avoid >US$20M/month in fraud losses**, with **15% lower per-account cost** and **+20% CNP fraud detection**. Itaú additionally reduced ML deployment cycles **from up to 6 months to 3–5 days** on AWS SageMaker — directly relevant to operationalising mule scoring.
+- **UOB Singapore** — first Singaporean bank to apply AI simultaneously to transaction monitoring and name screening. Published metrics: **96% true-positive rate** in the high-priority queue, **+5% TP and −50% FP** in transaction monitoring, **−70% FP for individual** and **−60% FP for corporate** name screening, with **<1% misclassification**.
+- **Danske Bank (Denmark)** with Teradata Think Big — ML ensembles cut **false positives by 20–30%** in 12-week sprints; deep-learning models (TensorFlow) showed **double-digit additional detection improvements** in pre-production testing.
 
-### Positive-Unlabeled (PU) learning — ideal when only confirmed mules are labelled
+### Positive-Unlabeled (PU) learning — the technically-correct training paradigm for HR-03 labels
 
-Banks rarely have a clean negative class — *unconfirmed* is not the same as *not a mule*. PU learning (Elkan & Noto, 2008) was made for this. Recent applications to mule / AML / fraud:
+Banks rarely have a clean negative class — *unconfirmed* is not the same as *not a mule*. PU learning (Elkan & Noto, 2008) addresses exactly this case. Recent work applying it to mule / AML / fraud detection:
 
-- **IJCAI 2021** — *Positive-Unlabeled Learning from Imbalanced Data* — handles the double burden of class imbalance + missing negatives.
-- **arXiv 2412.06203 (2024)** — survey of PU and Negative-Unlabeled learning in cybersecurity, including financial-fraud sub-domain.
+- **IJCAI 2021** — *Positive-Unlabeled Learning from Imbalanced Data* handles the combination of class imbalance and missing negatives.
+- **arXiv 2412.06203 (2024)** — survey of PU and Negative-Unlabeled learning in cybersecurity, including financial-fraud applications.
 - **ACM 2025** — *Enhancing Anti-Money Laundering by Money Mules Detection on Transaction Graphs* — explicit mule-targeted PU + graph hybrid.
 
-PU learning is the technically-correct training paradigm for any model trained on the BOT HR-03 list as the positive-only supervisor.
+PU-learning is the right paradigm when the BOT HR-03 list is used as the positive-only supervisor.
 
-### Calibration
+### Probability calibration
 
-For Thai banks where investigators have a fixed daily review capacity, the practical trick is **probability calibration** (Platt scaling, isotonic regression) so that thresholds map directly to expected case loads — the *Precision@Capacity* objective the reference deck calls out.
+When investigators have a fixed daily review capacity, **probability calibration** (Platt scaling, isotonic regression) ensures that score thresholds map directly to expected case loads — the *Precision@Capacity* operating point.
 
 ---
 
-## 6. Tier 4 — Graph and GNN methods
+## 6. Tier 4 — Graph and graph-neural-network methods
 
-This is the tier the demo focuses on, and rightly so. Mule operations are **structurally graph-shaped**: rings of accounts on shared devices, multi-hop pass-through chains, herder-recruit-deposit subgraphs.
+Mule operations are structurally graph-shaped: rings of accounts on shared devices, multi-hop pass-through chains, herder-recruit-deposit subgraphs. Graph analytics, and particularly graph neural networks (GNNs), have become the dominant technique for surfacing this structure.
 
-### Real production deployments with public numbers
+### Publicly disclosed production deployments
 
-- **HSBC + Quantexa** — the most widely cited public case study. After deploying Quantexa's Decision Intelligence (entity resolution + network analytics) globally from 2018, HSBC reports the platform **auto-closed 1 million false-positive alerts**, reducing alerts requiring investigation by **83%** — saving the time of **140–180 analysts** previously occupied by those FPs. Industry coverage frames it as "**4× more financial criminals identified while cutting false alarms by 60%**".
-- **Danske Bank + Quantexa** — post-Estonian-scandal pivot to contextual decision intelligence. Documented **60% reduction in false positives** with a **60% increase in fraud detection** and **50% drop in false positives** on the payment-fraud workload (Best Practice AI summary).
-- **Standard Chartered** — Quantexa case study on AML detection and investigation management (graph-driven prioritisation).
-- **NatWest + Featurespace ARIC** — included in the broader graph/contextual stack: **+135% scam detection rate** and **−75% false positives for scams** within 24 hours of deployment. ARIC's check-fraud variant detects **>90% of check fraud at a 5:1 FP ratio**.
-- **Mastercard TRACE** — network-wide AML/mule platform. **UK**: **21 financial institutions**, covering **~90% of the UK Faster Payments Service** network, since launch in 2018; **identified thousands of mule accounts** and **hundreds of new mule accounts every month**. **Asia Pacific**: launched **February 2025** in the Philippines via **BancNet (36 domestic banks)** — directly relevant comparator for any Thai national-level rollout.
-- **TMNL Netherlands** — five-bank cross-bank graph monitoring, focused on human-trafficking, VAT fraud and drugs typologies. Confirms that *joint* monitoring surfaces signals invisible to any single bank.
+- **HSBC + Quantexa** — the most widely cited public case study. After deploying Quantexa's Decision Intelligence (entity resolution + network analytics) from 2018, HSBC reports that the platform **auto-closed 1 million false-positive alerts**, reducing alerts requiring investigation by **83%** — saving the time of **140–180 analysts**. Industry summaries describe the outcome as "**4× more financial criminals identified while cutting false alarms by 60%**".
+- **Danske Bank + Quantexa** — post-Estonian-scandal modernisation. Documented **60% reduction in false positives** with a **60% increase in fraud detection** and **50% reduction in false positives** on the payment-fraud workload.
+- **Standard Chartered** — Quantexa case study on graph-driven AML detection and investigation prioritisation.
+- **NatWest + Featurespace ARIC** — graph-augmented adaptive behavioural analytics: **+135% scam-detection rate** and **−75% false positives for scams** within 24 hours of deployment. The check-fraud variant detects **>90% of check fraud at a 5:1 FP ratio**.
+- **Mastercard TRACE** — a network-level AML and mule platform. **United Kingdom**: **21 financial institutions** participating, covering **~90% of UK Faster Payments**, since launch in 2018; **thousands of mule accounts identified**, with **hundreds of new mule accounts identified every month**. **Asia Pacific**: launched February 2025 in the Philippines via **BancNet (36 domestic banks)** — a directly relevant comparator for any national-scale ASEAN rollout.
+- **TMNL Netherlands** — five-bank cross-bank graph-monitoring consortium focused on human-trafficking, VAT-fraud and drug typologies. The published programme confirms that joint cross-bank monitoring surfaces signals invisible to any single bank.
 
 ### Published results on real bank graphs
 
-- **DNB (Norway)** — heterogeneous GNN on Norway's largest bank, **5M nodes, ~10M edges**. **GraphSAGE > GAT > GCN**; first publication applying heterogeneous GNNs to AML on a large real-world bank graph (Fronzetti Colladon-style). Hybrid LSTM-GraphSAGE reaches **95.4% accuracy** on simulated data; standalone GraphSAGE achieves **acc 92.8% / prec 91.1% / recall 91.8% / F1 91.4%**.
+- **DNB (Norway)** — heterogeneous GNN on Norway's largest bank, with **5M nodes and ~10M edges**. Among tested architectures, **GraphSAGE outperformed GAT and GCN**. A hybrid LSTM-GraphSAGE configuration achieved **95.4% accuracy** on simulated data; standalone GraphSAGE achieved **92.8% accuracy / 91.1% precision / 91.8% recall / 91.4% F1**.
 
-### Benchmarks on synthetic data (IBM AMLworld)
+### Benchmark performance on the IBM AMLworld synthetic dataset
 
-- **NeurIPS 2023 Datasets & Benchmarks** — *Realistic Synthetic Financial Transactions for AML* (Altman et al., IBM). Publicly released **HI / LI** datasets, large variants of **175–180M transactions**. GNNs (PNA, GIN+EU) "**significantly enhance**" GNN performance and produce competitive results without feature engineering.
+- **NeurIPS 2023 Datasets & Benchmarks** — *Realistic Synthetic Financial Transactions for AML* (Altman et al., IBM). Publicly released **HI / LI** datasets, with large variants of **175–180M transactions**. Advanced GNN architectures (PNA, GIN+EU) significantly enhance performance and produce competitive results without manual feature engineering.
 - **arXiv 2306.11586** — *Provably Powerful GNNs for Directed Multigraphs* (Multi-PNA / Multi-GIN). Improves the **minority-class F1 of standard message-passing GNNs by up to +30%** on AMLworld.
-- **arXiv 2604.12241** — *BlazingAML*: high-throughput multi-stage graph mining pipeline on AMLworld.
-- **ACM 2024** — *Graph Feature Preprocessor*: graph-feature pre-processor that boosts an XGBoost downstream by **+46% F1** vs raw features. **This is the architectural pattern most banks should default to**: graph-derived features + GBT, with an optional GNN stage above.
+- **arXiv 2604.12241** — *BlazingAML*: high-throughput multi-stage graph-mining pipeline on AMLworld.
+- **ACM 2024** — *Graph Feature Preprocessor*: a pre-processor that boosts a downstream XGBoost by **+46% F1** versus raw features. Graph-derived features fed into a gradient-boosted tree is a robust default for most institutions, with an optional GNN stage above.
 
-### Why graph beats trees alone for mule networks
+### Why graph methods materially outperform tabular methods on mule networks
 
-- **Multi-hop money flow**: a 3-hop pass-through cannot be detected from per-account features.
-- **Shared-device / shared-IP rings**: cohort-level signal that does not exist at row level.
-- **Ring-level labelling**: Quantexa/HSBC's central insight — investigators can off-board entire networks rather than one account at a time, raising true-positive yield per investigator-hour by an order of magnitude.
+- **Multi-hop money flow** — a 3-hop pass-through cannot be detected from per-account features.
+- **Shared-device / shared-IP rings** — cohort-level signal that does not exist at the row level.
+- **Ring-level off-boarding** — the operational insight from HSBC + Quantexa: investigators can off-board entire networks rather than one account at a time, raising true-positive yield per investigator-hour substantially.
 
-### Limits
+### Limits of graph methods
 
-- **Compute** — 175 M-edge graphs need careful infrastructure (Spark/GraphFrames or specialised GNN frameworks). This is exactly where Lakeflow + GPU serverless on Databricks pay off.
-- **Label scarcity at ring level** — most banks have account-level labels, not ring-level — semi-supervised propagation, weak supervision, and PU-learning matter.
-- **Explainability** — investigators need *why this ring*, not *the embedding said so*. Quantexa's productisation around entity-resolution + visual graph context is what made HSBC's investigators trust it.
+- **Compute intensity** — 100M+ edge graphs require infrastructure designed for distributed graph computation (Spark/GraphFrames or specialised GNN frameworks). §8.8 covers scaling techniques.
+- **Label scarcity at ring level** — most institutions have account-level labels, not ring-level. Semi-supervised propagation, weak supervision and PU-learning all help.
+- **Explainability** — investigators need to understand *why this ring*, not simply that the embedding scored high. Entity-resolution and visual graph context are what made HSBC's investigators able to trust the model output.
 
 ---
 
-## 7. Tier 5 — Behavioral biometrics, sequence (LSTM/TGN), and deep learning
+## 7. Tier 5 — Behavioural biometrics, sequence and deep-learning models
 
-This is the tier that matters for the **third mule archetype** the reference deck identifies: **Exploited (account-takeover or coerced)**. The account looks legitimate at the row and graph levels — the only signal is *how the human interacts with the device during the session*.
+This tier exists to address the third mule archetype that the other tiers struggle to catch: the **exploited** account (account-takeover or coerced user). The account, its history, and its graph structure all look legitimate — the only available signal is *how the human interacts with the device during the session*.
 
-### Three mule archetypes and which tier catches them
+### Three mule archetypes and the detection tier that fits each
 
-| Archetype | Behaviour | Best-fit detection |
+| Archetype | Behaviour | Best-fit detection tier |
 |---|---|---|
 | **Complicit** (knowing accomplice) | Short-lived account, rapid activation, atypical spikes, no banking history | Tier 1 + Tier 3 (rules + XGBoost) |
-| **Recruited** (social-media lured) | Normal baseline, dormancy, low-value testers, then sudden spike | Tier 2 + Tier 4 (anomaly + graph) |
-| **Exploited** (ATO / coerced) | Existing genuine account, uncharacteristic velocity, new device | **Tier 5 (behavioral biometrics, sequence)** |
+| **Recruited** (lured via social media) | Normal baseline → dormancy → low-value testers → sudden spike | Tier 2 + Tier 4 (anomaly + graph) |
+| **Exploited** (account-takeover or coerced) | Genuine active account, uncharacteristic velocity, new device usage | **Tier 5 (behavioural biometrics, sequence models)** |
 
-### Behavioral biometrics — what is deployed
+### Behavioural biometrics — deployments and vendors
 
-- **BioCatch** (the most-cited mule deployment). Customer base of **257 financial institutions** in 2024; reports those customers identified and acted on **~2 million (some sources: 2.3 million) mule accounts in 2024**. Detects behavioural shifts: typing rhythm, swipe geometry, navigation flow, hesitation, copy-paste patterns, dwell times — signals that survive even when the device, IP, and account are all "trusted".
-- **Feedzai**, **NICE Actimize**, **LexisNexis ThreatMetrix**, **Mastercard NuData**, **Callsign**, **Revelock (Buguroo)** — comparable behavioural-biometrics stacks.
-- **RBI MuleHunter.AI (India)** — Reserve Bank Innovation Hub built an AI/ML mule-detection engine codifying **19 distinct mule behaviour patterns**. Pilot with two large public-sector banks reported "encouraging results"; by August 2025 **at least 15 banks had implemented** it; an RTI in December 2025 confirmed **23 banks**. This is a flagship example of a regulator-led, ML-based replacement for static rules.
+- **BioCatch** — the most-cited mule deployment. With a customer base of **257 financial institutions** in 2024, BioCatch reports that those institutions identified and acted on approximately **2–2.3 million mule accounts in 2024**. Detection signals include typing rhythm, swipe geometry, navigation flow, hesitation, copy-paste patterns and dwell times — signals that persist even when device, IP and account are otherwise "trusted".
+- **Feedzai**, **NICE Actimize**, **LexisNexis ThreatMetrix**, **Mastercard NuData**, **Callsign**, **Revelock** — comparable behavioural-biometrics stacks with overlapping capability.
+- **RBI MuleHunter.AI (India)** — the Reserve Bank Innovation Hub developed an in-house AI/ML mule-detection engine that codifies **19 distinct mule behaviour patterns**. The pilot with two large public-sector banks reported "encouraging results"; by August 2025 at least 15 banks had adopted it, and a December 2025 RTI confirmed **23 banks**. This is a flagship example of a regulator-led, ML-based modernisation programme replacing static rules.
 
 ### Sequence and temporal models
 
-- **LSTM / GRU on transaction sequences** — captures temporal dependencies that XGBoost cannot. Hybrid **LSTM + GraphSAGE** on simulated data: **95.4% accuracy**.
-- **Temporal Graph Networks (TGN)** — Rossi et al.; in production-style fraud benchmarks, TGN-based methods raise **Precision@20 Recall** from **68.5% → 86.2% (+17.7 points)** on Taobao and from **47.2% → 56.5%** on offline-merchant fraud, vs MLP with hand-engineered real-time features.
-- **Causal Temporal GNN (CaT-GNN, arXiv 2402.14708)** — preserves recall while gaining precision; an architectural answer to drift.
-- **Spatio-temporal attention GNN** — published metrics **96.4% accuracy / 97.8% precision / 93.5% recall / 95.6% F1** on credit-card fraud.
+- **LSTM / GRU on transaction sequences** — captures temporal dependencies that pointwise XGBoost cannot. A hybrid LSTM + GraphSAGE configuration achieves **95.4% accuracy** on simulated data.
+- **Temporal Graph Networks (TGN)** — Rossi et al. (2020). In production-style fraud benchmarks, TGN-based methods raise **Precision@20 Recall** from **68.5% → 86.2% (+17.7 points)** on Taobao and from **47.2% → 56.5%** on offline-merchant fraud, versus MLPs with hand-engineered real-time features.
+- **Causal Temporal GNN (CaT-GNN, arXiv 2402.14708)** — preserves recall while gaining precision; an architectural response to concept drift.
+- **Spatio-temporal attention GNN** — published metrics of **96.4% accuracy / 97.8% precision / 93.5% recall / 95.6% F1** on credit-card fraud.
 
 ### Deep-learning anomaly detection
 
-- **Mastercard Consumer Fraud Risk** (the deck-relevant example): an ensemble blending GBT, neural networks, and graph signals over Faster Payments. UK pilot at **TSB**: **+20% fraud detection in 4 months**; potential **£100M/year saved** if all UK banks matched TSB performance.
-- **DBS Singapore** — flags high-risk transactions in **<10 ms**, claiming **15% of customers' money saved from scams**.
+- **Mastercard Consumer Fraud Risk** — an ensemble blending gradient-boosted trees, neural networks and graph signals over Faster Payments. UK pilot at TSB: **+20% fraud detection in four months**; indicative system-wide saving of **~£100M/year** if all UK banks matched TSB performance.
+- **DBS Singapore** — real-time scoring flags high-risk transactions in **<10 ms**, with the bank reporting that **15% of customers' money is saved from scams**.
 
 ### Why this tier closes the loop
 
-The exploited-account problem is the residual after rules + anomaly + supervised + graph. Without biometrics, banks either (a) freeze legitimate customers (the BOT 4-hour-unfreeze problem) or (b) miss coerced-mule activity entirely. With biometrics + step-up auth, the tail is resolvable.
+The exploited-account problem is the residual after rules, anomaly, supervised and graph detection have been applied. Without behavioural-biometrics signal, institutions either freeze legitimate customers (creating the BOT 4-hour unfreeze problem) or miss coerced-mule activity entirely. With biometrics and step-up authentication, this residual becomes addressable.
 
 ---
 
 ## 8. Technical deep-dives
 
-This section answers the questions customers ask when the slide deck ends. Each subsection is self-contained — point to it during PoC scoping.
+This section addresses the technical questions that typically arise once the maturity ladder has been discussed. Each subsection is self-contained.
 
-### 8.1 How PU-learning actually works (and why HR-03 demands it)
+### 8.1 How PU-learning works (and why HR-03 calls for it)
 
-**The problem.** When a Thai bank trains a supervised mule classifier, it has:
+**The problem.** When training a supervised mule classifier, a bank typically has:
 
 - A set of confirmed mules (BOT HR-03, internal SAR confirmations, CFR feedback) — these are reliable positives.
-- A much larger set of accounts *not* on any list. These are **unlabeled**, not negative. Many of them are real customers, but some are mules that simply haven't been caught yet.
+- A much larger set of accounts *not* on any list. These are **unlabelled**, not negative. Many are legitimate customers, but some are mules that have not yet been caught.
 
-Treating "not on the list" as `y = 0` and training a normal classifier (XGBoost, logistic regression) is a documented failure mode: the model learns to predict "looks like HR-03 *paperwork*" rather than "is a mule". It systematically under-predicts on novel mule typologies because they were silently labelled negative during training.
+Treating "not on the list" as `y = 0` and training a standard classifier (XGBoost, logistic regression) is a documented failure mode: the model learns to predict accounts that resemble *recorded* HR-03 cases, rather than accounts that exhibit mule behaviour. It systematically under-predicts on novel typologies because they were silently labelled negative during training.
 
-**The theory** — *Elkan & Noto (2008), "Learning Classifiers from Only Positive and Unlabeled Data"*. The key result is that under the **Selected Completely At Random (SCAR)** assumption (positives are a uniform random sample of all true positives), a classifier trained on positive-vs-unlabeled data is **proportional** to the true positive-vs-negative classifier by a constant `c = P(s=1 | y=1)` that you can estimate from a held-out positive set. So:
+**The theory.** *Elkan & Noto (2008), "Learning Classifiers from Only Positive and Unlabeled Data"*. Under the **Selected Completely At Random (SCAR)** assumption (the labelled positives are a uniform random sample of all true positives), the classifier trained on positive-versus-unlabelled data is **proportional** to the true positive-versus-negative classifier by a constant `c = P(s=1 | y=1)`, which can be estimated from a held-out positive set:
 
 ```
 P(y = 1 | x) = P(s = 1 | x) / c
 ```
 
-In plain English: train as if unlabeled = negative, then divide the score by `c` to get a calibrated probability. SCAR is rarely literally true in banking (HR-03 over-represents certain typologies), so practitioners use extensions — **nnPU** (non-negative PU, Kiryo et al. 2017) is the modern default because it stabilises training under high class imbalance.
+In plain terms: train as if unlabelled means negative, then divide the score by `c` to obtain a calibrated probability. The SCAR assumption is rarely strictly true in banking (HR-03 over-represents certain typologies), so practitioners use extensions — **nnPU** (non-negative PU, Kiryo et al. 2017) is the modern default because it stabilises training under high class imbalance.
 
-**Python — the `pulearn` library.** Drop-in scikit-learn-compatible wrappers around an XGBoost base classifier:
+**Python — the `pulearn` library.** Scikit-learn-compatible wrappers around an XGBoost base classifier:
 
 ```python
 import numpy as np
@@ -270,7 +270,7 @@ from xgboost import XGBClassifier
 
 # y_pu convention for pulearn:
 #   +1 = confirmed mule (HR-03 / SAR)
-#   -1 = unlabeled (everyone else, NOT "confirmed clean")
+#   -1 = unlabelled (everyone else, NOT "confirmed clean")
 y_pu = np.where(df["bot_confirmed_mule"], 1, -1)
 
 base = XGBClassifier(
@@ -281,11 +281,11 @@ base = XGBClassifier(
 pu_clf = ElkanotoPuClassifier(estimator=base, hold_out_ratio=0.2)
 pu_clf.fit(X_train.values, y_pu_train)
 
-# Calibrated mule probability — already corrected for the c factor.
+# Calibrated mule probability — corrected for the c factor.
 proba = pu_clf.predict_proba(X_test.values)
 ```
 
-For more aggressive use cases (lots of HR-03 labels, expectation that mules in the unlabeled set are common):
+When more confirmed mules are available and the proportion of mules in the unlabelled set is expected to be larger:
 
 ```python
 from pulearn import BaggingPuClassifier  # Mordelet & Vert (2014)
@@ -299,7 +299,7 @@ pu_clf = BaggingPuClassifier(
 pu_clf.fit(X_train.values, y_pu_train)
 ```
 
-Or **nnPU** if you have a calibrated estimate of class prior `π = P(y = 1)`:
+The non-negative PU variant, when a calibrated estimate of class prior `π = P(y = 1)` is available:
 
 ```python
 from pulearn import NonNegativePUClassifier
@@ -307,36 +307,36 @@ pu_clf = NonNegativePUClassifier(estimator=base, prior=0.003)  # 0.3% mule prior
 pu_clf.fit(X_train.values, y_pu_train)
 ```
 
-**Sister libraries** — for research and benchmarking: `pu-learning` (Bekker & Davis lab, <https://github.com/aldro61/pu-learning>), TensorFlow / PyTorch implementations of nnPU for neural networks, and `LibPU` for graph-PU. On Databricks, all of these run unchanged in a Mosaic AI cluster — wrap the trained classifier with MLflow's `pyfunc` and serve through Model Serving.
+**Related libraries.** For research and benchmarking: `pu-learning` (Bekker & Davis lab, <https://github.com/aldro61/pu-learning>), TensorFlow / PyTorch implementations of nnPU for neural networks, and `LibPU` for graph-PU. All of these run unchanged in a Databricks Mosaic AI cluster; the trained classifier is registered in MLflow and served through Model Serving like any other model.
 
-**What this buys the bank.** Two concrete wins:
+**What this provides.** Two concrete benefits:
 
-1. **Higher recall on unseen typologies** — the model stops being fooled into thinking "unlabeled = clean".
-2. **Calibrated probabilities** — Precision@Capacity becomes a meaningful operating point because the score is genuinely `P(mule)`, not an arbitrary rank.
+1. **Higher recall on unseen typologies** — the model is no longer trained to treat unlabelled data as clean.
+2. **Calibrated probabilities** — *Precision@Capacity* becomes a meaningful operating point because the score reflects `P(mule)` rather than an arbitrary rank.
 
 ---
 
-### 8.2 What a GNN actually is (and why graphs beat trees on rings)
+### 8.2 What a graph neural network is (and why graphs outperform trees on rings)
 
-**The motivation.** Two accounts can look identical at the row level — same KYC age, same monthly volume, same device — yet one is a hub of a 50-account mule ring and the other is a yoga instructor. The difference is **who they transact with**. Trees and rules see one row at a time; a graph neural network sees a node *and the embeddings of its neighbours*.
+**The motivation.** Two accounts can look identical at the row level — same KYC age, same monthly volume, same device — yet one is the hub of a 50-account mule ring and the other is an entirely legitimate small business. The difference is *who they transact with*. Tree-based models and rules see one row at a time; a graph neural network sees an account *and the learned embeddings of its neighbours*.
 
-**The math, in one paragraph.** A GNN stacks layers of **message passing**. At each layer, every node `v` builds a new embedding by:
+**The core idea in one paragraph.** A GNN stacks layers of **message passing**. At each layer, every node `v` constructs a new embedding by:
 
-1. Collecting messages from its neighbours `N(v)` (each message is a function of the neighbour's current embedding and the edge attributes — e.g., transaction amount, timestamp).
-2. Aggregating the messages (mean, sum, max, attention-weighted — the choice is what differentiates GCN vs GraphSAGE vs GAT vs PNA).
+1. Collecting messages from its neighbours `N(v)` — each message is a function of the neighbour's current embedding and edge attributes (transaction amount, timestamp, channel).
+2. Aggregating those messages — mean, sum, max, or attention-weighted aggregation. The choice differentiates GCN, GraphSAGE, GAT and PNA.
 3. Combining the aggregated message with its own current embedding via a small MLP.
 
-After `k` layers, every node's embedding contains information from accounts up to `k` hops away. For mule detection, `k = 2` or `k = 3` is usually enough — you want the receive-and-forward pattern, not the entire chain of custody.
+After `k` layers, every node's embedding incorporates information from accounts up to `k` hops away. For mule detection, `k = 2` or `k = 3` is generally sufficient — the receive-and-forward pattern is the primary signal, not the entire downstream chain.
 
-**The popular architectures, ranked by what real banks use:**
+**Popular architectures, ordered by maturity in real bank deployments:**
 
 | Architecture | Aggregation | When to use |
 |---|---|---|
-| **GraphSAGE** (Hamilton et al. 2017) | Mean or LSTM aggregator over a sampled neighbourhood | Default for very large graphs (DNB Norway used this on 5M nodes / 10M edges). Cheap, scales. |
-| **GAT** (Veličković et al. 2018) | Attention-weighted | When some counterparties matter more than others (e.g., new + high-value). |
-| **PNA / Multi-PNA** (Corso et al. 2020 / Egressy et al. 2023) | Multiple aggregators concatenated | State of the art on IBM AMLworld — **+30% minority-class F1** over standard MPNN. |
-| **TGN** (Rossi et al. 2020) | Temporal — uses memory state per node | When transaction *order* matters (pass-through within hours). +17.7 P@20R in published fraud benchmarks. |
-| **R-GCN** (Schlichtkrull et al. 2018) | Per-edge-type weights | When edges have semantics — payment vs shared-device vs shared-IP. |
+| **GraphSAGE** (Hamilton et al. 2017) | Mean or LSTM aggregator over a sampled neighbourhood | Default for very large graphs (used in DNB Norway production at 5M nodes / 10M edges); efficient and scales well |
+| **GAT** (Veličković et al. 2018) | Attention-weighted | When some counterparties matter substantially more than others |
+| **PNA / Multi-PNA** (Corso et al. 2020 / Egressy et al. 2023) | Multiple aggregators concatenated | State of the art on IBM AMLworld — **+30% minority-class F1** over standard message-passing GNNs |
+| **TGN** (Rossi et al. 2020) | Temporal — uses memory state per node | When transaction *order* matters (e.g., short-window pass-through); +17.7 P@20R in published fraud benchmarks |
+| **R-GCN** (Schlichtkrull et al. 2018) | Per-edge-type weights | When edges carry semantics — payment vs shared-device vs shared-IP |
 
 **Python — minimal GraphSAGE for mule scoring with PyTorch Geometric:**
 
@@ -347,9 +347,9 @@ from torch_geometric.data import Data
 from torch_geometric.nn import SAGEConv
 
 # Build the graph once:
-#   x          : float tensor [num_accounts, num_features]  (rolling window features)
+#   x          : float tensor [num_accounts, num_features]  (rolling-window features)
 #   edge_index : long tensor  [2, num_edges]                (transaction edges A -> B)
-#   y          : long tensor  [num_accounts]                (1 if HR-03, 0 if unlabeled)
+#   y          : long tensor  [num_accounts]                (1 if HR-03, 0 if unlabelled)
 data = Data(x=x, edge_index=edge_index, y=y)
 
 class MuleSAGE(torch.nn.Module):
@@ -376,118 +376,120 @@ for epoch in range(50):
     loss.backward(); opt.step()
 ```
 
-For inference you simply call `model(data.x, data.edge_index)` and take `softmax(...)[:, 1]` as the per-account mule score. On Databricks, this runs on a single GPU node for any Thai bank's graph (typically <50M accounts / <500M edges per quarter); for larger graphs use neighbour sampling (`NeighborLoader`) or move to DGL's distributed trainer.
+Inference is `model(data.x, data.edge_index)`, taking `softmax(...)[:, 1]` as the per-account mule probability. On Databricks, a graph of up to ~50M accounts / ~500M edges runs on a single GPU node; larger graphs use neighbour sampling (`NeighborLoader`) or distributed DGL — see §8.8.
 
-**Don't skip the cheap option.** Before training a full GNN, run the **Graph Feature Preprocessor** pattern (ACM 2024): compute classical graph features (PageRank, community ID, k-core, two-hop ratio, triangle count, shared-device count) in GraphFrames, *feed them as columns into XGBoost*. Published lift is **+46% F1** over the same XGBoost on raw features. Most banks get 80% of the value here and only need a GNN for the residual.
+**Consider the lighter alternative first.** Before training a full GNN, the **Graph Feature Preprocessor** pattern (ACM 2024) is often sufficient: compute classical graph features (PageRank, community ID, k-core, two-hop ratio, triangle count, shared-device count) in GraphFrames and feed them as columns into XGBoost. Published lift is **+46% F1** over the same XGBoost on raw features. For many institutions this captures most of the value at a fraction of the implementation cost; a GNN is then introduced to address the residual.
 
 ---
 
-### 8.3 What MuleTrack is (and why the deck mentions it)
+### 8.3 What MuleTrack is (and how it fits the maturity ladder)
 
-**MuleTrack** is the *Lightweight Temporal Learning Framework for Money Mule Detection in Digital Payments* by Jambhrunkar, Sharma, Singla and Kailasam, published in **Springer LNCS as part of IWANN 2025 proceedings (2026)**. It is the most recent named, peer-reviewed mule-specific paper, which is why the ASEAN deck calls it out as a maturity-tier example.
+**MuleTrack** is the *Lightweight Temporal Learning Framework for Money Mule Detection in Digital Payments* by Jambhrunkar, Sharma, Singla and Kailasam, published in Springer LNCS as part of IWANN 2025 proceedings (2026). It is the most recent named, peer-reviewed mule-specific paper and is therefore frequently referenced as a maturity-tier example.
 
-**What it actually is.** Despite the deck pairing "MuleTrack / LSTM sequences", the paper's headline model is a **Markov chain over discretised account states**, not an LSTM:
+**What it actually is.** While MuleTrack is often grouped under "LSTM sequences" in summary materials, the paper's headline model is a **Markov chain over discretised account states**, not an LSTM:
 
 1. Each account's daily / weekly activity is bucketed into a small set of behavioural states (e.g., `dormant`, `low-activity`, `burst-inbound`, `pass-through`, `cash-out`).
-2. The paper learns a per-account state-transition matrix from the historical sequence.
-3. Steady-state distributions and transition probabilities are compared against the population-level Markov chain of normal accounts. Deviations score as mule-likelihood.
-4. Domain heuristics (UPI-specific: per-day transfer count, fan-out, beneficiary diversity) are blended in as additional features.
+2. The framework learns a per-account state-transition matrix from the historical sequence.
+3. Steady-state distributions and transition probabilities are compared against the population-level Markov chain of normal accounts; deviations score as mule-likelihood.
+4. Domain heuristics (UPI-specific: per-day transfer count, fan-out, beneficiary diversity) are combined with the Markov-derived features.
 
-**Why the authors chose Markov over LSTM** — three things matter on the Indian UPI rail (and the same applies to PromptPay):
+**Why the authors chose Markov over LSTM.** Three factors are explicit in the paper and apply equally to PromptPay:
 
-- **Inference latency**: 28-minute batch over the full UPI population, no GPUs, no DL retraining cycle.
-- **Interpretability**: a state-transition matrix is auditable; an LSTM cell is not.
-- **Cold-start**: works on accounts with very short histories — important for the *recruited* mule archetype where the syndicate activates the account after weeks of dormancy.
+- **Inference latency** — 28-minute batch over the entire UPI population, no GPU dependency, no deep-learning retraining cycle.
+- **Interpretability** — a state-transition matrix is auditable; an LSTM internal state is not.
+- **Cold-start performance** — works on accounts with very short histories, which matters for the *recruited* mule archetype where syndicates activate the account after weeks of dormancy.
 
-**Where this fits in a Thai-bank stack.** MuleTrack is the bridge between Tier 3 (XGBoost) and Tier 5 (deep sequence models). It captures the **temporal regime change** (dormant → burst → pass-through) that a pointwise XGBoost row will miss, without requiring the GPU and training pipeline of an LSTM or TGN. Treat it as a **complementary feature generator**: compute Markov state-transition deviations per account on a daily Lakeflow job, write them as columns into the Feature Store, and let the supervised tier consume them. The same lift, far cheaper than a sequence neural net.
+**Where MuleTrack fits in a Thai-bank stack.** It sits between Tier 3 (XGBoost) and Tier 5 (deep sequence models). It captures the temporal regime change (dormant → burst → pass-through) that a pointwise XGBoost record will miss, without requiring the GPU and training pipeline of an LSTM or TGN. The pragmatic deployment pattern is to treat MuleTrack as a **complementary feature generator**: compute Markov state-transition deviations per account on a daily Lakeflow job, materialise them as columns in the Feature Store, and let the supervised tier consume them. This delivers temporal signal at a fraction of the cost of a sequence neural network.
 
 **Reference:** Jambhrunkar et al., *MuleTrack*, Springer LNCS, IWANN 2025 (2026). <https://link.springer.com/chapter/10.1007/978-3-032-02725-2_30>
 
 ---
 
-### 8.4 The incomplete-graph problem: how to do graph detection when most mules leave your bank
+### 8.4 The incomplete-graph problem: how graph detection works when most mule activity crosses institutional boundaries
 
-Every Thai bank's graph is **structurally incomplete**:
+Every bank's transaction graph is **structurally incomplete**:
 
-- A mule receives funds from a customer of Bank A, parks them for 15 minutes, and sends them to a Bank B account, then a Bank C account, then a crypto exchange, then offshore. Bank A sees one outbound edge. The rest is dark.
-- Cifas UK data: roughly **half of mule pass-through hops cross bank boundaries** within 24 hours.
-- Once funds leave the country (USDT-on-Tron is the typical Thai off-ramp), no domestic bank ever sees them again.
+- A mule receives funds from a customer of Bank A, holds them briefly, and sends them onward to Bank B, then Bank C, then a crypto exchange, then offshore. Bank A sees only the first outbound edge; the remainder is invisible.
+- Cifas UK data indicates that approximately **half of mule pass-through hops cross bank boundaries** within 24 hours.
+- Once funds leave the country (USDT-on-Tron is a common Thai off-ramp), no domestic bank sees them again.
 
-**Naively trained, a GNN inside one bank's silo only learns the leaves of the network, never the hubs.** The literature and the deployed-vendor practice have converged on **five complementary mitigations**:
+A naïvely trained GNN inside a single bank's silo therefore learns the leaves of mule networks but not the hubs. The literature and the deployed-vendor practice have converged on **five complementary strategies** to address this:
 
-**1. Lean on the partial signal that you do have.** Most mule rings have *some* intra-bank density — recruits often onboard at the same bank, herders test with internal accounts first. Even a 10% intra-bank density makes community detection and PageRank meaningful. Don't let the perfect be the enemy of the good.
+**1. Use the partial signal effectively.** Most mule rings have *some* intra-bank density — recruits often onboard at the same bank, herders test with internal accounts first. Even a 10% intra-bank density is sufficient for community detection and PageRank to surface meaningful structure.
 
-**2. Use HR-03 (and equivalents) as 1-hop counterparty features.** You don't need to *see* a mule's transactions to know that a customer sent THB 200k to a HR-03-listed account at another bank. The BOT CFR / HR-03 list, joined onto the counterparty side of every outbound transaction, yields the highest-signal feature most banks have access to. This works *today*, no consortium needed.
+**2. Use HR-03 (and equivalents) as 1-hop counterparty features.** Direct visibility into another bank's mule transactions is unnecessary if it is known that a customer sent THB 200k to a HR-03-listed account at another bank. Joining the BOT CFR / HR-03 list onto the counterparty side of every outbound transaction yields one of the highest-signal features available to a single institution, and requires no new consortium agreement.
 
-**3. Subscribe to a network operator's cross-bank view.** **Mastercard TRACE** is the operative example: 21 UK institutions and **~90% of UK Faster Payments**; APAC launched Feb 2025 in the Philippines with BancNet (36 banks). TRACE consumes the inter-bank rail directly and emits per-account risk scores that any participating bank can ingest as features. The Thai analogue would be a BOT-CFR feed enriched with rail-level signal — exactly the gap a Databricks-native consortium platform fills.
+**3. Subscribe to a network-operator view of the cross-bank graph.** **Mastercard TRACE** is the operative example: 21 UK institutions covering ~90% of UK Faster Payments; APAC launched February 2025 in the Philippines via BancNet (36 banks). TRACE consumes the inter-bank rail directly and emits per-account risk scores that participating banks ingest as features. A Thai analogue would be a BOT-CFR feed enriched with rail-level signal — a natural use case for a Lakehouse-native consortium platform.
 
-**4. Privacy-preserving cross-bank collaboration (Delta Sharing + Clean Rooms).** What can be shared legally under PDPA:
-- Hashed counterparty IDs and risk scores.
+**4. Privacy-preserving cross-bank collaboration.** Under PDPA-class regimes the following can be shared legally:
+
+- Hashed counterparty identifiers and risk scores.
 - Aggregated subgraph fingerprints (ring size, age, fan-out distribution) without individual identities.
-- Federated GNN gradients — train one model on partitioned graphs without ever moving the raw edges (see *Privacy-Preserving Graph-Based ML with Fully Homomorphic Encryption*, arXiv 2411.02926, 2024).
+- Federated GNN gradients — train one model on partitioned graphs without moving the raw edges (see *Privacy-Preserving Graph-Based ML with Fully Homomorphic Encryption*, arXiv 2411.02926, 2024).
 - Bloom-filter or PSI-based "is this account on your watchlist?" queries.
-Databricks Clean Rooms is the productisation of this pattern. TMNL Netherlands, Singapore COSMIC, and FinCEN 314(b) are precedents that the regulator already understands.
 
-**5. Treat the cross-border / crypto tail as a different problem.** Once funds reach a VASP or leave the country, on-chain analytics vendors (Chainalysis, Elliptic, TRM Labs) take over — banks should ingest **outbound risk scores from those vendors** as another feature column rather than try to extend the bank graph onto chain.
+**Databricks Clean Rooms** productises this pattern with cryptographic isolation and audit. TMNL Netherlands, Singapore COSMIC and FinCEN 314(b) provide established regulatory precedent that supervisors already understand.
 
-**Net guidance for a Thai bank starting today.** Sequence: (1) intra-bank graph with HR-03 as a counterparty feature → (2) BOT-CFR ingestion as a global label feed → (3) Mastercard-TRACE-style operator data when available → (4) bilateral or consortium Clean Room with one or two peer banks for the highest-density cross-bank corridors → (5) on-chain feed for the off-ramp tail. Each step is independently shippable; nothing requires a regulator-driven utility to start working.
+**5. Treat the cross-border / crypto tail as a separate problem.** Once funds reach a VASP or leave the country, on-chain analytics specialists (Chainalysis, Elliptic, TRM Labs) take over. The pragmatic pattern is to **ingest outbound risk scores from these specialists** as feature columns, rather than attempt to extend the bank graph onto chain.
+
+**Recommended sequencing.** A bank starting from intra-bank-only graph features can adopt these strategies independently and incrementally: (1) intra-bank graph with HR-03 as a counterparty feature → (2) BOT-CFR ingestion as a global label feed → (3) Mastercard-TRACE-style operator data when available → (4) bilateral or consortium Clean Room with one or two peer banks for the highest-density cross-bank corridors → (5) on-chain feed for the off-ramp tail. Each step is independently shippable and delivers measurable signal lift; none of them require a regulator-driven utility to begin working.
 
 ---
 
-### 8.5 Data sources and where Thai banks typically have them
+### 8.5 Data sources and where they typically reside in a Thai bank
 
-This maps the deck's data-domain table to the actual systems a Thai-bank SA team will encounter on day one of a discovery.
+The table below maps the canonical mule-detection data domains to the systems on which Thai banks typically host them, and the recommended ingestion pattern into the Lakehouse.
 
-| Data domain | What it contains | Where it typically lives in a Thai major bank | How it lands in the Lakehouse |
+| Data domain | What it contains | Where it typically lives in a Thai major bank | Ingestion pattern into the Lakehouse |
 |---|---|---|---|
-| **Core banking — accounts** | Account master, open/close date, type, branch, status, daily balance snapshots | IBM mainframe (`z/OS` + DB2), occasionally Oracle Exadata for newer banks; the Big Five almost universally run DB2 | Lakeflow Connect (DB2 CDC) → Bronze Delta; daily reconciliation for balance snapshots |
-| **Payments — domestic transfers** | PromptPay (NITMX rail), BAHTNET (high-value RTGS), ATM withdrawals, intra-bank transfers | Switch systems (BCMS / EPS / proprietary) writing to messaging queues (typically IBM MQ); ITMX produces near-real-time event streams; ATM via switch journals | Lakeflow + Kafka / Auto Loader → Bronze; <1 min freshness achievable |
-| **Payments — international & cards** | SWIFT, Visa / Mastercard authorisations and clearing | SWIFT alliance, card switch (Tieto / TSYS / FIS depending on bank), settlement systems | Batch (clearing) + streaming (auth) — typical SLA 5-15 min |
-| **KYC / onboarding** | Declared income, occupation, nationality, address, ID documents, FATCA, eKYC selfie + liveness | Dedicated KYC platform (Fenergo, NICE Actimize KYC, in-house Java) backed by Oracle or DB2; documents in object storage or a content mgmt system (FileNet / Documentum) | Lakeflow CDC from KYC DB; documents land via volume mount; OCR / embeddings on demand |
-| **Digital channels / sessions** | Login events, device fingerprint, IP, geolocation, session duration, in-app navigation, failed-auth events | Mobile / internet-banking platform — typically Hadoop / Cloudera, Elastic, or a modern stream platform; device intelligence from a vendor (BioCatch, ThreatMetrix, NuData) | Auto Loader from log buckets; vendor APIs as silver tables |
-| **Cards** | Card-level activity, MCC, chargeback history, dispute outcomes | Card-processor systems (Tieto, FIS, in-house); often siloed from current account data | Batch nightly + streaming auth via Kafka |
+| **Core banking — accounts** | Account master, open/close date, type, branch, status, daily balance snapshots | IBM mainframe (`z/OS` + DB2), occasionally Oracle Exadata for newer institutions; the major Thai banks predominantly run DB2 | Lakeflow Connect (DB2 CDC) → Bronze Delta; daily reconciliation for balance snapshots |
+| **Payments — domestic transfers** | PromptPay (NITMX rail), BAHTNET (high-value RTGS), ATM withdrawals, intra-bank transfers | Switch systems (BCMS / EPS / proprietary) writing to messaging queues (typically IBM MQ); ITMX provides near-real-time event streams; ATM via switch journals | Lakeflow + Kafka / Auto Loader → Bronze; <1 minute freshness is achievable |
+| **Payments — international and cards** | SWIFT, Visa / Mastercard authorisations and clearing | SWIFT Alliance, card switch (Tieto / TSYS / FIS depending on the bank), settlement systems | Batch (clearing) plus streaming (auth); typical SLA 5–15 minutes |
+| **KYC / onboarding** | Declared income, occupation, nationality, address, ID documents, FATCA, eKYC selfie + liveness | Dedicated KYC platform (Fenergo, NICE Actimize KYC, in-house Java) backed by Oracle or DB2; documents in object storage or a content-management system (FileNet, Documentum) | Lakeflow CDC from KYC DB; documents land via volume mount; OCR / embeddings computed on demand |
+| **Digital channels / sessions** | Login events, device fingerprint, IP, geolocation, session duration, in-app navigation, failed-auth events | Mobile / internet-banking platform — typically Hadoop / Cloudera, Elastic or a modern stream platform; device intelligence from a partner (BioCatch, ThreatMetrix, NuData) | Auto Loader from log buckets; partner APIs as Silver tables |
+| **Cards** | Card-level activity, MCC, chargeback history, dispute outcomes | Card-processor systems (Tieto, FIS, in-house); often siloed from current-account data | Batch nightly + streaming auth via Kafka |
 | **CRM / contact** | Phone, email, address history, customer-service notes, complaint records | Salesforce or in-house CRM; complaint cases in ServiceNow | API connectors / Lakeflow |
-| **Credit bureau / external** | NCB (National Credit Bureau Thailand) reports, credit score, total outstanding debt, query history | Procured per-customer via NCB API; cached internally | Lakeflow / DLT with explicit consent log |
-| **BOT / regulator feeds** | **HR-03 high-risk register**, dark-brown / brown / orange / yellow account categories, Central Fraud Registry (CFR) entries | Distributed by the Thai Bankers' Association to member banks; typically delivered as encrypted batch files or via a secure portal API | Daily Lakeflow ingestion into a Unity-Catalog-governed Silver table; lineage tracked back to BOT for audit |
-| **Investigator / case management** | SAR drafts, fraud confirmations, freezing actions, customer escalations | ServiceNow or an in-house case-mgmt system; SAR submissions via DataPro / BOT eForm | API or DB sync into a Silver case table; closes the loop for label generation |
-| **Alternative data** | Telco signals, geolocation, behavioural biometrics scores | Per-vendor APIs (AIS/dtac/Truemove for telco signals via licensed brokers; BioCatch / Feedzai BB for biometrics) | API → Silver |
+| **Credit bureau / external** | NCB (National Credit Bureau Thailand) reports, credit score, total outstanding debt, query history | Procured per-customer via NCB API; cached internally | Lakeflow / DLT with explicit consent logging |
+| **BOT / regulator feeds** | **HR-03 high-risk register**, dark-brown / brown / orange / yellow account categories, Central Fraud Registry (CFR) entries | Distributed by the Thai Bankers' Association to member banks; typically delivered as encrypted batch files or via a secure-portal API | Daily Lakeflow ingestion into a Unity-Catalog-governed Silver table; lineage tracked back to BOT for audit |
+| **Investigator / case management** | SAR drafts, fraud confirmations, freezing actions, customer escalations | ServiceNow or an in-house case-management system; SAR submissions via DataPro / BOT eForm | API or DB sync into a Silver case table; closes the loop for label generation |
+| **Alternative data** | Telco signals, geolocation, behavioural-biometrics scores | Per-vendor APIs (AIS / dtac / Truemove via licensed brokers; BioCatch / Feedzai BB for biometrics) | API → Silver |
 
-**Three structural observations** that come up in every Thai-bank discovery:
+**Three observations that typically emerge in early architecture discussions:**
 
-1. **The mainframe is real and not going away in the next 24 months.** Plan for DB2 CDC or batch unloads, not for "migrate the core to cloud first" — that conversation kills the project.
-2. **The biggest single source of fragmentation is the digital-channel platform.** Mobile banking sessions are where the *exploited mule* (account-takeover) shows itself, and they typically live on a separate Hadoop cluster from payments. Unifying these two domains in one Lakehouse is the single highest-ROI integration.
-3. **The BOT CFR / HR-03 feed is your label generator.** Treat it as a first-class data product — versioned, lineage-tracked, with explicit point-in-time semantics for model training (always train on what was knowable as of `t`, not on labels that arrived later — temporal leakage is the most common mistake in supervised AML modelling).
+1. **The mainframe is real and will remain in scope for the foreseeable horizon.** Workable patterns rely on DB2 CDC or batch unloads, not on prior modernisation of the core banking system.
+2. **The largest source of data fragmentation is usually the digital-channel platform.** Mobile-banking session events — which carry the strongest signal for the *exploited* mule archetype — tend to live on a separate Hadoop or stream platform from payments data. Unifying these two domains under one governed Lakehouse is the highest-ROI integration in most engagements.
+3. **The BOT CFR / HR-03 feed should be treated as a first-class data product.** It should be versioned, lineage-tracked and ingested with explicit point-in-time semantics for model training — models must be trained on labels that were *knowable as of t*, not on labels that arrived later. Temporal leakage is the most common pitfall in supervised AML modelling.
 
 ---
 
-### 8.6 The investigator experience — today vs Lakehouse-native
+### 8.6 The investigator experience — current state and a Lakehouse-native target state
 
-The investigator's productivity is where the ROI actually lands. A bank can have a 0.99 AUC model and still lose the war if the analyst takes 45 minutes to clear each alert.
+Investigator productivity is where operational ROI is realised. A model with an AUC of 0.99 cannot deliver its full value if the analyst requires 45 minutes to clear each alert.
 
-**How it looks today at a Thai major bank (typical workflow):**
+#### Current state in a typical major Thai bank
 
-1. Alert lands in **NICE Actimize / SAS AML / in-house rules engine** queue.
-2. Analyst opens 4–8 tabs to assemble context:
-   - Core banking screen (DB2 — slow, separate AS/400-style green screen on some banks)
-   - KYC system for declared occupation / income
+1. An alert lands in a transaction-monitoring queue (commonly NICE Actimize, SAS AML, or an in-house rules engine).
+2. The analyst opens 4–8 separate applications to assemble context:
+   - Core-banking screen (DB2)
+   - KYC system for declared occupation and income
    - CRM for contact and complaint history
    - Mobile-banking session log (sometimes a separate Splunk dashboard)
    - Call-centre notes (ServiceNow)
-   - Counterparty bank's published HR-03 status (manual lookup)
-   - Excel sheet with the analyst's own running list of "accounts I've seen before"
-3. Stitch a working narrative in Excel or a Word doc. **30 minutes to several hours per case** depending on complexity.
-4. Decide: file SAR, freeze, escalate, or close. File via DataPro / BOT eForm.
-5. Repeat. Typical analyst load in a Thai major bank: **15–40 alerts/day**, of which **>99% are false positives** by pre-ML baselines.
+   - Manual lookup of counterparty HR-03 status
+   - Locally maintained spreadsheet of previously seen accounts
+3. The analyst stitches a working narrative in Excel or Word — typically **30 minutes to several hours per case** depending on complexity.
+4. A decision is recorded — file SAR, freeze, escalate or close — and submitted via DataPro / BOT eForm.
+5. A typical analyst workload is **15–40 alerts per day**, of which more than **99% are false positives** at pre-ML baselines.
 
-**Why this is the binding constraint:**
+The structural consequences of this workflow are:
 
-- The BOT 4-hour unfreeze SLA is *physically impossible* in a multi-tab manual workflow during a scam surge.
-- Wrongful freezes happen because analysts under time pressure default to the cautious decision.
-- The same true-positive ring is investigated 6–10 times by different analysts who each see only their account in isolation — no ring-level off-boarding.
+- The **BOT 4-hour unfreeze SLA** is operationally challenging during scam surges, because the manual context-assembly process does not parallelise.
+- Time-pressured analysts default to the cautious decision, contributing to wrongful freezes.
+- The same true-positive mule ring is often investigated several times by different analysts, each seeing only a single account in isolation — there is no mechanism for ring-level off-boarding.
 
-**How it should look on a Databricks-native stack (`mule-explorer` is the first cut of this):**
+#### Lakehouse-native target state
 
-A single-pane-of-glass Databricks App, backed by Lakebase (managed Postgres) for sub-50ms reads of the 360 view, with Genie for natural-language drill-down:
+A unified investigator workspace, delivered as a Databricks App backed by Lakebase (managed PostgreSQL) for sub-50 ms reads of the 360 view, with Genie for natural-language drill-down. The illustrative layout below corresponds to the `mule-explorer` reference implementation in this repository:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -514,185 +516,188 @@ A single-pane-of-glass Databricks App, backed by Lakebase (managed Postgres) for
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-**The architecture behind that one screen:**
+**The architecture supporting this experience:**
 
-- **Lakehouse Bronze → Gold** pipelines unify every data source from §8.5 into one governed 360 table per account.
-- **Lakebase** (managed Postgres on Databricks) holds the *hot serving copy* of the 360 table + ring memberships + score history. Synced from the Lakehouse via reverse-ETL synced tables. Read latency for the app: **<50 ms**.
-- **Databricks App** (Plotly Dash, in this repo as `mule-explorer/`) renders the layout, talks to Lakebase for facts and to MLflow Model Serving for live re-scoring.
-- **Genie** sits on top of the same Gold tables — analysts get NL-to-SQL for the long tail of "I just want to ask this one thing without raising a ticket to the data team".
-- **Active learning loop** — every "Mark false positive" and "Confirm mule" decision is written back to a Silver table that feeds the next PU-learning retrain.
+- **Lakehouse Bronze → Gold** pipelines unify every data source from §8.5 into a governed 360 table per account.
+- **Lakebase** (managed PostgreSQL on Databricks) holds the hot serving copy of the 360 table, ring memberships and score history, synced from the Lakehouse via reverse-ETL synced tables. Read latency for the app is **<50 ms**.
+- **The Databricks App** (Plotly Dash in this reference implementation) renders the layout, queries Lakebase for facts and calls MLflow Model Serving for live re-scoring.
+- **Genie** sits on top of the same Gold tables, providing natural-language-to-SQL access for the long tail of ad-hoc analyst questions.
+- **An active-learning loop** captures every "mark false positive" and "confirm mule" decision back into a Silver table that feeds the next PU-learning retrain.
 
-**What this changes operationally:**
+#### Operational implications
 
-| Metric | Today | Lakehouse-native |
+| Metric | Current state | Lakehouse-native target |
 |---|---|---|
-| Cases / analyst / day | 15–40 | 80–150 (Quantexa / HSBC band) |
+| Cases / analyst / day | 15–40 | 80–150 (consistent with the published Quantexa / HSBC band) |
 | Time per case | 20–60 min | 3–10 min |
-| Off-boarding granularity | Per account | Per ring (Quantexa pattern) |
-| BOT 4-hour unfreeze | Best-effort | Default — alerts arrive pre-explained |
+| Off-boarding granularity | Per account | Per ring |
+| Compliance with BOT 4-hour unfreeze | Best-effort | Default — alerts arrive pre-explained |
 | Label feedback to model | Spreadsheet → quarterly retrain | Real-time → weekly retrain |
 
-This is the part of the demo that wins the room. The model lift numbers are abstract; **a working 360 screen with the customer's actual logo at the top of it is concrete**, and it is exactly what no point-vendor (Quantexa, Actimize, BioCatch) can hand the customer because none of them owns the data foundation underneath.
+The decisive operational advantage of this pattern is that **the full 360 view, the ring graph and the model explanation arrive in one screen at sub-50 ms read latency**, because the investigator app sits directly on top of the same Lakehouse that produced the scores. No point-vendor that does not own the underlying data foundation can deliver this single-screen experience.
 
 ---
 
-### 8.7 "We already pay for Actimize / Quantexa / Featurespace. Why migrate?"
+### 8.7 Evolving from a point-solution stack toward a unified platform
 
-The honest answer is: **don't migrate. Re-layer.** The Lakehouse becomes the platform; the specialist vendors become *features* into it.
+A common starting position is a portfolio of specialist vendors — a rules engine, an anomaly-detection product, a graph platform, a behavioural-biometrics product — each with its own data store, its own model lifecycle and its own governance. The Lakehouse pattern does not require replacing all of these. The recommended approach is to **re-layer** the architecture: the Lakehouse becomes the data platform; the specialist products that provide genuinely differentiated capability become *features* into it.
 
-**What gets replaced vs what stays.**
+The table below summarises what is typically modernised on the Lakehouse versus what is retained as a feature provider.
 
-| Layer | Today (typical Thai bank) | After Lakehouse |
+| Layer | Common current state | Lakehouse pattern |
 |---|---|---|
-| Rules engine on Hadoop / proprietary store | **NICE Actimize SAM / SAS AML** — locked-in store, slow batch | **Replaced.** Rules run in DLT / SQL against the Lakehouse, with full lineage. |
-| Anomaly detection | **ThetaRay** (OCBC's vendor), in-house | **Either-or.** Keep as feature provider (ingest scores) or rebuild on Mosaic AI — most banks find rebuild is faster than the renewal cycle. |
-| Supervised ML scoring | Vendor's hosted GBT, opaque | **Replaced.** XGBoost / LightGBM with PU-learning, MLflow versioning, Unity Catalog lineage — better than the vendor on every axis. |
-| Graph analytics | **Quantexa** | **Complementary.** Quantexa's entity resolution and visual investigator UX are still best-in-class. Plug it in as a feature source: ingest entity-resolution edges into Delta, consume its risk scores as columns; let the Lakehouse own the data plane and the ensemble. |
-| Behavioural biometrics | **BioCatch / NuData / Feedzai BB** | **Complementary.** No reason to rebuild; ingest their per-session scores via API into Silver and feature-engineer on top. |
-| Cross-bank network signal | **Mastercard TRACE** (where available) | **Complementary.** Ingest TRACE risk scores per account as features. |
-| Case management / SAR | ServiceNow or vendor case mgmt | **Either-or.** Most banks keep ServiceNow for workflow + audit and bolt a Databricks App on top of it for the actual investigation work. |
+| Rules engine on legacy infrastructure | Vendor rules engine on Hadoop / proprietary store | **Modernised on the Lakehouse.** Rules run in DLT / SQL against governed Delta tables, with full lineage. |
+| Anomaly detection | Vendor anomaly engine (e.g., ThetaRay) | **Either retained as a feature provider or rebuilt on Mosaic AI.** Many institutions find that rebuilding is faster than the next renewal cycle once data is unified. |
+| Supervised ML scoring | Vendor-hosted gradient-boosted models | **Modernised on the Lakehouse.** XGBoost / LightGBM with PU-learning, MLflow versioning and Unity Catalog lineage — with full model transparency for MRM. |
+| Graph analytics and entity resolution | A specialist graph platform (e.g., Quantexa) | **Complementary.** Specialist entity-resolution and visual investigator UX remain best-in-class. Ingest entity-resolution edges into Delta and consume risk scores as features; the Lakehouse owns the data plane and the ensemble. |
+| Behavioural biometrics | Vendor biometrics platform (e.g., BioCatch, NuData, Feedzai BB) | **Complementary.** Ingest per-session scores via API into Silver and feature-engineer on top. |
+| Cross-bank network signal | Network operator (e.g., Mastercard TRACE) where available | **Complementary.** Ingest TRACE risk scores per account as features. |
+| Case management and SAR submission | ServiceNow or vendor case management | **Either retained or replaced.** Most institutions retain ServiceNow for workflow and audit, and add a Databricks App on top for the actual investigation work. |
 
-**Why "re-layer" wins over "rip and replace" on every dimension the customer cares about:**
+#### Why a re-layering approach is generally preferred over a full replacement
 
-1. **Risk.** No big-bang migration. Vendor stays live; Lakehouse runs in parallel and overtakes on detection metrics one tier at a time.
-2. **Cost.** The expensive vendor contracts that are easy to drop are the rules engines and the supervised-ML black boxes — exactly the tiers the Lakehouse handles natively. The expensive contracts that are *hard* to drop (Quantexa, BioCatch) are the ones you keep, plugged in as features.
-3. **Lock-in.** Today: 5 vendors, 5 data copies, 5 governance regimes. After: 1 platform (Unity Catalog), N feature providers — the bank can swap any of them out without re-platforming.
-4. **Speed.** Building a new feature inside the Lakehouse is a notebook + Feature Store entry. Building a new feature inside Actimize is a vendor SOW.
-5. **Regulatory defence.** BOT's model-risk expectations land cleanly on MLflow + Unity Catalog lineage. A black-box vendor scoring service is a much harder MRM conversation.
+1. **Lower risk.** No big-bang migration. Existing vendors continue to operate while the Lakehouse runs in parallel and progressively takes over tiers as detection metrics warrant.
+2. **Predictable cost.** The vendor contracts that are easiest to retire are the rules engines and supervised-ML services — the tiers the Lakehouse handles natively. The vendor contracts that are most painful to retire (specialist graph platforms, behavioural biometrics) are also the ones that retain a clear differentiated value when used as feature providers.
+3. **Lower lock-in.** Today a typical stack has five vendors, five data copies, and five governance regimes. In the target state there is one platform (Unity Catalog) and N feature providers — any individual provider can be swapped without re-platforming.
+4. **Faster iteration.** Creating a new feature inside the Lakehouse is a notebook plus a Feature Store entry. Creating the equivalent inside a closed vendor product typically requires a statement of work.
+5. **Stronger regulatory posture.** Regulator expectations for model-risk management map cleanly onto MLflow + Unity Catalog lineage. A vendor-hosted scoring service that cannot be inspected end-to-end is a more difficult MRM conversation.
 
-**TCO crossover heuristic.** Per-event vendor pricing (typical AML/fraud vendor: USD 0.001–0.005 per transaction scored) crosses serverless Databricks compute at roughly **10–30 million transactions per day**. Every Thai major bank is above that volume on PromptPay alone. Mid-tier banks cross it within 18 months at current PromptPay growth.
+#### TCO crossover heuristic
 
-**The one-line answer to the customer:** *"You don't fire Quantexa. You stop paying NICE Actimize to be your data platform. Quantexa becomes a feature provider into a platform you actually own."*
+Per-event vendor pricing in AML / fraud is typically in the range of **USD 0.001–0.005 per transaction scored**. On a serverless Lakehouse the equivalent compute cost crosses below this at roughly **10–30 million transactions per day**. A Thai major bank typically exceeds that threshold on PromptPay volume alone; mid-tier banks reach it within 18 months at current PromptPay growth.
+
+**The architectural conclusion.** The Lakehouse becomes the system of record for data, features, models and lineage. Specialist vendors are integrated as feature providers where they retain a clear capability advantage. The bank gains a single governed data plane while preserving investments in specialist capability that genuinely contribute to detection quality.
 
 ---
 
-### 8.8 Scaling graph feature computation at production volumes (the "500M-node" question)
+### 8.8 Scaling graph-feature computation at production volumes (the "500M-node" question)
 
-**The premise.** Most published graph-AML papers run on graphs that fit on one machine — DNB Norway used **5M nodes / 10M edges**; even the *large* AMLworld benchmark tops out at **~50M nodes / 180M transactions**. A Thai major bank's PromptPay-plus-corporate graph routinely sits at **~500M nodes and several billion edges per quarter** (~30–50M individual customers, plus all their counterparties at other banks, plus merchants, plus historical edges). A 12-month rolling window pushes that past 1B edges. Naïve PageRank on a single driver dies; naïve Louvain on the same graph runs for days; a 3-layer GraphSAGE forward pass over the full neighbourhood is computationally infeasible because the receptive field explodes combinatorially.
+Most published graph-AML studies run on graphs that fit on a single machine. DNB Norway's heterogeneous-GNN deployment used **5M nodes and ~10M edges**; even the *large* IBM AMLworld benchmark tops out at **~50M nodes and 180M transactions**. A Thai major bank's PromptPay-plus-corporate transaction graph routinely sits at **~500M nodes and several billion edges per quarter** (30–50M individual customers, plus all counterparties at other banks, plus merchants, plus historical edges). A 12-month rolling window pushes past 1B edges.
 
-This subsection summarises the **seven proven scaling strategies** banks and the literature have converged on. Most production deployments combine **three or four of them simultaneously**.
+At that scale, naïve PageRank on a single driver does not complete, naïve Louvain runs for days, and a three-layer GraphSAGE forward pass over the full neighbourhood is computationally infeasible because the receptive field grows combinatorially. The literature and deployed-vendor practice have converged on **seven proven scaling strategies**; most production deployments combine three or four of them simultaneously.
 
-#### Strategy 1 — Prune before you compute
+#### Strategy 1 — Prune before computing
 
-The cheapest order-of-magnitude reduction is to remove nodes that cannot meaningfully contribute to mule signal. The literature on **graph reduction** and **k-core decomposition** (Batagelj & Zaveršnik, 2003) is the formal backing; in practice, banks apply heuristics that drop **60–85% of nodes** with negligible signal loss:
+The cheapest order-of-magnitude reduction is to remove nodes that cannot contribute meaningful mule signal. The literature on graph reduction and k-core decomposition (Batagelj & Zaveršnik, 2003) provides the formal basis. In practice the following heuristics typically drop **60–85% of nodes** with negligible signal loss:
 
-- **Degree pruning**: drop accounts with `degree < 2` over the rolling window. These are terminal leaves — they cannot route money and therefore cannot be mules in the structural sense.
-- **k-core extraction**: compute the **2-core** or **3-core** of the graph. A k-core is the maximal subgraph where every node has degree ≥ k. Mule rings exhibit reinforcing connectivity (every node in the ring has multiple ring-neighbours), so they survive k-core filtering; legitimate retail customers with one occasional bill-pay relationship do not. Empirically, the 2-core of a retail-banking transaction graph is **~10–25% of the original nodes**.
-- **Dormancy filtering**: drop accounts with zero activity in the last `T` days from the *graph for graph-feature purposes* (they remain in the rules-and-XGBoost pipeline). Mule activation is bursty; dormant nodes do not need real-time graph scoring.
-- **Amount-thresholded edges**: collapse very-low-value edges (e.g., `< THB 100`) into aggregated weights or drop them entirely. Mule passes are by design above structuring thresholds.
-- **Bot / merchant masking**: large merchants and government agencies act as graph "supernodes" with millions of incoming edges — their PageRank dominates spuriously. Mask them out (or compute a *masked* PageRank where supernode contributions are zeroed); this is the standard treatment in published AML PageRank work.
+- **Degree pruning** — drop accounts with `degree < 2` over the rolling window. These are terminal leaves that cannot route money and therefore cannot be mules in the structural sense.
+- **k-core extraction** — compute the **2-core** or **3-core** of the graph. A k-core is the maximal subgraph in which every node has degree ≥ k. Mule rings exhibit reinforcing connectivity and survive k-core filtering; legitimate retail customers with one occasional bill-pay relationship do not. Empirically the 2-core of a retail-banking transaction graph is **~10–25% of the original node count**.
+- **Dormancy filtering** — remove accounts with zero activity in the last `T` days from the graph for graph-feature purposes (they remain in the rules and supervised-ML pipelines). Mule activation is bursty; dormant nodes do not require real-time graph scoring.
+- **Amount-thresholded edges** — collapse very-low-value edges (e.g., `< THB 100`) into aggregated weights or drop them. Mule pass-throughs are by design above reporting thresholds.
+- **Supernode masking** — large merchants and government agencies act as graph supernodes with millions of incoming edges, which distort PageRank. Mask them out or compute a masked PageRank where supernode contributions are zeroed. This is the standard treatment in published AML PageRank work.
 
-For a Thai major bank, this stack of filters typically reduces a 500M-node working graph to a **75–150M-node analytically-relevant graph** — the point at which the next strategies become tractable.
+A typical reduction for a Thai major bank is from a 500M-node working graph to a **75–150M-node analytically-relevant graph** — the point at which the next strategies become tractable.
 
 #### Strategy 2 — Partition the graph
 
-Once you must distribute, the question is *how* you split the graph across workers. Two paradigms:
+Once distribution is required, the question is how the graph is split across workers.
 
-- **Edge-cut partitioning** (METIS — Karypis & Kumar, 1998; Spinner — Martella et al., 2017): split *vertices* across machines, replicate edges that cross. Good for graphs with bounded degree.
-- **Vertex-cut partitioning** (PowerGraph — Gonzalez et al., OSDI 2012; "PowerLyra" — Chen et al. 2015): split *edges* across machines, replicate high-degree vertices. **This is the right default for banking graphs** because transaction degree distributions are heavy-tailed (a handful of hub accounts — PromptPay aggregators, payroll accounts, e-wallet bridges — have millions of edges; most accounts have <10). PowerGraph's empirical finding is that vertex-cut reduces communication by **>10× on power-law graphs** vs edge-cut.
+- **Edge-cut partitioning** (METIS — Karypis & Kumar, 1998; Spinner — Martella et al., 2017) splits vertices across machines and replicates edges that cross. Effective for bounded-degree graphs.
+- **Vertex-cut partitioning** (PowerGraph — Gonzalez et al., OSDI 2012; PowerLyra — Chen et al. 2015) splits edges across machines and replicates high-degree vertices. **This is generally the preferred default for banking transaction graphs**, where degree distributions are heavy-tailed (a small number of hub accounts — payment aggregators, payroll accounts, e-wallet bridges — have millions of edges, while most accounts have <10). PowerGraph's empirical result on power-law graphs is **>10× communication reduction** versus edge-cut.
 
 In Databricks the practical realisations are:
-- **GraphFrames** on Spark — edge-cut by default; for very-skewed graphs use the `aggregateMessages` Pregel API with custom partitioning on `srcId % N` after **degree-aware skew handling** (broadcast the top-100 supernodes and process them separately).
-- **NVIDIA cuGraph** for vertex-cut on a single multi-GPU node — handles 1B-edge graphs comfortably on a single 4×GPU machine; integrates with Databricks GPU runtimes.
 
-**Streaming partitioners** like **LDG** (Stanton & Kliot, KDD 2012) and **HDRF** (Petroni et al., CIKM 2015) are useful when the graph arrives as an edge stream from Lakeflow — partition assignments are computed online with no upfront global view, with locality only **~5% worse than offline METIS**.
+- **GraphFrames** on Spark — edge-cut by default; for very skewed graphs the `aggregateMessages` Pregel API can be used with custom partitioning on `srcId % N` after explicit degree-aware skew handling (broadcasting the top supernodes and processing them separately).
+- **NVIDIA cuGraph** for vertex-cut on a single multi-GPU node — handles 1B-edge graphs on a single 4×GPU machine and integrates with Databricks GPU runtimes.
+
+**Streaming partitioners** such as **LDG** (Stanton & Kliot, KDD 2012) and **HDRF** (Petroni et al., CIKM 2015) are appropriate when edges arrive from Lakeflow as a stream — partition assignments are computed online with no global view and locality only **~5% worse than offline METIS**.
 
 #### Strategy 3 — Sample rather than enumerate
 
-For GNN training and inference on giant graphs, **neighbourhood sampling** is the dominant technique. Four canonical methods, in order of bank-deployment maturity:
+For GNN training and inference on large graphs, **neighbourhood sampling** is the dominant technique. The four canonical methods, ordered by maturity in production deployments:
 
 | Method | Paper | What it does | Trade-off |
 |---|---|---|---|
-| **GraphSAGE neighbour sampling** | Hamilton et al., NeurIPS 2017 | At each layer, sample a fixed `k` neighbours per node | Simple, scales linearly with number of nodes. Used in DNB Norway production. |
-| **FastGCN** | Chen et al., ICLR 2018 | Importance-sample nodes per layer (not per node) | Faster training; some variance penalty |
-| **ClusterGCN** | Chiang et al., KDD 2019 | METIS-partition the graph, train on one cluster per mini-batch | Memory-efficient; loses some inter-cluster edges. Strong empirical performance on benchmarks. |
-| **GraphSAINT** | Zeng et al., ICLR 2020 | Subgraph-sample whole subgraphs each mini-batch (with bias correction) | Best published accuracy / speed trade-off at the time |
+| **GraphSAGE neighbour sampling** | Hamilton et al., NeurIPS 2017 | At each layer, sample a fixed `k` neighbours per node | Simple, scales linearly with number of nodes; used in DNB Norway production |
+| **FastGCN** | Chen et al., ICLR 2018 | Importance-sample nodes per layer rather than per node | Faster training; small variance penalty |
+| **ClusterGCN** | Chiang et al., KDD 2019 | METIS-partition the graph and train on one cluster per mini-batch | Memory-efficient; loses some inter-cluster edges; strong empirical performance |
+| **GraphSAINT** | Zeng et al., ICLR 2020 | Subgraph-sample whole subgraphs each mini-batch, with bias correction | Best published accuracy / speed trade-off at the time |
 
-For **classical graph features** (not GNNs), the equivalent is **personalised PageRank from a seed set**: don't compute global PageRank, compute Personalised PageRank seeded at HR-03 confirmed mules — the result is a *proximity-to-known-mule* score per account, computed via the **local push algorithm** (Andersen, Chung & Lang, FOCS 2006) in roughly `O(1/ε)` work *independent of graph size*. This is the single most impactful approximate-algorithm idea for mule detection: you only ever need the part of the graph that is reachable from known mules.
+For **classical graph features** (non-GNN), the equivalent insight is **Personalised PageRank from a seed set**: rather than computing global PageRank, compute Personalised PageRank seeded at the HR-03 confirmed mules. The result is a *proximity-to-known-mule* score per account, produced via the **local push algorithm** (Andersen, Chung & Lang, FOCS 2006) in `O(1/ε)` work *independent of graph size*. This is the highest-impact approximate-algorithm idea for mule detection: only the part of the graph reachable from known mules ever needs to be touched.
 
 #### Strategy 4 — Use approximate algorithms with provable error bounds
 
 Exact graph algorithms are wasteful when a 1–5% error is operationally invisible:
 
-- **Approximate PageRank** — push algorithm (Andersen et al. 2006); Monte Carlo PageRank (Bahmani et al. VLDB 2011) — `O(n log n)` work for ε-approximate ranks.
-- **HyperLogLog** for cardinality of neighbours / unique counterparties — `O(1)` memory per node for ≤2% error. Already a first-class function in Spark SQL (`approx_count_distinct`).
-- **MinHash / LSH** for Jaccard similarity between account neighbourhoods — detects "two accounts that transact with nearly the same set of counterparties" (a strong shared-controller signal) without `O(n²)` pairwise comparisons.
-- **HyperBall** (Boldi, Rosa & Vigna, 2011) for approximate closeness / harmonic centrality — orders of magnitude faster than exact.
-- **Local clustering / Nibble** (Spielman & Teng, STOC 2004) — find the community around a seed node in time proportional to the *community* size, not the graph size. The cluster around an HR-03 node is exactly the mule ring.
+- **Approximate PageRank** — push algorithm (Andersen et al. 2006); Monte Carlo PageRank (Bahmani et al., VLDB 2011) — `O(n log n)` work for ε-approximate ranks.
+- **HyperLogLog** for cardinality of neighbours and unique counterparties — `O(1)` memory per node for ≤2% error; available as a first-class function in Spark SQL (`approx_count_distinct`).
+- **MinHash / LSH** for Jaccard similarity between account neighbourhoods — surfaces "two accounts transacting with nearly the same set of counterparties" (a strong shared-controller signal) without `O(n²)` pairwise comparisons.
+- **HyperBall** (Boldi, Rosa & Vigna, 2011) for approximate closeness and harmonic centrality — orders of magnitude faster than exact computation.
+- **Local clustering / Nibble** (Spielman & Teng, STOC 2004) — find the community around a seed node in time proportional to the *community* size rather than the graph size. The cluster around an HR-03 node is, by construction, the mule ring.
 
-These belong in a **two-tier compute pattern**: approximate everywhere by default, exact computation only on the candidate set surfaced by the approximate pass.
+The recommended pattern is a **two-tier compute approach**: approximate everywhere by default, with exact computation reserved for the candidate set surfaced by the approximate pass.
 
 #### Strategy 5 — Compute incrementally, not from scratch
 
-The single biggest waste in many production stacks is recomputing all graph features daily. Mules change slowly; the graph is mostly stable; most nodes' features don't move day-to-day. Three incremental patterns:
+A common operational inefficiency is recomputing all graph features daily. Mule networks change slowly; the graph is largely stable day-to-day. Three incremental patterns are well established:
 
-- **Snapshot + delta**: compute the full feature set weekly, then maintain it incrementally with edge insertions/deletions. **Dynamic PageRank** algorithms (Bahmani, Chowdhury, Goel, VLDB 2010) update ranks in time proportional to the changed subgraph, not the whole graph.
-- **Streaming community detection**: incremental Louvain (Cordeiro et al., 2016) keeps community labels stable across updates — important because investigators rely on consistent ring identifiers.
-- **Event-driven recompute**: subscribe to "interesting" graph events (a new edge to/from an HR-03 node, a new shared-device link) and recompute features *only* for the affected egonet (~2-hop). This is the Lakeflow + Streaming Table pattern.
+- **Snapshot plus delta** — compute the full feature set weekly and maintain it incrementally with edge insertions and deletions. **Dynamic PageRank** algorithms (Bahmani, Chowdhury, Goel, VLDB 2010) update ranks in time proportional to the changed subgraph rather than the whole graph.
+- **Streaming community detection** — incremental Louvain (Cordeiro et al., 2016) keeps community labels stable across updates, which matters because investigators rely on consistent ring identifiers across days.
+- **Event-driven recompute** — subscribe to graph events of interest (a new edge to or from an HR-03 node, a new shared-device link) and recompute features only for the affected ego-network (~2 hops). This is the Lakeflow + Streaming Tables pattern.
 
-For Thai banks specifically, **the daily fresh-compute target shrinks from "500M nodes" to "the few percent of nodes that changed materially since yesterday"** — typically <5M nodes.
+In practice, the daily fresh-compute target shrinks from "500M nodes" to "the few percent of nodes that have changed materially since yesterday" — typically fewer than 5M nodes.
 
 #### Strategy 6 — Use the right hardware
 
-Compute density matters at this scale:
+Compute density is decisive at this scale:
 
-- **GPU acceleration via NVIDIA cuGraph / RAPIDS** — Louvain on **1B-edge graphs in <60 seconds** on a single 8×GPU node (published cuGraph benchmarks). PageRank, BFS, connected components similarly accelerated by **50–500×** vs CPU-only Spark.
-- **Photon / serverless Spark** for the wide-scan operations (edge counting, degree calculation, group-bys) — Photon's vectorised execution is 3–10× faster than vanilla Spark on the same compute budget.
-- **DGL-distributed / PyTorch-Geometric distributed** for multi-GPU GNN training — DGL's distributed trainer scales near-linearly to ≥8 nodes.
+- **GPU acceleration via NVIDIA cuGraph / RAPIDS** — Louvain on **1B-edge graphs in under 60 seconds** on a single 8×GPU node (published cuGraph benchmarks). PageRank, BFS and connected components are similarly accelerated by **50–500×** versus CPU-only Spark.
+- **Photon / serverless Spark** for the wide-scan operations (edge counting, degree calculation, group-bys). Photon's vectorised execution is 3–10× faster than vanilla Spark on the same compute budget.
+- **DGL-distributed / PyTorch-Geometric distributed** for multi-GPU GNN training. The DGL distributed trainer scales near-linearly to ≥8 nodes.
 
-On Databricks the practical recipe is: **Spark/Photon for ingestion + pruning + classical aggregations; GPU cluster with cuGraph for the heavy global algorithms (PageRank, Louvain, k-core, connected components); GPU GNN nodes for model training/inference.**
+The deployable Databricks recipe is: **Spark / Photon for ingestion, pruning and classical aggregations; a GPU cluster with cuGraph for the heavy global algorithms (PageRank, Louvain, k-core, connected components); GPU nodes for GNN training and inference.**
 
 #### Strategy 7 — Cache aggressively in a feature store
 
 Once a graph feature is computed, it should not be recomputed for read traffic. Two layers:
 
 1. **Databricks Feature Store** (Delta-backed) — the system of record for per-account graph features (PageRank, community ID, two-hop ratio, k-core number, shared-device count). Versioned, lineage-tracked, joinable in MLflow training.
-2. **Lakebase** (managed Postgres) — the hot serving copy synced from Feature Store via reverse-ETL synced tables. Read latency **<50 ms** for the Databricks App / investigator workflow.
+2. **Lakebase** (managed PostgreSQL) — the hot serving copy synced from the Feature Store via reverse-ETL synced tables. Read latency **<50 ms** for the Databricks App and investigator workflow.
 
-This decouples **producer cadence** (heavy graph compute on a daily/hourly schedule on GPU) from **consumer latency** (sub-second reads from Lakebase during investigator drill-down). It is the same two-tier OLAP/OLTP pattern that Quantexa, Feedzai and Featurespace each implement internally; the Lakehouse exposes it as a first-class platform capability.
+This decouples **producer cadence** (heavy graph compute on a daily or hourly GPU schedule) from **consumer latency** (sub-second reads from Lakebase during investigator drill-down). It is the same OLAP/OLTP pattern implemented internally by leading graph-analytics and fraud-detection vendors; the Lakehouse exposes it as a first-class platform capability rather than as a proprietary implementation.
 
-#### Putting it together for a 500M-node Thai-bank graph
+#### Putting it together for a 500M-node bank graph
 
-The deployable recipe, in roughly the order a customer should adopt it:
+The deployable recipe, in roughly the order it would be adopted:
 
-1. **Ingest the full edge stream** into Bronze Delta with Lakeflow. Don't filter at ingest — keep the raw record for audit.
+1. **Ingest the full edge stream** into Bronze Delta with Lakeflow. Do not filter at ingest — retain the raw record for audit.
 2. **Build the analytical graph in Silver** with the Strategy-1 pruning stack (degree, k-core, dormancy, supernode masking). Typical reduction: **500M → ~100M nodes**.
-3. **Compute classical features** (degree, in/out ratio, two-hop ratio, HyperLogLog distinct counterparties, MinHash sketches) in Photon SQL — these are the cheapest and account for most of the lift via the Graph Feature Preprocessor pattern (**+46% F1** on downstream XGBoost).
-4. **Run global algorithms on GPU**: Louvain via cuGraph for community assignment; approximate PageRank for centrality; connected components for ring discovery. Weekly snapshot, daily incremental updates.
-5. **Run Personalised PageRank seeded at HR-03 nodes** via the push algorithm — proximity-to-known-mule per account.
-6. **Train a GNN** (GraphSAGE with neighbour sampling, or ClusterGCN if the cluster structure is informative) for the residual signal that classical features miss. Use the pruned analytical graph, not the raw 500M-node one.
-7. **Materialise the per-account feature vector** into the Feature Store, sync to Lakebase. The investigator app reads from Lakebase with <50 ms latency; the training pipeline reads from the Feature Store with point-in-time correctness.
-8. **Drive recomputation incrementally** — Lakeflow streaming tables propagate new edges into affected egonets only; nightly batch reconciles drift.
+3. **Compute classical features** (degree, in/out ratio, two-hop ratio, HyperLogLog distinct counterparties, MinHash sketches) in Photon SQL. These are the cheapest features and provide most of the lift via the Graph Feature Preprocessor pattern (**+46% F1** on downstream XGBoost).
+4. **Run global algorithms on GPU** — Louvain via cuGraph for community assignment; approximate PageRank for centrality; connected components for ring discovery. Weekly snapshot, daily incremental updates.
+5. **Run Personalised PageRank seeded at HR-03 nodes** via the local push algorithm — a proximity-to-known-mule score per account.
+6. **Train a GNN** (GraphSAGE with neighbour sampling, or ClusterGCN where cluster structure is informative) for the residual signal that classical features do not capture. Use the pruned analytical graph rather than the raw 500M-node version.
+7. **Materialise the per-account feature vector** into the Feature Store and sync to Lakebase. The investigator app reads from Lakebase at <50 ms latency; the training pipeline reads from the Feature Store with point-in-time correctness.
+8. **Drive recomputation incrementally** — Lakeflow streaming tables propagate new edges into affected ego-networks only; nightly batch reconciles drift.
 
-This recipe is consistent with the published practice at HSBC + Quantexa (graph entity resolution + classical features dominate; GNN is the residual), DNB Norway's heterogeneous GNN paper (GraphSAGE neighbour-sampling), and the cuGraph reference deployments at NVIDIA fraud-detection customers. It is what makes the "500M nodes" question a routine engineering exercise rather than a research problem.
+This recipe is consistent with the published practice at HSBC + Quantexa (graph entity resolution + classical features dominate, GNN as residual), with the DNB Norway heterogeneous-GNN paper (GraphSAGE neighbour-sampling), and with cuGraph reference deployments at NVIDIA fraud-detection customers. With this recipe in place, the "500M nodes" question becomes a routine engineering exercise rather than a research problem.
 
-#### References (added to §12)
+#### Algorithm and platform references
 
-- Karypis & Kumar, "METIS: A Software Package for Partitioning Unstructured Graphs", 1998.
-- Gonzalez et al., "PowerGraph: Distributed Graph-Parallel Computation on Natural Graphs", OSDI 2012.
-- Andersen, Chung & Lang, "Local Graph Partitioning using PageRank Vectors", FOCS 2006.
-- Bahmani, Chakrabarti & Xin, "Fast Personalized PageRank on MapReduce", SIGMOD 2011.
-- Bahmani, Chowdhury & Goel, "Fast Incremental and Personalized PageRank", VLDB 2010.
-- Spielman & Teng, "Nearly-linear time algorithms for graph partitioning, graph sparsification, and solving linear systems", STOC 2004.
-- Hamilton, Ying & Leskovec, "Inductive Representation Learning on Large Graphs (GraphSAGE)", NeurIPS 2017.
-- Chiang et al., "Cluster-GCN: An Efficient Algorithm for Training Deep and Large GCNs", KDD 2019.
-- Zeng et al., "GraphSAINT: Graph Sampling Based Inductive Learning Method", ICLR 2020.
-- Batagelj & Zaveršnik, "An O(m) Algorithm for Cores Decomposition of Networks", 2003.
-- Boldi, Rosa & Vigna, "HyperANF: Approximating the Neighbourhood Function of Very Large Graphs", 2011.
+- Karypis & Kumar, *METIS: A Software Package for Partitioning Unstructured Graphs*, 1998.
+- Gonzalez et al., *PowerGraph: Distributed Graph-Parallel Computation on Natural Graphs*, OSDI 2012.
+- Andersen, Chung & Lang, *Local Graph Partitioning using PageRank Vectors*, FOCS 2006.
+- Bahmani, Chakrabarti & Xin, *Fast Personalized PageRank on MapReduce*, SIGMOD 2011.
+- Bahmani, Chowdhury & Goel, *Fast Incremental and Personalized PageRank*, VLDB 2010.
+- Spielman & Teng, *Nearly-linear time algorithms for graph partitioning, graph sparsification, and solving linear systems*, STOC 2004.
+- Hamilton, Ying & Leskovec, *Inductive Representation Learning on Large Graphs (GraphSAGE)*, NeurIPS 2017.
+- Chiang et al., *Cluster-GCN: An Efficient Algorithm for Training Deep and Large GCNs*, KDD 2019.
+- Zeng et al., *GraphSAINT: Graph Sampling Based Inductive Learning Method*, ICLR 2020.
+- Batagelj & Zaveršnik, *An O(m) Algorithm for Cores Decomposition of Networks*, 2003.
+- Boldi, Rosa & Vigna, *HyperANF: Approximating the Neighbourhood Function of Very Large Graphs*, 2011.
 - NVIDIA cuGraph documentation and benchmarks: <https://docs.rapids.ai/api/cugraph/stable/>.
-- GraphFrames (Databricks-maintained): <https://graphframes.io/>.
+- GraphFrames: <https://graphframes.io/>.
 
 ---
 
-## 9. Cross-cutting design choices that the literature is unanimous on
+## 9. Cross-cutting design choices on which the literature is unanimous
 
-1. **Rolling-window features** (1-day, 7-day, 30-day) are universally used; mule activation timescales are bursty.
+1. **Rolling-window features** (1-day, 7-day, 30-day) are universally used because mule activation timescales are bursty.
 2. **Ratio features** (in/out, balance/volume) outperform raw amounts.
-3. **Entropy of counterparties** is a strong tier-2/3 signal — low entropy = repetitive structuring.
-4. **Calibrated probabilities** + capacity-tuned thresholds beat hard-coded score cutoffs (Precision@Capacity).
-5. **Ensembling rules + ML + graph** beats any single model — every named-bank deployment in this document does this.
-6. **Investigator-in-the-loop / active learning** is now standard. The deck's "active learning queue" is consistent with the BioCatch Link, Quantexa case, and Featurespace ARIC investigator workflows.
-7. **Cross-bank consortium signal** (TMNL, COSMIC, TRACE, 314(b), Fintel Alliance, BOT CFR) is what unlocks ring-level detection; any single-bank model is structurally blind.
+3. **Counterparty entropy** is a strong Tier-2/Tier-3 signal — low entropy indicates repetitive structuring.
+4. **Calibrated probabilities** combined with capacity-tuned thresholds outperform hard-coded score cut-offs (the *Precision@Capacity* objective).
+5. **Ensembling rules, ML and graph signals** outperforms any single model. Every named-bank deployment cited in this document follows this principle.
+6. **Investigator-in-the-loop / active learning** is now standard practice. Feedback loops from confirmed and rejected alerts feed the next training round.
+7. **Cross-bank consortium signal** (TMNL, COSMIC, TRACE, FinCEN 314(b), AUSTRAC Fintel Alliance, BOT CFR) is what unlocks ring-level detection; any single-bank model is structurally blind to cross-institutional patterns.
 
 ---
 
@@ -700,40 +705,40 @@ This recipe is consistent with the published practice at HSBC + Quantexa (graph 
 
 | Bank / regulator | Tech stack | Headline number | Source |
 |---|---|---|---|
-| HSBC + Quantexa | Entity resolution + graph | 1M FP auto-closed; 83% alert reduction; 4× criminals; -60% FP | Quantexa case study; ChiefAIOfficer summary |
-| Danske Bank + Quantexa | Graph + ML ensembles | -50–60% FP, +60% fraud detection | Quantexa; Best Practice AI |
-| Danske Bank + Teradata Think Big | ML ensembles + DL (TensorFlow) | 20–30% FP cut; double-digit DL gains in test | Teradata case |
-| NatWest + Featurespace ARIC | Adaptive Behavioural Analytics + graph | +135% scam detection; -75% scam FP within 24 h | Featurespace |
-| Mastercard CFR (TSB, NatWest, Lloyds, Halifax, Monzo, BoS, AIB) | Graph + ML over Faster Payments | TSB +20% fraud detection in 4 months; ~£100M/yr UK projected | Mastercard, FCA, TSB |
+| HSBC + Quantexa | Entity resolution + graph | 1M FP auto-closed; 83% alert reduction; 4× criminals identified; -60% FP | Quantexa case study; industry summaries |
+| Danske Bank + Quantexa | Graph + ML ensembles | -50–60% FP; +60% fraud detection | Quantexa; Best Practice AI |
+| Danske Bank + Teradata Think Big | ML ensembles + DL (TensorFlow) | 20–30% FP reduction; double-digit DL gains in pre-prod | Teradata case |
+| NatWest + Featurespace ARIC | Adaptive behavioural analytics + graph | +135% scam detection; -75% scam FP within 24 h | Featurespace |
+| Mastercard CFR (TSB, NatWest, Lloyds, Halifax, Monzo, BoS, AIB) | Graph + ML over Faster Payments | TSB +20% fraud detection in 4 months; ~£100M/yr UK projection | Mastercard; FCA; TSB |
 | Mastercard TRACE UK | Network-level AML | 21 banks; ~90% of UK FPS; thousands of mules; hundreds new monthly | Mastercard |
-| Mastercard TRACE APAC (Philippines / BancNet) | Network-level AML | 36 banks onboarded Feb 2025 | Mastercard, PRNewswire |
+| Mastercard TRACE APAC (Philippines / BancNet) | Network-level AML | 36 banks onboarded Feb 2025 | Mastercard; PRNewswire |
 | RBI MuleHunter.AI (India) | ML, 19 behaviour patterns | 23 banks adopted by Dec 2025 | RBIH; medianama RTI |
-| OCBC + ThetaRay | Unsupervised anomaly | -35% non-actionable alerts; +4× detection accuracy | OCBC, ThetaRay |
-| UOB Singapore | AI on TM + name screening | 96% TP high-priority; -50% FP TM; -70% FP individual screening | UOB press release |
+| OCBC + ThetaRay | Unsupervised anomaly | -35% non-actionable alerts; +4× detection accuracy | OCBC; ThetaRay |
+| UOB Singapore | AI on transaction monitoring + name screening | 96% TP high-priority; -50% FP TM; -70% FP individual screening | UOB press release |
 | DBS Singapore | Real-time scoring | <10 ms decision; 15% of customer scam funds saved | DBS |
-| BioCatch (vendor, 257 FIs) | Behavioural biometrics | ~2M – 2.3M mule accounts identified in 2024 | BioCatch |
+| BioCatch (vendor, 257 FIs) | Behavioural biometrics | ~2M–2.3M mule accounts identified in 2024 | BioCatch |
 | Stripe Radar | GBT + neural ensembles | +20% YoY ML; -30% fraud (eligible); -42% SEPA / -20% ACH fraud | Stripe |
-| Itaú + FICO Falcon | Supervised + cloud | -US$20M/month fraud loss avoided; +20% CNP detection | FICO |
+| Itaú + FICO Falcon | Supervised + cloud | -US$20M/month fraud loss; +20% CNP detection | FICO |
 | TMNL Netherlands | Cross-bank graph TM | Joint monitoring surfaces signals invisible to single banks | TMNL |
 | BOT + Thai Bankers Assoc CFR | Rules + cross-bank registry | >1.8M mule accounts suspended | Bangkok Post; Thailand Business News |
 
-(All vendor-reported figures should be verified against the original primary source before customer-facing use; this table is a curated reading list, not an audit.)
+Vendor-reported figures should be cross-checked against the primary source listed in §12 before being relied on in formal documentation.
 
 ---
 
 ## 11. Recommended target architecture for a Thai bank
 
-The literature converges on a single design — and it is the same one the reference ASEAN deck advocates:
+The literature, the regulator guidance and the publicly disclosed bank deployments converge on a single architectural pattern:
 
-1. **Data foundation** — unify KYC + payments + sessions + device + BOT HR-03 / AMLO labels in a single Lakehouse with Unity Catalog governance.
-2. **Tier 1 rules** — codify FATF, BOT and internal typologies as guardrails, not as the detector. Use them to generate **weak labels** for tier 3.
-3. **Tier 2 unsupervised** — Isolation Forest / autoencoder per-account scoring for the "not on any list yet" tail.
-4. **Tier 3 supervised** — XGBoost / LightGBM trained with PU-learning on HR-03 + confirmed-fraud as positives. Calibrated to Precision@Capacity.
-5. **Tier 4 graph** — graph-feature preprocessor (community ID, PageRank, two-hop ratio, k-core, triangle counts) feeding tier 3, plus a GNN (PNA / Multi-GIN / TGN) for ring-level scoring.
-6. **Tier 5 sequence + biometrics** — LSTM / TGN over transaction sequences, plus a behavioural-biometrics partner (BioCatch / NuData / Feedzai BB) for the exploited-mule tail.
-7. **Calibration + decisioning** — Platt / isotonic calibration; thresholds tuned to investigator review capacity; hybrid scoring of rules + ML; explainable case packages for SAR.
-8. **Active learning loop** — investigator confirmations feed back into PU-learning labels and graph supervision.
-9. **Cross-bank signal** — feed into / consume from the BOT CFR; track Mastercard TRACE-APAC as it expands beyond Philippines.
+1. **Unified data foundation** — KYC, payments, sessions, device telemetry and BOT HR-03 / AMLO labels in a single Lakehouse governed by Unity Catalog.
+2. **Tier 1 rules** — FATF, BOT and internal typologies codified in DLT / SQL as guardrails (not as the detector); also used to generate weak labels for Tier 3.
+3. **Tier 2 unsupervised** — Isolation Forest / autoencoder scoring for the accounts not yet on any confirmed list.
+4. **Tier 3 supervised** — XGBoost or LightGBM trained with PU-learning on HR-03 plus confirmed-fraud positives; outputs calibrated to *Precision@Capacity*.
+5. **Tier 4 graph** — graph-feature pre-processor (community ID, PageRank, two-hop ratio, k-core, triangle counts) feeding Tier 3, plus a GNN (PNA / Multi-GIN / TGN) for ring-level scoring.
+6. **Tier 5 sequence and biometrics** — LSTM / TGN over transaction sequences plus a behavioural-biometrics partner (e.g., BioCatch, NuData, Feedzai BB) for the exploited-mule tail.
+7. **Calibration and decisioning** — Platt / isotonic calibration; thresholds tuned to investigator review capacity; hybrid scoring across rules + ML + graph; explainable case packages for SAR.
+8. **Active-learning loop** — investigator confirmations feed back into PU-learning labels and graph supervision.
+9. **Cross-bank signal** — bidirectional integration with the BOT CFR; track Mastercard TRACE APAC as it expands beyond the Philippines.
 
 ---
 
@@ -754,7 +759,7 @@ The literature converges on a single design — and it is the same one the refer
 - UK Government, "Money mule and financial exploitation action plan 2024": <https://assets.publishing.service.gov.uk/media/65e0a18f2f2b3b001c7cd7b7/Money+Mule+and+Financial+Exploitation+Action+Plan+.pdf>
 - Europol, EMMA results pages: <https://www.europol.europa.eu/media-press/newsroom/news/european-money-mule-action-leads-to-1-803-arrests>, <https://www.europol.europa.eu/media-press/newsroom/news/paper-trail-ends-in-jail-time-for-1-013-money-mules>, <https://www.europol.europa.eu/media-press/newsroom/news/422-arrested-and-4%20031-money-mules-identified-in-global-crackdown-money-laundering>, <https://www.europol.europa.eu/media-press/newsroom/news/228-arrests-and-over-3800-money-mules-identified-in-global-action-against-money-laundering>, <https://www.europol.europa.eu/media-press/newsroom/news/178-arrests-in-successful-hit-against-money-muling>
 - MAS, "COSMIC Platform launch": <https://www.mas.gov.sg/news/media-releases/2024/mas-launches-cosmic-platform>; COSMIC overview: <https://www.mas.gov.sg/regulation/anti-money-laundering/cosmic>
-- AUSTRAC, Fintel Alliance: <https://www.austrac.gov.au/partners/fintel-alliance>; Fintel Alliance Annual Report 2023–24: <https://www.austrac.gov.au/sites/default/files/2024-11/Fintel%20Alliance%20Annual%20Report%20Extract%202023-24.pdf>; Foreign-student mule guidance: <https://www.austrac.gov.au/news-and-media/media-release/new-guidance-released-help-combat-use-foreign-students-money-mules>
+- AUSTRAC, Fintel Alliance: <https://www.austrac.gov.au/partners/fintel-alliance>; Fintel Alliance Annual Report 2023–24: <https://www.austrac.gov.au/sites/default/files/2024-11/Fintel%20Alliance%20Annual%20Report%20Extract%202023-24.pdf>; foreign-student mule guidance: <https://www.austrac.gov.au/news-and-media/media-release/new-guidance-released-help-combat-use-foreign-students-money-mules>
 - TMNL: <https://tmnl.nl/en/article/transaction-monitoring-netherlands-adapts-its-working-method-to-new-european-legislation/>
 - FinCEN Section 314(b): <https://www.fincen.gov/section-314b>; Fact Sheet (PDF): <https://www.fincen.gov/sites/default/files/shared/314bfactsheet.pdf>
 - FATF, *Professional Money Laundering* (July 2018): <https://www.fatf-gafi.org/content/dam/fatf/documents/Professional-Money-Laundering.pdf>
@@ -766,7 +771,7 @@ The literature converges on a single design — and it is the same one the refer
 - Quantexa, Danske Bank case study: <https://www.quantexa.com/resources/danske-bank/>
 - Best Practice AI, "Danske Bank increases payment fraud detection by 60% and reduces false positives by 50%": <https://www.bestpractice.ai/ai-case-study-best-practice/danish_danske_bank_increases_payment_fraud_detection_by_60%25_and_reduces_false_positives_by_50%25_with_machine_learning>
 - Teradata, "Danske Bank Saves Millions Fighting Fraud With Deep Learning and AI" (PDF): <https://assets.teradata.com/resourceCenter/downloads/CaseStudies/CaseStudy_EB9821_Danske_Bank_Saves_Millions_Fighting_Fraud_With_Deep_Learning_and_AI.pdf>
-- Featurespace, NatWest scam-detection +135% / FP −75%: <https://www.featurespace.com/newsroom/natwest-improves-scam-detection-rate-by-135-using-featurespaces-technology>; ARIC overview: <https://www.featurespace.com/aric-risk-hub>
+- Featurespace, NatWest scam detection +135% / FP -75%: <https://www.featurespace.com/newsroom/natwest-improves-scam-detection-rate-by-135-using-featurespaces-technology>; ARIC overview: <https://www.featurespace.com/aric-risk-hub>
 - Mastercard, Consumer Fraud Risk launch (UK, 2023): <https://newsroom.mastercard.com/news/press/2023/july/mastercard-leverages-its-ai-capabilities-to-fight-real-time-payment-scams/>; "Mastercard transforms the fight against scams" (2024): <https://www.mastercard.com/news/press/2024/april/mastercard-transforms-the-fight-against-scams-with-latest-ai-tech/>
 - Mastercard, TRACE Asia Pacific launch (Feb 2025): <https://www.mastercard.com/us/en/news-and-trends/press/2025/february/mastercard-launches-anti-money-laundering-service-trace-to-combat-financial-crime-in-asia-pacific.html>; PRNewswire: <https://www.prnewswire.com/apac/news-releases/mastercard-launches-anti-money-laundering-service-trace-to-combat-financial-crime-in-asia-pacific-302375041.html>
 - The Financial Technology Report, "UK Banks Save Millions with Mastercard's AI-Powered Fraud Detection Solution": <https://thefinancialtechnologyreport.com/uk-banks-save-millions-with-mastercards-ai-powered-fraud-detection-solution/>
@@ -781,7 +786,7 @@ The literature converges on a single design — and it is the same one the refer
 
 - Hajek et al., "Fraud Detection in Mobile Payment Systems using an XGBoost-based Framework", *Information Systems Frontiers* / PMC: <https://pmc.ncbi.nlm.nih.gov/articles/PMC9560719/>; <https://link.springer.com/article/10.1007/s10796-022-10346-6>
 - "Feature generation and contribution comparison for electronic fraud detection", *Scientific Reports*, Nature 2022: <https://www.nature.com/articles/s41598-022-22130-2>
-- "Automatic suppression of false positive alerts in AML systems using machine learning", *J. Supercomputing* 2023: <https://link.springer.com/article/10.1007/s11227-023-05708-z>
+- "Automatic suppression of false positive alerts in AML systems using machine learning", *Journal of Supercomputing*, 2023: <https://link.springer.com/article/10.1007/s11227-023-05708-z>
 - "Fighting Money Laundering with Statistics and Machine Learning", arXiv 2201.04207 / IJSRED: <https://arxiv.org/pdf/2201.04207>; <https://ijsred.com/volume8/issue3/IJSRED-V8I3P249.pdf>
 - Altman et al., IBM, "Realistic Synthetic Financial Transactions for AML Models", NeurIPS 2023: <https://proceedings.neurips.cc/paper_files/paper/2023/file/5f38404edff6f3f642d6fa5892479c42-Paper-Datasets_and_Benchmarks.pdf>; arXiv 2306.16424: <https://arxiv.org/pdf/2306.16424>; AMLworld data on GitHub: <https://github.com/IBM/AML-Data>
 - "Provably Powerful GNNs for Directed Multigraphs" (Multi-PNA / Multi-GIN), arXiv 2306.11586: <https://arxiv.org/html/2306.11586v3>
@@ -806,4 +811,4 @@ The literature converges on a single design — and it is the same one the refer
 
 ---
 
-*Document generated 2026-05-04. Vendor-reported figures should be re-verified against primary sources before being relied on for customer-facing claims.*
+*Document last revised May 2026. Vendor-published figures should be cross-checked against the primary source before being cited in formal materials.*
