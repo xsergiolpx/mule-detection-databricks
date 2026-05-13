@@ -28,19 +28,18 @@ Sources for this section are listed at the end (BOT, Cifas, Europol, MAS, TMNL, 
 
 The reference ASEAN deck frames mule detection as a five-tier ladder of cumulative detection power versus implementation difficulty:
 
-```
-                                         ▲ cumulative detection power
-                                         │
-             Behavioral biometrics  ─────┤
-                  Autoencoders / DL ─────┤
-        MuleTrack / LSTM sequences ─────┤
-        Graph ML / GNN / typologies ─────┤
-   Mule-type-specific ensembles    ─────┤
-       Supervised ML (XGBoost)    ─────┤
-        Unsupervised ML (IF/AE)   ─────┤
-        Business-logic rules      ─────┤
-                                         └────────────────► implementation difficulty
-```
+As detection power grows up the ladder, so does implementation effort:
+
+| Level | Maturity tier | Implementation effort | Cumulative detection power |
+|---|---|---|---|
+| 1 | Business-logic rules | `█░░░░░░░░░` | `█░░░░░░░░░` |
+| 2 | Unsupervised ML (Isolation Forest, autoencoders) | `██░░░░░░░░` | `███░░░░░░░` |
+| 3 | Supervised ML (XGBoost + PU-learning) | `███░░░░░░░` | `█████░░░░░` |
+| 4 | Mule-type-specific ensembles | `████░░░░░░` | `██████░░░░` |
+| 5 | Graph ML / GNN / typologies | `██████░░░░` | `███████░░░` |
+| 6 | MuleTrack / sequence models | `███████░░░` | `████████░░` |
+| 7 | Autoencoders / deep learning | `████████░░` | `█████████░` |
+| 8 | Behavioral biometrics | `██████████` | `██████████` |
 
 Each tier addresses a failure mode of the previous one:
 
