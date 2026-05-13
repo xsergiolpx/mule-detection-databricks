@@ -6,6 +6,31 @@
 
 ---
 
+## Table of contents
+
+1. [Why mule detection has become a Tier-1 problem](#1-why-mule-detection-has-become-a-tier-1-problem)
+2. [The maturity ladder](#2-the-maturity-ladder)
+3. [Tier 1 — Business-logic rules and typologies](#3-tier-1--business-logic-rules-and-typologies)
+4. [Tier 2 — Unsupervised machine learning and anomaly detection](#4-tier-2--unsupervised-machine-learning-and-anomaly-detection)
+5. [Tier 3 — Supervised ML, especially gradient boosting (XGBoost) and PU-learning](#5-tier-3--supervised-ml-especially-gradient-boosting-xgboost-and-pu-learning)
+6. [Tier 4 — Graph and graph-neural-network methods](#6-tier-4--graph-and-graph-neural-network-methods)
+7. [Tier 5 — Behavioural biometrics, sequence and deep-learning models](#7-tier-5--behavioural-biometrics-sequence-and-deep-learning-models)
+8. [Technical deep-dives](#8-technical-deep-dives)
+   - 8.1 [How PU-learning works (and why HR-03 calls for it)](#81-how-pu-learning-works-and-why-hr-03-calls-for-it)
+   - 8.2 [What a graph neural network is (and why graphs outperform trees on rings)](#82-what-a-graph-neural-network-is-and-why-graphs-outperform-trees-on-rings)
+   - 8.3 [What MuleTrack is (and how it fits the maturity ladder)](#83-what-muletrack-is-and-how-it-fits-the-maturity-ladder)
+   - 8.4 [The incomplete-graph problem: how graph detection works when most mule activity crosses institutional boundaries](#84-the-incomplete-graph-problem-how-graph-detection-works-when-most-mule-activity-crosses-institutional-boundaries)
+   - 8.5 [Data sources and where they typically reside in a Thai bank](#85-data-sources-and-where-they-typically-reside-in-a-thai-bank)
+   - 8.6 [The investigator experience — current state and a Lakehouse-native target state](#86-the-investigator-experience--current-state-and-a-lakehouse-native-target-state)
+   - 8.7 [Evolving from a point-solution stack toward a unified platform](#87-evolving-from-a-point-solution-stack-toward-a-unified-platform)
+   - 8.8 [Scaling graph-feature computation at production volumes (the "500M-node" question)](#88-scaling-graph-feature-computation-at-production-volumes-the-500m-node-question)
+9. [Cross-cutting design choices on which the literature is unanimous](#9-cross-cutting-design-choices-on-which-the-literature-is-unanimous)
+10. [Comparator-bank summary table](#10-comparator-bank-summary-table)
+11. [Recommended target architecture for a Thai bank](#11-recommended-target-architecture-for-a-thai-bank)
+12. [Sources](#12-sources)
+
+---
+
 ## 1. Why mule detection has become a Tier-1 problem
 
 The mule account is the bottleneck of every modern scam. Authorised push payments (APP), call-centre scams, romance fraud, business-email-compromise, investment scams and crypto off-ramps all require a mule to receive and disperse funds before they can be cashed out. Disrupting the mule node therefore disproportionately reduces criminal yield, which is why regulators worldwide have shifted from prosecuting individual scams to systematically dismantling the mule layer.
