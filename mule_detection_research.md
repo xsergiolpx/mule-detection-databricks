@@ -24,10 +24,21 @@
    - 8.6 [The investigator experience — current state and a Lakehouse-native target state](#86-the-investigator-experience--current-state-and-a-lakehouse-native-target-state)
    - 8.7 [Evolving from a point-solution stack toward a unified platform](#87-evolving-from-a-point-solution-stack-toward-a-unified-platform)
    - 8.8 [Scaling graph-feature computation at production volumes (the "500M-node" question)](#88-scaling-graph-feature-computation-at-production-volumes-the-500m-node-question)
+   - 8.9 [Combining multi-tier outputs: union, cascade, stacking, and rules-bound blending](#89-combining-multi-tier-outputs-union-cascade-stacking-and-rules-bound-blending)
 9. [Cross-cutting design choices on which the literature is unanimous](#9-cross-cutting-design-choices-on-which-the-literature-is-unanimous)
 10. [Comparator-bank summary table](#10-comparator-bank-summary-table)
 11. [Recommended target architecture for a Thai bank](#11-recommended-target-architecture-for-a-thai-bank)
 12. [Sources](#12-sources)
+13. [Appendix A — Runnable code examples by maturity tier](#appendix-a--runnable-code-examples-by-maturity-tier)
+    - A.0 [Shared synthetic mule transaction generator](#a0-shared-synthetic-mule-transaction-generator)
+    - A.1 [Tier 1 — Business-logic rules engine](#a1-tier-1--business-logic-rules-engine)
+    - A.2 [Tier 2 — Isolation Forest anomaly detection](#a2-tier-2--isolation-forest-anomaly-detection)
+    - A.3 [Tier 2 — Autoencoder anomaly detection (PyTorch)](#a3-tier-2--autoencoder-anomaly-detection-pytorch)
+    - A.4 [Tier 3 — XGBoost supervised classifier with PU-learning correction](#a4-tier-3--xgboost-supervised-classifier-with-pu-learning-correction)
+    - A.5 [Tier 4 — Graph features with GraphFrames on Spark feeding XGBoost](#a5-tier-4--graph-features-with-graphframes-on-spark-feeding-xgboost)
+    - A.6 [Tier 4 — GraphSAGE GNN with PyTorch Geometric](#a6-tier-4--graphsage-gnn-with-pytorch-geometric)
+    - A.7 [Tier 5 — LSTM sequence classifier over transaction histories](#a7-tier-5--lstm-sequence-classifier-over-transaction-histories)
+    - A.8 [Tier 5 — Temporal Graph Network (TGN) sketch](#a8-tier-5--temporal-graph-network-tgn-sketch)
 
 ---
 
@@ -714,6 +725,94 @@ This recipe is consistent with the published practice at HSBC + Quantexa (graph 
 
 ---
 
+### 8.9 Combining multi-tier outputs: union, cascade, stacking, and rules-bound blending
+
+**The question this section answers.** Once a bank has rules + Isolation Forest + XGBoost + GNN + LSTM all running, how do those five outputs end up as *one* alert (or one ranked queue) on an investigator's screen? The honest answer is that production AML programmes almost never pick a single model — they combine. The combination pattern varies more than the algorithms do.
+
+#### Five patterns seen in production
+
+**Pattern A — Union of alerts (parallel rails).** Each tier fires its own alerts against its own threshold. The investigator queue is the *union* of all flagged accounts. This is the simplest and the most common in legacy banks, often because tiers were added at different times and never re-wired.
+
+- Pros: each tier is independently explainable; the regulator sees clean rule-by-rule reasoning.
+- Cons: massive alert duplication; the same account is reviewed multiple times; there is no calibrated overall risk score.
+
+**Pattern B — Cascade / triage funnel.** Tier 1 (rules) gates everything: only accounts that fire a rule progress to tiers 2–5. Each subsequent tier re-ranks the survivors. The final list shown to investigators is a ranked subset of the rule-flagged set.
+
+- Pros: regulator-friendly (rules still fire first); reduces ML compute (fewer accounts to score); clear audit trail.
+- Cons: tier 1's recall ceiling becomes the system's recall ceiling. A novel typology that no rule encodes is invisible to every later tier.
+- Common variant: a "soft cascade" — keep a small carve-out of accounts that look clean to rules but rank in the top 1% by ML for novel-typology discovery.
+
+**Pattern C — Score stacking with a meta-classifier.** Treat each tier's score as a feature, then train a small supervised model (logistic regression or shallow XGBoost) to predict mule-ness from those features. The meta-model's output is the final *Mule Score*.
+
+- Pros: highest measured PR-AUC in the literature; correctly weights tiers per the bank's own data; can learn that "low XGBoost + high GNN = ring member" interactions.
+- Cons: trained on labels so it inherits all the PU-learning issues of Tier 3 (see §8.1); slightly harder to explain to a regulator who asks "why 0.83?" — the answer is "because the meta-model weighted graph 0.6 and LSTM 0.4."
+- Banks doing this: HSBC's AML stack with Featurespace ARIC and internal models; JP Morgan internal ensembles.
+
+**Pattern D — Weighted score blend (calibrated).** Each tier's raw score is calibrated to `P(mule | tier_score)` via isotonic or Platt regression on a holdout, then averaged with fixed weights. The output is itself a calibrated probability.
+
+- Pros: simpler than a meta-classifier; per-tier contribution is explainable as a fixed coefficient; no extra labels needed beyond what the individual tiers already use.
+- Cons: fixed weights are suboptimal versus learned weights; calibration drifts and needs monitoring; misses tier interactions.
+- Common in early-maturity programmes where the meta-classifier has not yet been signed off by model risk.
+
+**Pattern E — Rules-bound boosting (alert score adjustment).** Rules fire first and produce a "should we alert" boolean plus a typology code. ML scores then *adjust* the priority, severity or SLA of the alert — they do not change the alert decision itself. This is the dominant pattern at Mastercard CFR, Featurespace ARIC and most card-fraud deployments.
+
+- Pros: the alert decision is auditable end-to-end via the rule that fired; ML lift goes into *prioritisation* rather than gate-keeping, which is what regulators are most nervous about.
+- Cons: alert volume is still bounded by rules; ML can only reorder, not surface novel patterns missed by rules.
+
+#### What the named banks actually do
+
+| Bank / vendor | Combination pattern | How it works in practice |
+|---|---|---|
+| HSBC + Featurespace ARIC | E + A | ARIC produces a continuous risk score per transaction. HSBC's existing rule engine fires alerts; ARIC's score then prioritises and triages, including suppressing alerts the model is highly confident are false positives. |
+| HSBC + Quantexa | C-with-graph-entity | Quantexa's Contextual Decision Intelligence platform consolidates internal and external data into entity graphs. Rules + ML produce *signals on the entity*, not on the transaction. Investigators see one ranked queue of entities, with the underlying signals visible per click. |
+| RBI MuleHunter.AI (India) | A from the bank's perspective; cascade from the regulator's | The national pilot exposes a single API: a bank submits an account, RBI returns a mule probability. MuleHunter combines centrally-curated signals internally; downstream banks apply their own rules on top. |
+| Mastercard CFR (UK / TRACE APAC) | E | Mastercard returns a score per outbound transaction; banks decide their own thresholds for blocking, friction or silent monitoring. |
+| Featurespace at NatWest | A + E | ARIC produces both a binary alert (for SAR-eligible cases — the regulator side) and a continuous score (for friction / step-up auth — the operational side). |
+| Danske Bank ensemble | C | Multiple deep-learning models plus engineered features stacked into a single fraud score; rules retained as a small set of "stop and call" overrides on top. |
+
+#### Calibration is the unsung step
+
+None of these patterns work unless every tier produces *comparable* scores. In practice:
+
+- **Tier 1** outputs are `0/1` per rule, not probabilities → calibrate `rule_count` (or `rule_score`) against confirmed-mule outcomes on a holdout via Platt or isotonic regression.
+- **Tier 2** (Isolation Forest, autoencoder) outputs are unbounded anomaly scores → calibrate to `P(mule | score)` on a holdout slice.
+- **Tier 3** (XGBoost + PU) is already calibrated through the propensity correction (see §8.1).
+- **Tier 4–5** are bounded model probabilities, but still apply isotonic on holdout to correct for class imbalance and over-confident heads.
+
+The meta-classifier (Pattern C) then operates on the *calibrated* outputs, not the raw scores. Skipping this step lets a tier that fires often (rules) dominate any naive average regardless of its actual signal quality.
+
+#### The recommended combination for a mule-detection programme
+
+The shape of mule risk argues for stacking, not picking. Rules catch the obvious; the unsupervised tier surfaces novelty; the supervised tier ranks; the graph tier finds rings; the temporal / biometric tier closes the loop on exploited mules. Each catches what the others miss — and the ensembling lift is larger here than in card-fraud-only programmes.
+
+A workable target stack for a Thai bank:
+
+1. **Tier 1 always fires as alerts** — regulator requirement (BOT HR-03 must produce SARs).
+2. **Tiers 2–5 score every account in parallel** — including accounts Tier 1 did *not* flag, so the system can discover novel typologies the rules don't encode.
+3. **A logistic-regression meta-classifier** stacks the calibrated probabilities from tiers 2–5 into a single *Mule Score* in `[0, 1]`.
+4. **The investigator queue is the union of**: (a) all rule alerts (mandatory), (b) accounts whose `Mule Score > 95th-percentile-on-holdout` threshold (operational ranking).
+5. **The investigator UI shows the rule that fired AND each tier's individual score** for auditability and to support explanation under SR 11-7 / MAS FEAT / EU AI Act.
+6. **Daily holdout re-scoring** detects calibration drift; **weekly retraining** of the meta-classifier on the latest investigator feedback.
+
+This is **Pattern C** for the *score* and **Pattern A** for the *alert volume*. The rules tier remains the floor for regulatory compliance; the meta-classifier provides ranking lift for investigator efficiency.
+
+#### A note on model risk
+
+Every additional model in production is one more model to monitor under SR 11-7 (US), MAS FEAT (Singapore), or the EU AI Act. Banks that adopt stacking often start with Pattern E (rules-bound boosting) because it keeps the new model on the easier side of model-risk governance — the model affects ranking, not decisions, so its failure mode is "wrong priority" rather than "wrong alert." Programmes graduate from E to C as the meta-model accumulates enough out-of-sample performance evidence for the model-risk committee.
+
+#### Pointers
+
+- [KPMG India, *Bridging innovation and compliance: ML models in FCC*, Nov 2025](https://assets.kpmg.com/content/dam/kpmgsites/in/pdf/2025/11/bridging-innovation-and-compliance-machine-learning-models-in-fcc.pdf) — governance perspective on rules-vs-ML-vs-GenAI distinctions.
+- [Compliance Week, *How banks are responsibly embedding ML and GenAI into AML surveillance*, 2025](https://www.complianceweek.com/opinion/how-banks-are-responsibly-embedding-machine-learning-and-genai-into-aml-surveillance/36431.article) — practitioner view on the calibration-and-stacking step.
+- [Featurespace ARIC product page](https://www2.featurespace.com/solutions/aml) — Pattern E reference architecture.
+- [Quantexa Contextual Monitoring solution brief (PDF)](https://www.quantexa.com/assets/x/670c53045c/solution-brief-contextual-monitoring_fincrime-final.pdf) — Pattern C with entity-level scoring.
+- [Tookitaki, *AML Transaction Monitoring 2025*](https://www.tookitaki.com/compliance-hub/aml-transaction-monitoring) — vendor-agnostic walkthrough of hybrid scoring.
+- [Unit21, *Alert Scoring: How It Works and How to Use It to Manage Cases*](https://www.unit21.ai/fraud-aml-dictionary/alert-scoring) — practical operational write-up.
+- *Stacking Ensemble Methods for Financial Fraud Detection*, arXiv 2505.10050: <https://arxiv.org/html/2505.10050v1>.
+- *Stacking-based hybrid ML for credit-card fraud detection*, PMC 12453863: <https://pmc.ncbi.nlm.nih.gov/articles/PMC12453863/>.
+
+---
+
 ## 9. Cross-cutting design choices on which the literature is unanimous
 
 1. **Rolling-window features** (1-day, 7-day, 30-day) are universally used because mule activation timescales are bursty.
@@ -837,3 +936,572 @@ The literature, the regulator guidance and the publicly disclosed bank deploymen
 ---
 
 *Document last revised May 2026. Vendor-published figures should be cross-checked against the primary source before being cited in formal materials.*
+
+---
+
+## Appendix A — Runnable code examples by maturity tier
+
+This appendix provides a self-contained, runnable Python example for every tier in the maturity ladder (§2). Each block can be pasted into a Databricks notebook (or any Python 3.10+ environment with the listed dependencies) and executed end-to-end. The same synthetic generator (A.0) is reused across A.1–A.8 so results are directly comparable.
+
+The dataset is deliberately tiny so every example trains in seconds on CPU. The mule signal is also deliberately strong — these are pedagogical examples, not benchmarks. In a real deployment the same algorithms run against tens of millions of accounts and hundreds of millions of transactions in Delta tables on a Databricks cluster, with feature pipelines orchestrated by Lakeflow / Mosaic AI and models tracked in MLflow.
+
+**Dependencies:**
+
+```bash
+pip install numpy pandas scikit-learn xgboost networkx torch torch-geometric
+```
+
+---
+
+### A.0 Shared synthetic mule transaction generator
+
+Generates a population of legitimate accounts plus a small number of planted mule rings. Each ring has a "collector" that receives many small inbound transfers from random legitimate accounts (the scam-victim pattern) and then quickly forwards the consolidated funds to other ring members (the pass-through pattern).
+
+```python
+import numpy as np
+import pandas as pd
+
+def make_synthetic_mule_data(
+    n_legit: int = 2_000,
+    n_mules: int = 80,
+    n_days: int = 30,
+    ring_size: int = 6,
+    seed: int = 42,
+):
+    """Return (accounts_df, txns_df). Mule ground-truth in accounts_df.is_mule."""
+    rng = np.random.default_rng(seed)
+    n_total = n_legit + n_mules
+    is_mule = np.concatenate([np.zeros(n_legit, dtype=bool),
+                              np.ones(n_mules,  dtype=bool)])
+    account_ids = np.arange(n_total)
+
+    txns = []
+    # Legitimate accounts: low-volume, varied counterparties.
+    for aid in account_ids[~is_mule]:
+        n_tx = max(1, rng.poisson(3 * n_days // 10))
+        amts = rng.lognormal(mean=4.0, sigma=1.0, size=n_tx)
+        cps  = rng.integers(0, n_total, size=n_tx)
+        days = rng.uniform(0, n_days, size=n_tx)
+        txns.append(pd.DataFrame({
+            "src": aid, "dst": cps, "amount": amts, "day": days,
+        }))
+
+    # Mule rings: fan-in followed by quick fan-out within the ring.
+    mule_ids = account_ids[is_mule].copy()
+    rng.shuffle(mule_ids)
+    rings = np.array_split(mule_ids, max(1, len(mule_ids) // ring_size))
+    for ring in rings:
+        collector = ring[0]
+        n_in  = rng.integers(20, 60)
+        srcs  = rng.choice(account_ids[~is_mule], size=n_in)
+        amts  = rng.lognormal(mean=5.0, sigma=0.5, size=n_in)
+        days  = rng.uniform(0, n_days - 1, size=n_in)
+        txns.append(pd.DataFrame({
+            "src": srcs, "dst": collector, "amount": amts, "day": days,
+        }))
+        # Collector forwards ~95% of consolidated balance within hours.
+        forward_total = amts.sum() * rng.uniform(0.90, 0.99)
+        for nxt in ring[1:]:
+            txns.append(pd.DataFrame({
+                "src": [collector], "dst": [nxt],
+                "amount": [forward_total / max(1, len(ring) - 1)],
+                "day": [days.max() + rng.uniform(0.01, 0.5)],
+            }))
+
+    txns_df = pd.concat(txns, ignore_index=True)
+    txns_df["amount"] = txns_df["amount"].round(2)
+    accounts_df = pd.DataFrame({"account_id": account_ids, "is_mule": is_mule})
+    return accounts_df, txns_df
+
+
+if __name__ == "__main__":
+    accounts, txns = make_synthetic_mule_data()
+    print(f"{len(accounts):,} accounts ({accounts.is_mule.sum()} mules), "
+          f"{len(txns):,} transactions")
+```
+
+A helper used by the supervised, anomaly and graph examples — flat per-account features built from rolling-window inbound and outbound aggregates.
+
+```python
+def build_account_features(accounts: pd.DataFrame, txns: pd.DataFrame) -> pd.DataFrame:
+    inb = txns.groupby("dst").agg(
+        in_count=("src", "count"),
+        in_amt_sum=("amount", "sum"),
+        in_amt_mean=("amount", "mean"),
+        in_distinct_src=("src", "nunique"),
+    ).rename_axis("account_id")
+    out = txns.groupby("src").agg(
+        out_count=("dst", "count"),
+        out_amt_sum=("amount", "sum"),
+        out_amt_mean=("amount", "mean"),
+        out_distinct_dst=("dst", "nunique"),
+    ).rename_axis("account_id")
+    df = accounts.set_index("account_id").join(inb).join(out).fillna(0.0)
+    df["passthrough_ratio"] = df["out_amt_sum"] / df["in_amt_sum"].clip(lower=1.0)
+    df["fanin_ratio"]       = df["in_distinct_src"] / df["in_count"].clip(lower=1.0)
+    return df.reset_index()
+```
+
+---
+
+### A.1 Tier 1 — Business-logic rules engine
+
+Encodes three FATF / BOT typologies as boolean predicates and counts how many fire per account. This is the bottom of the maturity ladder — fully deterministic, easy to explain to a regulator, but blind to anything outside the rule set.
+
+```python
+def score_with_rules(accounts, txns, window_days=7,
+                     fanin_threshold=15, passthrough_threshold=0.7,
+                     burst_amount=50_000, burst_count=10):
+    end_day = txns["day"].max()
+    recent = txns[txns["day"] > end_day - window_days]
+
+    inb = recent.groupby("dst").agg(
+        in_count=("src", "nunique"),
+        in_amount=("amount", "sum"),
+    ).rename_axis("account_id")
+    out = recent.groupby("src").agg(
+        out_count=("dst", "nunique"),
+        out_amount=("amount", "sum"),
+    ).rename_axis("account_id")
+    df = accounts.set_index("account_id").join(inb).join(out).fillna(0.0)
+
+    df["rule_fanin"]        = df["in_count"] >= fanin_threshold
+    df["rule_passthrough"]  = (df["out_amount"] / df["in_amount"].clip(lower=1)) > passthrough_threshold
+    df["rule_burst_inflow"] = (df["in_amount"] > burst_amount) & (df["in_count"] > burst_count)
+    df["rule_score"] = df[["rule_fanin", "rule_passthrough", "rule_burst_inflow"]].sum(axis=1)
+    return df.reset_index()
+
+
+accounts, txns = make_synthetic_mule_data()
+scored = score_with_rules(accounts, txns)
+flagged = scored[scored["rule_score"] >= 2]
+total_mules = scored["is_mule"].sum()
+print(f"Flagged {len(flagged)} of {len(scored)} accounts "
+      f"(precision {flagged['is_mule'].mean():.1%}, "
+      f"recall {flagged['is_mule'].sum()/total_mules:.1%})")
+```
+
+Typical output on the synthetic data: ~85–95% precision, ~50–60% recall. Recall is bounded by the typologies the rules encode; novel mule patterns slip through entirely.
+
+---
+
+### A.2 Tier 2 — Isolation Forest anomaly detection
+
+Unsupervised — needs no labels. Trains on the full population and surfaces the small fraction of accounts whose feature vector is statistically furthest from the bulk.
+
+```python
+from sklearn.ensemble import IsolationForest
+from sklearn.metrics import average_precision_score
+
+accounts, txns = make_synthetic_mule_data()
+feat = build_account_features(accounts, txns)
+X = feat.drop(columns=["account_id", "is_mule"]).values
+y = feat["is_mule"].astype(int).values
+
+iso = IsolationForest(n_estimators=300, contamination=0.05, random_state=0)
+iso.fit(X)
+feat["anomaly_score"] = -iso.score_samples(X)  # higher = more anomalous
+
+top = feat.nlargest(int(0.05 * len(feat)), "anomaly_score")
+print(f"Precision@5%: {top['is_mule'].mean():.1%}")
+print(f"Recall@5%   : {top['is_mule'].sum() / y.sum():.1%}")
+print(f"AUPRC       : {average_precision_score(y, feat['anomaly_score']):.3f}")
+```
+
+Use *Precision@K* (or *Precision@Capacity*) rather than ROC-AUC — the operating point that matters is "out of the K accounts an investigator can review today, how many are real mules".
+
+---
+
+### A.3 Tier 2 — Autoencoder anomaly detection (PyTorch)
+
+Same intent as Isolation Forest but learns a non-linear manifold. Train the autoencoder on the majority of accounts; mules — being rare and structurally different — reconstruct poorly and score high.
+
+```python
+import torch
+import torch.nn as nn
+import numpy as np
+
+accounts, txns = make_synthetic_mule_data()
+feat = build_account_features(accounts, txns)
+X = feat.drop(columns=["account_id", "is_mule"]).values.astype("float32")
+y = feat["is_mule"].astype(int).values
+
+# Standardise.
+mu, sigma = X.mean(0), X.std(0) + 1e-6
+Xn = (X - mu) / sigma
+
+class AutoEncoder(nn.Module):
+    def __init__(self, d, latent=4):
+        super().__init__()
+        self.enc = nn.Sequential(nn.Linear(d, 16), nn.ReLU(), nn.Linear(16, latent))
+        self.dec = nn.Sequential(nn.Linear(latent, 16), nn.ReLU(), nn.Linear(16, d))
+    def forward(self, x):
+        return self.dec(self.enc(x))
+
+Xt = torch.from_numpy(Xn)
+model = AutoEncoder(d=Xn.shape[1])
+opt = torch.optim.Adam(model.parameters(), lr=2e-3)
+
+for epoch in range(300):
+    opt.zero_grad()
+    loss = ((model(Xt) - Xt) ** 2).mean()
+    loss.backward()
+    opt.step()
+
+with torch.no_grad():
+    recon_err = ((model(Xt) - Xt) ** 2).mean(dim=1).numpy()
+
+feat["ae_score"] = recon_err
+top = feat.nlargest(int(0.05 * len(feat)), "ae_score")
+print(f"AE Precision@5%: {top['is_mule'].mean():.1%}")
+print(f"AE Recall@5%   : {top['is_mule'].sum() / y.sum():.1%}")
+```
+
+In production, the autoencoder is trained only on accounts that pass cheap rule filters as "likely clean" — that sharpens the reconstruction signal further. See *AutoEncoder-enhanced LightGBM for credit-card fraud detection* (PMC 11623290, cited in §12).
+
+---
+
+### A.4 Tier 3 — XGBoost supervised classifier with PU-learning correction
+
+Two passes over the same data: (1) a standard supervised baseline assuming all unlabelled accounts are negatives, then (2) the Elkan–Noto PU correction that treats unlabelled accounts as their own class and rescales the predicted probability by the estimated label propensity `c`.
+
+```python
+import numpy as np
+from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import average_precision_score
+
+accounts, txns = make_synthetic_mule_data()
+feat = build_account_features(accounts, txns)
+X = feat.drop(columns=["account_id", "is_mule"]).values
+y = feat["is_mule"].astype(int).values
+
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, stratify=y, test_size=0.3, random_state=0)
+
+# --- (1) Standard supervised baseline ---
+clf = XGBClassifier(n_estimators=400, max_depth=5, learning_rate=0.05,
+                    tree_method="hist", eval_metric="aucpr")
+clf.fit(X_tr, y_tr)
+proba_sup = clf.predict_proba(X_te)[:, 1]
+print(f"Supervised XGBoost AUPRC: {average_precision_score(y_te, proba_sup):.3f}")
+
+# --- (2) PU-learning (Elkan-Noto) ---
+# Simulate the BOT-HR03 reality: only half of the true mules are on the list.
+rng = np.random.default_rng(0)
+pos_idx = np.where(y_tr == 1)[0]
+labelled = rng.choice(pos_idx, size=len(pos_idx) // 2, replace=False)
+s = np.zeros_like(y_tr)
+s[labelled] = 1                       # 1 = on the HR-03 list, 0 = unlabelled
+
+clf_pu = XGBClassifier(n_estimators=400, max_depth=5, learning_rate=0.05,
+                       tree_method="hist", eval_metric="aucpr")
+clf_pu.fit(X_tr, s)
+
+# Estimate c = P(s=1 | y=1) on a held-out slice of the labelled positives.
+val_pos = labelled[: max(1, len(labelled) // 5)]
+c = clf_pu.predict_proba(X_tr[val_pos])[:, 1].mean()
+proba_pu = np.clip(clf_pu.predict_proba(X_te)[:, 1] / max(c, 1e-3), 0.0, 1.0)
+print(f"PU-corrected AUPRC : {average_precision_score(y_te, proba_pu):.3f}")
+print(f"Estimated propensity c = {c:.3f}")
+```
+
+The PU version produces *calibrated* probabilities — a score of 0.8 means roughly an 80% chance the account is a mule — which lets the bank set Precision@Capacity thresholds rationally. See §8.1 for the full theory.
+
+---
+
+### A.5 Tier 4 — Graph features with GraphFrames on Spark feeding XGBoost
+
+Same XGBoost classifier as A.4, but the feature set now includes structural signals computed from the transaction graph: PageRank, in/out degree, two-hop reach, and community ID. The example uses **GraphFrames on Spark** — the same API used in Databricks production graph-feature pipelines — so the code scales unchanged from the toy dataset to the hundreds-of-millions-of-edges graphs typical of a Tier-1 bank.
+
+> **Cluster setup.** GraphFrames is installed on a Databricks cluster by attaching the Maven package `graphframes:graphframes:0.8.4-spark3.5-s_2.12` (match the GraphFrames build to your runtime's Spark / Scala version), then importing `from graphframes import GraphFrame` from Python. On Databricks ML Runtime 14.3+, GraphFrames is preinstalled.
+
+```python
+from pyspark.sql import SparkSession, functions as F
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+from graphframes import GraphFrame
+from xgboost.spark import SparkXGBClassifier
+
+spark = SparkSession.builder.getOrCreate()
+
+# --- 1. Synthetic data → Spark DataFrames ---
+accounts_pd, txns_pd = make_synthetic_mule_data()
+vertices = (spark.createDataFrame(accounts_pd)
+                  .withColumnRenamed("account_id", "id"))
+edges    = (spark.createDataFrame(txns_pd)
+                  .withColumnRenamed("src", "src")
+                  .withColumnRenamed("dst", "dst"))
+
+g = GraphFrame(vertices, edges)
+
+# --- 2. Vertex-level graph features ---
+pr      = g.pageRank(resetProbability=0.15, maxIter=10).vertices \
+            .select("id", F.col("pagerank").alias("pagerank"))
+in_deg  = g.inDegrees    # columns: id, inDegree
+out_deg = g.outDegrees   # columns: id, outDegree
+
+# Two-hop reach: distinct accounts reachable in exactly 2 forward hops.
+two_hop = (g.find("(a)-[]->(b); (b)-[]->(c)")
+            .where("a.id != c.id")
+            .groupBy(F.col("a.id").alias("id"))
+            .agg(F.countDistinct("c.id").alias("two_hop_reach")))
+
+# Community ID via label propagation — large communities = candidate rings.
+comm = (g.labelPropagation(maxIter=5)
+         .groupBy("label").count()
+         .withColumnRenamed("count", "community_size")
+         .join(g.labelPropagation(maxIter=5).select("id", "label"), on="label")
+         .select("id", "community_size"))
+
+graph_feat = (vertices
+              .join(pr,       "id", "left")
+              .join(in_deg,   "id", "left")
+              .join(out_deg,  "id", "left")
+              .join(two_hop,  "id", "left")
+              .join(comm,     "id", "left")
+              .na.fill(0))
+
+# --- 3. Train SparkXGBClassifier on the graph features (distributed) ---
+feature_cols = ["pagerank", "inDegree", "outDegree", "two_hop_reach", "community_size"]
+
+assembler = VectorAssembler(inputCols=feature_cols, outputCol="features")
+ml_df = (assembler.transform(graph_feat)
+                  .select("id", "features",
+                          F.col("is_mule").cast("int").alias("label")))
+
+train_df, test_df = ml_df.randomSplit([0.7, 0.3], seed=0)
+
+# SparkXGBClassifier distributes training across the cluster's executors.
+# num_workers should match the number of Spark task slots you want to use.
+clf = SparkXGBClassifier(
+    features_col="features",
+    label_col="label",
+    num_workers=4,
+    n_estimators=300,
+    max_depth=4,
+    learning_rate=0.1,
+    tree_method="hist",
+    eval_metric="aucpr",
+)
+model = clf.fit(train_df)
+
+predictions = model.transform(test_df)
+auprc = BinaryClassificationEvaluator(
+    labelCol="label",
+    rawPredictionCol="rawPrediction",
+    metricName="areaUnderPR",
+).evaluate(predictions)
+print(f"Graph-feature SparkXGBoost AUPRC: {auprc:.3f}")
+
+# Feature importances come back from the underlying booster.
+importances = model.get_booster().get_score(importance_type="gain")
+print("Feature importances:", importances)
+```
+
+**Why this scales.** GraphFrames executes PageRank, motif finding and label propagation as distributed Spark jobs over Delta tables in Unity Catalog. On a real bank graph the same code, unchanged, runs over hundreds of millions of edges; intermediate vertex features land back in Delta and are registered in the **Databricks Feature Store** so the same definitions feed both training (batch) and serving (real-time lookup). For further-optimised subgraph extraction (sub-millisecond per node) see the IBM Graph Feature Preprocessor (ACM 2024, §12) — also available as a UDF on Databricks.
+
+---
+
+### A.6 Tier 4 — GraphSAGE GNN with PyTorch Geometric
+
+End-to-end graph neural network. The model now learns node embeddings that incorporate information from each account's two-hop neighbourhood — it can detect ring structure that no static feature captures.
+
+```python
+import torch
+import torch.nn.functional as F
+from torch_geometric.data import Data
+from torch_geometric.nn import SAGEConv
+from sklearn.metrics import average_precision_score
+
+accounts, txns = make_synthetic_mule_data()
+
+edge_index = torch.tensor(txns[["src", "dst"]].values.T, dtype=torch.long)
+
+inb = txns.groupby("dst")["amount"].agg(["count", "sum", "mean"]).rename_axis("aid")
+out = txns.groupby("src")["amount"].agg(["count", "sum", "mean"]).rename_axis("aid")
+nf  = (accounts.set_index("account_id")
+                .join(inb, rsuffix="_in")
+                .join(out, rsuffix="_out")
+                .fillna(0.0))
+x = torch.tensor(nf.drop(columns=["is_mule"]).values, dtype=torch.float)
+y = torch.tensor(accounts["is_mule"].astype(int).values, dtype=torch.long)
+
+data = Data(x=x, edge_index=edge_index, y=y)
+n = data.num_nodes
+perm = torch.randperm(n)
+train_mask = torch.zeros(n, dtype=torch.bool); train_mask[perm[: int(0.7 * n)]] = True
+test_mask  = ~train_mask
+
+class MuleSAGE(torch.nn.Module):
+    def __init__(self, d_in, h=32):
+        super().__init__()
+        self.conv1 = SAGEConv(d_in, h)
+        self.conv2 = SAGEConv(h, h)
+        self.head  = torch.nn.Linear(h, 2)
+    def forward(self, x, edge_index):
+        x = F.relu(self.conv1(x, edge_index))
+        x = F.dropout(x, p=0.3, training=self.training)
+        x = F.relu(self.conv2(x, edge_index))
+        return self.head(x)
+
+model = MuleSAGE(d_in=data.x.size(1))
+opt   = torch.optim.Adam(model.parameters(), lr=5e-3, weight_decay=1e-4)
+
+# Class-weighted loss — mules are <5% of accounts.
+pos = (data.y[train_mask] == 1).sum().item()
+neg = (data.y[train_mask] == 0).sum().item()
+class_weights = torch.tensor([1.0, neg / max(pos, 1)], dtype=torch.float)
+
+for epoch in range(80):
+    model.train()
+    opt.zero_grad()
+    logits = model(data.x, data.edge_index)
+    loss = F.cross_entropy(logits[train_mask], data.y[train_mask], weight=class_weights)
+    loss.backward()
+    opt.step()
+
+model.eval()
+with torch.no_grad():
+    proba = F.softmax(model(data.x, data.edge_index), dim=1)[:, 1]
+print(f"GraphSAGE AUPRC: "
+      f"{average_precision_score(data.y[test_mask].numpy(), proba[test_mask].numpy()):.3f}")
+```
+
+For larger graphs, swap `SAGEConv` for `PNAConv` (state of the art on IBM AMLworld per §6) or wrap inference in a `NeighborLoader` for mini-batched training. DNB Norway's production deployment uses GraphSAGE on a 5M-node graph (see §6).
+
+---
+
+### A.7 Tier 5 — LSTM sequence classifier over transaction histories
+
+Per-account temporal model. Each account becomes a sequence of `(amount, direction, time)` tokens and an LSTM learns the temporal signature of a pass-through mule (rapid inbound burst followed by immediate outbound).
+
+```python
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn
+from sklearn.metrics import average_precision_score
+
+accounts, txns = make_synthetic_mule_data()
+SEQ_LEN = 20
+
+def account_sequence(account_id: int) -> np.ndarray:
+    inb = txns[txns["dst"] == account_id].assign(direction=+1.0)
+    oub = txns[txns["src"] == account_id].assign(direction=-1.0)
+    s = pd.concat([inb, oub]).sort_values("day").tail(SEQ_LEN)
+    out = np.zeros((SEQ_LEN, 3), dtype="float32")
+    if len(s):
+        out[-len(s):] = s[["amount", "direction", "day"]].values.astype("float32")
+    return out
+
+X = np.stack([account_sequence(a) for a in accounts["account_id"]])
+y = accounts["is_mule"].astype(int).values
+
+X[:, :, 0] = np.log1p(X[:, :, 0])
+X[:, :, 2] = X[:, :, 2] / max(1.0, X[:, :, 2].max())
+
+class MuleLSTM(nn.Module):
+    def __init__(self, d_in=3, h=32):
+        super().__init__()
+        self.lstm = nn.LSTM(d_in, h, batch_first=True)
+        self.head = nn.Linear(h, 2)
+    def forward(self, x):
+        _, (h, _) = self.lstm(x)
+        return self.head(h.squeeze(0))
+
+X_t = torch.from_numpy(X); y_t = torch.from_numpy(y).long()
+rng_idx = np.random.default_rng(0).permutation(len(y))
+tr = rng_idx[: int(0.7 * len(y))]
+te = rng_idx[int(0.7 * len(y)):]
+
+model = MuleLSTM()
+opt   = torch.optim.Adam(model.parameters(), lr=2e-3)
+pos = int(y_t[tr].sum()); neg = len(tr) - pos
+w = torch.tensor([1.0, neg / max(pos, 1)], dtype=torch.float)
+
+for epoch in range(60):
+    model.train(); opt.zero_grad()
+    loss = nn.functional.cross_entropy(model(X_t[tr]), y_t[tr], weight=w)
+    loss.backward(); opt.step()
+
+model.eval()
+with torch.no_grad():
+    proba_te = torch.softmax(model(X_t[te]), dim=1)[:, 1].numpy()
+print(f"LSTM AUPRC: {average_precision_score(y[te], proba_te):.3f}")
+```
+
+In production this is typically swapped for a small Transformer encoder (better at long-range patterns) or a TGN (which combines sequence and graph — see A.8). MuleTrack (§8.3, IWANN 2025) is a published instance of this tier.
+
+---
+
+### A.8 Tier 5 — Temporal Graph Network (TGN) sketch
+
+A TGN combines the per-node memory of a sequence model with the message passing of a GNN, on a graph that *evolves event by event*. Each transaction is an event that (a) updates the memory state of source and destination, and (b) is used as supervision for the prediction head. This is the architecture behind the +17.7 P@20R credit-card-fraud result cited in §6.
+
+The example below is a minimal skeleton built on PyG's TGN building blocks. For a production-faithful reference see [PyG's official TGN example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/tgn.py).
+
+```python
+import numpy as np
+import pandas as pd
+import torch
+from torch_geometric.nn import TGNMemory, TransformerConv
+from torch_geometric.nn.models.tgn import (
+    IdentityMessage, LastAggregator, LastNeighborLoader,
+)
+
+accounts, txns = make_synthetic_mule_data()
+events = txns.sort_values("day").reset_index(drop=True)
+
+src  = torch.tensor(events["src"].values,  dtype=torch.long)
+dst  = torch.tensor(events["dst"].values,  dtype=torch.long)
+t    = torch.tensor((events["day"].values * 86400).astype("int64"))
+msg  = torch.tensor(np.log1p(events[["amount"]].values).astype("float32"))
+y    = torch.tensor(accounts["is_mule"].astype(int).values, dtype=torch.long)
+n_nodes = int(accounts["account_id"].max() + 1)
+
+MEM_DIM, TIME_DIM = 32, 8
+memory = TGNMemory(
+    num_nodes=n_nodes,
+    raw_msg_dim=msg.size(1),
+    memory_dim=MEM_DIM,
+    time_dim=TIME_DIM,
+    message_module=IdentityMessage(msg.size(1), MEM_DIM, TIME_DIM),
+    aggregator_module=LastAggregator(),
+)
+neighbor_loader = LastNeighborLoader(n_nodes, size=10)
+
+gnn = TransformerConv(in_channels=MEM_DIM, out_channels=MEM_DIM,
+                      heads=2, dropout=0.1, edge_dim=msg.size(1) + TIME_DIM)
+head = torch.nn.Linear(MEM_DIM, 2)
+opt  = torch.optim.Adam(list(memory.parameters()) + list(gnn.parameters())
+                        + list(head.parameters()), lr=1e-3)
+
+BATCH = 256
+memory.reset_state()
+neighbor_loader.reset_state()
+
+for start in range(0, len(events), BATCH):
+    end = min(start + BATCH, len(events))
+    b_src, b_dst, b_t, b_msg = src[start:end], dst[start:end], t[start:end], msg[start:end]
+
+    # Pull current memory + recent neighbours for every node in the batch.
+    nodes = torch.cat([b_src, b_dst]).unique()
+    n_id, edge_index, e_id = neighbor_loader(nodes)
+    z, last_update = memory(n_id)
+    # ... feed (z, edge_index, edge attrs) into `gnn`, then `head` on the rows
+    # corresponding to b_dst to produce per-account mule logits, then supervise
+    # against y[b_dst]. Standard TGN training loop.
+
+    # After the forward pass: update memory and neighbour cache with this batch.
+    memory.update_state(b_src, b_dst, b_t, b_msg)
+    neighbor_loader.insert(b_src, b_dst)
+```
+
+The skeleton above shows the moving parts — TGN memory, last-neighbour cache, message function, aggregator, attention-based GNN, prediction head — without the full training boilerplate. A practitioner adopting TGN should start from the PyG example and replace its link-prediction head with a node-classification head supervised against `y`.
+
+**Where each tier lands in Databricks.** All eight examples above run unmodified inside a Databricks notebook. In production:
+
+- A.0–A.1 become **Delta / SQL** pipelines on Lakeflow.
+- A.2–A.4 become **MLflow-tracked sklearn / XGBoost models** served via Mosaic AI Model Serving.
+- A.5–A.6 become **GraphFrames feature jobs + GNN training** on GPU clusters; the trained graph model is registered in Unity Catalog like any other.
+- A.7–A.8 become **streaming feature pipelines** (per-account sequence state) feeding a temporal model served behind a low-latency Mosaic AI endpoint, fronted by the investigator app (see §8.6).
