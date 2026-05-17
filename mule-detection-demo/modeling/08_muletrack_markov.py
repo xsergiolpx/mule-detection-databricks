@@ -39,8 +39,9 @@ import time
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 from pyspark.sql import functions as F
 from pyspark.sql.types import (StructType, StructField, IntegerType, DoubleType,
@@ -62,6 +63,17 @@ STATE_IDX = {s: i for i, s in enumerate(STATES)}
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
 
 # Per-(account, day) inbound & outbound aggregates ---------------------------
 in_agg  = (txns.groupBy(F.col("dst").alias("account_id"),
@@ -192,42 +204,56 @@ displayHTML(sankey_for_population(mule_matrix, "Mule population — average tran
 # COMMAND ----------
 
 # 2. Side-by-side heatmaps ---------------------------------------------------
-fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-for ax, M, title in [(axes[0], ref_matrix,  "Legit reference"),
-                      (axes[1], mule_matrix, "Mule average")]:
-    im = ax.imshow(M, cmap="Reds", vmin=0, vmax=max(ref_matrix.max(), mule_matrix.max()))
-    ax.set_xticks(range(len(STATES))); ax.set_xticklabels(STATES, rotation=30, ha="right")
-    ax.set_yticks(range(len(STATES))); ax.set_yticklabels(STATES)
-    ax.set_title(title)
-    for i in range(len(STATES)):
-        for j in range(len(STATES)):
-            ax.text(j, i, f"{M[i,j]:.2f}", ha="center", va="center",
-                     color="white" if M[i,j] > 0.4 else "black", fontsize=8)
-fig.suptitle("Transition matrix: legit vs mule", fontsize=13)
-fig.tight_layout()
+vmax = float(max(ref_matrix.max(), mule_matrix.max()))
+fig = make_subplots(rows=1, cols=2,
+                     subplot_titles=("Legit reference transition matrix",
+                                       "Mule average transition matrix"))
+for col, M in enumerate([ref_matrix, mule_matrix], start=1):
+    fig.add_trace(go.Heatmap(z=M, x=STATES, y=STATES, colorscale="Reds",
+                              zmin=0, zmax=vmax,
+                              text=[[f"{v:.2f}" for v in row] for row in M],
+                              texttemplate="%{text}",
+                              hovertemplate="from %{y} → %{x}: %{z:.3f}<extra></extra>",
+                              showscale=(col == 2)),
+                  row=1, col=col)
+fig.update_layout(template="plotly_white", height=480,
+                   title_text="Transition matrix — legit vs mule",
+                   margin=dict(l=20, r=20, t=70, b=40))
+fig.update_xaxes(tickangle=-30)
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. Deviation score distribution --------------------------------------------
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.hist(deviation[y == 0], bins=80, alpha=0.6, color="#7f7f7f", label="legit", density=True)
-ax.hist(deviation[y == 1], bins=80, alpha=0.7, color="#d62728", label="mule",  density=True)
-ax.set_xlabel("Frobenius distance from legitimate reference")
-ax.set_ylabel("density")
-ax.set_title("Deviation score by class")
-ax.legend()
-fig.tight_layout()
+dev_df = pd.DataFrame({
+    "deviation": deviation,
+    "class":     np.where(y == 1, "mule", "legit"),
+})
+fig = px.histogram(dev_df, x="deviation", color="class",
+                    color_discrete_map={"legit": "#9aa0a6", "mule": "#d62728"},
+                    barmode="overlay", opacity=0.65, histnorm="probability density",
+                    nbins=80, height=420,
+                    title="Deviation score by class",
+                    labels={"deviation": "Frobenius distance from legitimate reference"})
+fig.update_layout(template="plotly_white",
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 4. PR curve ----------------------------------------------------------------
 p, r, _ = precision_recall_curve(y, deviation)
-fig, ax = plt.subplots(figsize=(7, 5))
-ax.plot(r, p, color="#bcbd22", label=f"MuleTrack-style  AUPRC={auprc:.3f}")
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall — Tier 5 (Markov / MuleTrack-style)")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=r, y=p, mode="lines",
+                            line=dict(color="#bcbd22", width=3),
+                            name=f"MuleTrack-style  AUPRC={auprc:.3f}"))
+fig.update_layout(template="plotly_white", height=460,
+                   title="Precision–Recall — Tier 5 (Markov / MuleTrack-style)",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 

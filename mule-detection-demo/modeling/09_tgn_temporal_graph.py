@@ -35,7 +35,8 @@ import json
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 
 import torch
 from pyspark.sql import functions as F
@@ -60,6 +61,17 @@ os.makedirs(TGN_DIR, exist_ok=True)
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
 
 events_pd = (txns.orderBy("day").toPandas()
                   .rename(columns={"day": "t"})
@@ -309,7 +321,7 @@ def train_tgn(
 # MAGIC ## 2.5 Network architecture
 # MAGIC
 # MAGIC TGN's forward pass is stateful (memory + neighbour cache + GNN + head, with
-# MAGIC each batch updating memory in place). Auto-tools like `torchview` don't draw
+# MAGIC each batch updating memory in place). Auto-tools like `torchviz` don't draw
 # MAGIC this cleanly, so we use a hand-drawn block diagram + `torchinfo` on the
 # MAGIC individual sub-modules.
 # MAGIC
@@ -446,12 +458,13 @@ print(f"TGN AUPRC={auprc:.3f}  P@5%={p5:.1%}  R@5%={r5:.1%}")
 # COMMAND ----------
 
 # 1. Training loss -----------------------------------------------------------
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(losses, marker="o", color="#17becf")
-ax.set_xlabel("epoch"); ax.set_ylabel("loss")
-ax.set_title("TGN training loss")
-ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=list(range(len(losses))), y=losses, mode="lines+markers",
+                            line=dict(color="#17becf", width=3), marker=dict(size=8)))
+fig.update_layout(template="plotly_white", height=380,
+                   title="TGN training loss",
+                   xaxis_title="epoch", yaxis_title="loss",
+                   margin=dict(l=20, r=20, t=60, b=40))
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -459,26 +472,30 @@ fig.tight_layout()
 with open(SNAP_PATH, "rb") as f:
     snaps = torch.load(f)
 if len(snaps) > 0:
-    states = np.array([s["state"][:16] for s in snaps])  # first 16 dims
+    states = np.array([s["state"][:16] for s in snaps])  # first 16 dims  (T, 16)
     times  = [s["time"] for s in snaps]
-    fig, ax = plt.subplots(figsize=(10, 4))
-    im = ax.imshow(states.T, aspect="auto", cmap="RdBu_r",
-                    vmin=-np.abs(states).max(), vmax=np.abs(states).max())
-    ax.set_xticks(range(len(times))[::max(1, len(times)//10)])
-    ax.set_xticklabels([f"{t:,}s" for t in times[::max(1, len(times)//10)]], rotation=30)
-    ax.set_ylabel("memory dim")
-    ax.set_xlabel("event time (snapshots)")
-    ax.set_title("Memory state evolution for a tracked node (first 16 dims)")
-    fig.colorbar(im, ax=ax, fraction=0.05)
-    fig.tight_layout()
+    vmax = float(np.abs(states).max())
+    fig = go.Figure(go.Heatmap(
+        z=states.T,  # (16, T) — rows are memory dims, cols are snapshots
+        x=[f"{t:,}s" for t in times],
+        y=[f"dim {i}" for i in range(states.shape[1])],
+        colorscale="RdBu_r", zmin=-vmax, zmax=vmax,
+        hovertemplate="memory %{y} @ %{x}: %{z:.3f}<extra></extra>",
+    ))
+    fig.update_layout(template="plotly_white", height=420,
+                       title="Memory-state evolution for a tracked node (first 16 dims)",
+                       xaxis_title="event time (snapshots)", yaxis_title="memory dim",
+                       margin=dict(l=20, r=20, t=60, b=40))
+    plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. PR curve overlay vs GraphSAGE (if its scores table exists) --------------
 p, r, _ = precision_recall_curve(y_eval[test_mask], sc[test_mask])
-fig, ax = plt.subplots(figsize=(7, 5))
-ax.plot(r, p, color="#17becf", label=f"TGN  AUPRC={auprc:.3f}")
 
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=r, y=p, mode="lines", line=dict(color="#17becf", width=3),
+                          name=f"TGN  AUPRC={auprc:.3f}"))
 try:
     sage = (spark.table(scores_table("06_graphsage"))
                   .toPandas().sort_values("account_id"))
@@ -487,14 +504,19 @@ try:
     from sklearn.metrics import average_precision_score as ap
     p2, r2, _ = precision_recall_curve(sage["is_mule"][mask_sage].astype(int),
                                           sage["score"][mask_sage])
-    ax.plot(r2, p2, color="#9467bd", linestyle="--", alpha=0.7,
-             label=f"GraphSAGE  AUPRC={ap(sage['is_mule'][mask_sage].astype(int), sage['score'][mask_sage]):.3f}")
+    auprc_sage = ap(sage["is_mule"][mask_sage].astype(int), sage["score"][mask_sage])
+    fig.add_trace(go.Scatter(x=r2, y=p2, mode="lines",
+                              line=dict(color="#9467bd", width=2, dash="dash"),
+                              name=f"GraphSAGE  AUPRC={auprc_sage:.3f}"))
 except Exception:
     pass
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall — TGN vs GraphSAGE")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+fig.update_layout(template="plotly_white", height=460,
+                   title="Precision–Recall — TGN vs GraphSAGE",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 

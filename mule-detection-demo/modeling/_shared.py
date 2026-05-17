@@ -290,6 +290,117 @@ def timed(label: str):
     print(f"  ⏱ {label}: {timed.last:.2f}s")
 
 
+def show_dataset_overview(accounts, txns, title: str = "Meet the dataset"):
+    """Render a demo-friendly 3-part plotly overview of the dataset.
+
+    Designed to live right after the data-load section of every modeling notebook.
+    Three components:
+
+    1. **KPI tile banner** — total accounts, mules, mule rate, transactions,
+       mule:legit fan-in ratio.
+    2. **Bivariate signal scatter** — `in_distinct_src` (x, log) vs
+       `passthrough_ratio` (y), 2 000 accounts per class. Mules visibly cluster
+       apart, before any model is trained.
+    3. **"Meet two accounts" comparison** — one random legit + the highest-
+       fan-in mule, key metrics side by side on a log-y bar chart.
+    """
+    import plotly.express as px
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    feat_pd = build_account_features(accounts, txns).toPandas()
+    feat_pd["class"] = np.where(feat_pd["is_mule"], "mule", "legit")
+
+    n_accounts        = len(feat_pd)
+    n_mules           = int(feat_pd["is_mule"].sum())
+    n_txns            = txns.count()
+    mule_rate         = n_mules / max(n_accounts, 1)
+    avg_fanin_mule    = float(feat_pd.loc[feat_pd["is_mule"], "in_distinct_src"].mean())
+    avg_fanin_legit   = float(feat_pd.loc[~feat_pd["is_mule"], "in_distinct_src"].mean())
+    fanin_ratio       = avg_fanin_mule / max(avg_fanin_legit, 1e-6)
+
+    # ── 1. KPI tiles ────────────────────────────────────────────────────────
+    fig_kpi = make_subplots(rows=1, cols=5, specs=[[{"type": "indicator"}] * 5])
+    fig_kpi.add_trace(go.Indicator(mode="number", value=n_accounts,
+        title={"text": "Accounts"}, number={"valueformat": ","}), row=1, col=1)
+    fig_kpi.add_trace(go.Indicator(mode="number", value=n_mules,
+        title={"text": "Mules"}, number={"valueformat": ",", "font": {"color": "#d62728"}}), row=1, col=2)
+    fig_kpi.add_trace(go.Indicator(mode="number", value=mule_rate * 100,
+        title={"text": "Mule rate"}, number={"valueformat": ".2f", "suffix": "%", "font": {"color": "#d62728"}}), row=1, col=3)
+    fig_kpi.add_trace(go.Indicator(mode="number", value=n_txns,
+        title={"text": "Transactions"}, number={"valueformat": ","}), row=1, col=4)
+    fig_kpi.add_trace(go.Indicator(mode="number", value=fanin_ratio,
+        title={"text": "Mule ÷ Legit fan-in"},
+        number={"valueformat": ".1f", "suffix": "×", "font": {"color": "#d62728"}}), row=1, col=5)
+    fig_kpi.update_layout(height=200, template="plotly_white",
+                           margin=dict(l=10, r=10, t=60, b=10),
+                           title_text=f"<b>{title}</b>", title_x=0.0)
+    displayHTML(fig_kpi.to_html(include_plotlyjs="cdn", full_html=False))  # noqa: F821
+
+    # ── 2. Bivariate signal scatter ─────────────────────────────────────────
+    rng_ov = np.random.default_rng(SEED)
+    legit_pool = feat_pd[~feat_pd["is_mule"]]
+    mule_pool  = feat_pd[ feat_pd["is_mule"]]
+    sample = pd.concat([
+        legit_pool.sample(min(2_000, len(legit_pool)), random_state=int(rng_ov.integers(1e9))),
+        mule_pool .sample(min(2_000, len(mule_pool)),  random_state=int(rng_ov.integers(1e9))),
+    ])
+    # Avoid 0s on the log x-axis
+    sample = sample.assign(in_distinct_src_plot=sample["in_distinct_src"].clip(lower=1))
+
+    fig_scatter = px.scatter(
+        sample, x="in_distinct_src_plot", y="passthrough_ratio",
+        color="class",
+        color_discrete_map={"legit": "#bfbfbf", "mule": "#d62728"},
+        opacity=0.55, hover_data={"account_id": True, "in_distinct_src_plot": False},
+        title="The signal at a glance — mules sit in the high-fan-in, high-passthrough corner",
+        labels={"in_distinct_src_plot": "# distinct inbound senders (log scale)",
+                "passthrough_ratio":   "out-amount / in-amount ratio"},
+        height=440, log_x=True,
+    )
+    fig_scatter.update_layout(template="plotly_white",
+                               legend=dict(orientation="h", y=1.05, x=1, xanchor="right"),
+                               margin=dict(l=20, r=20, t=60, b=20))
+    displayHTML(fig_scatter.to_html(include_plotlyjs="cdn", full_html=False))  # noqa: F821
+
+    # ── 3. Two-account comparison ───────────────────────────────────────────
+    sample_legit = legit_pool.sample(1, random_state=7).iloc[0]
+    sample_mule  = mule_pool.nlargest(1, "in_distinct_src").iloc[0]
+    metrics = [("in_count",          "# inbound transactions"),
+               ("in_amt_sum",        "total inbound amount (THB)"),
+               ("in_distinct_src",   "# distinct inbound senders"),
+               ("out_count",         "# outbound transactions"),
+               ("out_amt_sum",       "total outbound amount (THB)"),
+               ("passthrough_ratio", "passthrough ratio")]
+
+    df_cmp = pd.DataFrame({
+        "metric": [m_label for _, m_label in metrics] * 2,
+        "value":  [max(float(sample_legit[m]), 0.001) for m, _ in metrics]
+                + [max(float(sample_mule [m]), 0.001) for m, _ in metrics],
+        "account": [f"legit  (id={int(sample_legit['account_id'])})"] * len(metrics)
+                 + [f"mule  (id={int(sample_mule['account_id'])}) ⚠"] * len(metrics),
+    })
+    legit_label = f"legit  (id={int(sample_legit['account_id'])})"
+    mule_label  = f"mule  (id={int(sample_mule['account_id'])}) ⚠"
+
+    fig_cmp = px.bar(
+        df_cmp, x="metric", y="value", color="account", barmode="group",
+        color_discrete_map={legit_label: "#9aa0a6", mule_label: "#d62728"},
+        title="Side by side — one everyday account vs one mule collector (log scale)",
+        log_y=True, height=440,
+    )
+    fig_cmp.update_layout(template="plotly_white",
+                           legend=dict(orientation="h", y=1.05, x=1, xanchor="right"),
+                           margin=dict(l=20, r=20, t=60, b=80),
+                           xaxis_tickangle=-25)
+    displayHTML(fig_cmp.to_html(include_plotlyjs="cdn", full_html=False))  # noqa: F821
+
+
+def plotly_show(fig):
+    """Render a plotly figure in a Databricks notebook with the size-safe options."""
+    displayHTML(fig.to_html(include_plotlyjs="cdn", full_html=False))  # noqa: F821
+
+
 def run_distributed_or_local(train_fn, *args, _use_distributor: bool = False, **kwargs):
     """
     Run a PyTorch training function. By default, runs **direct on the driver** —

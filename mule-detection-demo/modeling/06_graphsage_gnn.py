@@ -21,7 +21,11 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install torch-geometric pynvml torchinfo torchview --quiet
+# MAGIC %pip install torch-geometric pynvml torchinfo torchviz --quiet
+
+# COMMAND ----------
+
+# MAGIC %sh apt-get install -y graphviz > /dev/null 2>&1 && echo "✓ graphviz binary ready" || echo "graphviz install skipped (already present or no sudo)"
 
 # COMMAND ----------
 
@@ -35,7 +39,9 @@ import json
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 import torch
 from pyspark.sql import functions as F
@@ -66,6 +72,17 @@ os.makedirs(GNN_DATA_DIR, exist_ok=True)
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
 
 # Node features = lifetime aggregates (Tier-3 features, repurposed) -----------
 feat_sdf = build_account_features(accounts, txns)
@@ -233,7 +250,7 @@ def train_graphsage(
 # MAGIC Two views before launching training:
 # MAGIC
 # MAGIC - **`torchinfo`** — layers + output shapes + parameter counts.
-# MAGIC - **`torchview`** — boxes-and-arrows of the forward pass through both SAGE convs and the classification head.
+# MAGIC - **`torchviz`** — autograd graph rendered via Graphviz, covering both SAGE convs and the classification head.
 
 # COMMAND ----------
 
@@ -268,14 +285,20 @@ print(summary(_viz_model,
 # COMMAND ----------
 
 try:
-    from torchview import draw_graph
-    g = draw_graph(_viz_model, input_data=(_x_demo, _edge_demo),
-                    expand_nested=True, depth=3, graph_dir="TB",
-                    graph_name="MuleSAGE")
-    displayHTML(g.visual_graph.pipe(format="svg").decode("utf-8"))
+    from torchviz import make_dot
+    # Force model and inputs onto CPU — DBR ML GPU runtime defaults parameters
+    # to cuda:0, which mismatches the CPU-side dummy tensors.
+    _viz_model_cpu = _viz_model.to("cpu")
+    _x_cpu  = _x_demo.to("cpu")
+    _ei_cpu = _edge_demo.to("cpu")
+    _yhat = _viz_model_cpu(_x_cpu, _ei_cpu)
+    dot = make_dot(_yhat, params=dict(_viz_model_cpu.named_parameters()),
+                    show_attrs=False, show_saved=False)
+    dot.attr(rankdir="TB", size="9,14")
+    displayHTML(dot.pipe(format="svg").decode("utf-8"))
 except Exception as e:
-    print(f"torchview rendering failed ({type(e).__name__}: {e})")
-    print("If the error mentions 'dot' / 'graphviz', run:  %sh apt-get install -y graphviz")
+    print(f"torchviz rendering failed ({type(e).__name__}: {e})")
+    print("If the error mentions 'dot' / 'graphviz', the system binary is missing.")
 
 # COMMAND ----------
 
@@ -329,20 +352,28 @@ print(f"GraphSAGE AUPRC={auprc:.3f}  P@5%={p5:.1%}  R@5%={r5:.1%}")
 # COMMAND ----------
 
 # 1. Training loss + GPU metrics ---------------------------------------------
-fig, ax1 = plt.subplots(figsize=(10, 4))
-ax1.plot(gpu_log["epoch"], gpu_log["loss"], color="#1f77b4", marker="o", label="loss")
-ax1.set_xlabel("epoch"); ax1.set_ylabel("train loss", color="#1f77b4")
-ax2 = ax1.twinx()
-ax2.plot(gpu_log["epoch"], gpu_log["gpu_mem_mb"], color="#d62728", linestyle="--", label="GPU MB")
-ax2.plot(gpu_log["epoch"], gpu_log["gpu_util"],   color="#2ca02c", linestyle=":",  label="GPU util %")
-ax2.set_ylabel("GPU mem (MB) / util (%)")
-fig.suptitle("GraphSAGE training: loss vs GPU activity")
-fig.tight_layout()
+fig = make_subplots(specs=[[{"secondary_y": True}]])
+fig.add_trace(go.Scatter(x=gpu_log["epoch"], y=gpu_log["loss"], mode="lines+markers",
+                          line=dict(color="#1f77b4", width=3), marker=dict(size=8),
+                          name="train loss"), secondary_y=False)
+fig.add_trace(go.Scatter(x=gpu_log["epoch"], y=gpu_log["gpu_mem_mb"], mode="lines",
+                          line=dict(color="#d62728", width=2, dash="dash"),
+                          name="GPU mem (MB)"), secondary_y=True)
+fig.add_trace(go.Scatter(x=gpu_log["epoch"], y=gpu_log["gpu_util"], mode="lines",
+                          line=dict(color="#2ca02c", width=2, dash="dot"),
+                          name="GPU util (%)"), secondary_y=True)
+fig.update_layout(template="plotly_white", height=440,
+                   title="GraphSAGE training: loss vs GPU activity",
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+fig.update_xaxes(title_text="epoch")
+fig.update_yaxes(title_text="train loss",        secondary_y=False)
+fig.update_yaxes(title_text="GPU mem / util",   secondary_y=True)
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 2. t-SNE of learned embeddings ---------------------------------------------
-# Sample for speed.
 sample_idx = np.random.default_rng(SEED).choice(len(embeddings),
                                                   size=min(5000, len(embeddings)),
                                                   replace=False)
@@ -350,26 +381,34 @@ print("Running t-SNE on a 5k-node sample …")
 emb2d = TSNE(n_components=2, init="pca", random_state=SEED,
               perplexity=30, learning_rate="auto").fit_transform(embeddings[sample_idx])
 
-fig, ax = plt.subplots(figsize=(8, 6))
 labels_sub = y_np[sample_idx]
-ax.scatter(emb2d[labels_sub == 0, 0], emb2d[labels_sub == 0, 1],
-           s=4, alpha=0.2, color="#7f7f7f", label="legit")
-ax.scatter(emb2d[labels_sub == 1, 0], emb2d[labels_sub == 1, 1],
-           s=12, alpha=0.8, color="#d62728", label="mule")
-ax.set_title("t-SNE of GraphSAGE node embeddings (5k sample)")
-ax.legend()
-fig.tight_layout()
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=emb2d[labels_sub == 0, 0], y=emb2d[labels_sub == 0, 1],
+                          mode="markers", marker=dict(size=4, color="#9aa0a6", opacity=0.35),
+                          name="legit"))
+fig.add_trace(go.Scatter(x=emb2d[labels_sub == 1, 0], y=emb2d[labels_sub == 1, 1],
+                          mode="markers", marker=dict(size=8, color="#d62728", opacity=0.85),
+                          name="mule"))
+fig.update_layout(template="plotly_white", height=520,
+                   title="t-SNE of GraphSAGE node embeddings (5k sample)",
+                   xaxis_title="t-SNE 1", yaxis_title="t-SNE 2",
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. PR curve ----------------------------------------------------------------
 p, r, _ = precision_recall_curve(y_np[test_mask], proba[test_mask])
-fig, ax = plt.subplots(figsize=(7, 5))
-ax.plot(r, p, color="#9467bd", label=f"GraphSAGE  AUPRC={auprc:.3f}")
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall — Tier 4 (GraphSAGE GNN)")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=r, y=p, mode="lines", line=dict(color="#9467bd", width=3),
+                            name=f"GraphSAGE  AUPRC={auprc:.3f}"))
+fig.update_layout(template="plotly_white", height=460,
+                   title="Precision–Recall — Tier 4 (GraphSAGE GNN)",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 

@@ -14,7 +14,9 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from sklearn.metrics import precision_recall_curve, average_precision_score
 
 spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
@@ -36,25 +38,30 @@ display(spark.table(BENCHMARK_TABLE).orderBy("tier_number", "tier_name"))
 
 # COMMAND ----------
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
 colors_by_tier = {
     1: "#1f77b4", 2: "#ff7f0e", 3: "#2ca02c", 4: "#9467bd", 5: "#bcbd22",
 }
 bar_colors = [colors_by_tier[t] for t in bench["tier_number"]]
 
-for ax, col, title, fmt in [
-    (axes[0], "pr_auc",            "PR-AUC by tier",            "{:.2f}"),
-    (axes[1], "precision_at_5pct", "Precision @ top 5%",        "{:.1%}"),
-    (axes[2], "recall_at_5pct",    "Recall @ top 5%",            "{:.1%}"),
-]:
-    ax.bar(bench["tier_name"], bench[col], color=bar_colors)
-    for i, v in enumerate(bench[col]):
-        ax.text(i, v, fmt.format(v), ha="center", va="bottom", fontsize=9)
-    ax.set_title(title)
-    ax.set_xticklabels(bench["tier_name"], rotation=30, ha="right")
-    ax.set_ylim(0, max(1.05, bench[col].max() * 1.15))
-fig.suptitle("Mule detection — maturity ladder, side-by-side", fontsize=14)
-fig.tight_layout()
+# 3 metric bars side by side
+fig = make_subplots(rows=1, cols=3,
+                     subplot_titles=("PR-AUC by tier",
+                                      "Precision @ top 5%",
+                                      "Recall @ top 5%"))
+for c, (col, fmt) in enumerate([("pr_auc",            "{:.2f}"),
+                                  ("precision_at_5pct", "{:.1%}"),
+                                  ("recall_at_5pct",    "{:.1%}")], start=1):
+    fig.add_trace(go.Bar(x=bench["tier_name"], y=bench[col],
+                          marker_color=bar_colors,
+                          text=[fmt.format(v) for v in bench[col]],
+                          textposition="outside",
+                          showlegend=False), row=1, col=c)
+    fig.update_yaxes(range=[0, max(1.05, bench[col].max() * 1.20)], row=1, col=c)
+    fig.update_xaxes(tickangle=-30, row=1, col=c)
+fig.update_layout(template="plotly_white", height=460,
+                   title_text="<b>Mule detection — maturity ladder, side-by-side</b>",
+                   margin=dict(l=20, r=20, t=80, b=80))
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -63,14 +70,17 @@ fig.tight_layout()
 
 # COMMAND ----------
 
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.bar(bench["tier_name"], bench["runtime_seconds"], color=bar_colors)
-for i, v in enumerate(bench["runtime_seconds"]):
-    ax.text(i, v, f"{v:.1f}s", ha="center", va="bottom", fontsize=9)
-ax.set_xticklabels(bench["tier_name"], rotation=30, ha="right")
-ax.set_ylabel("seconds (fit + score)")
-ax.set_title("Runtime by tier")
-fig.tight_layout()
+fig = go.Figure(go.Bar(
+    x=bench["tier_name"], y=bench["runtime_seconds"],
+    marker_color=bar_colors,
+    text=[f"{v:.1f}s" for v in bench["runtime_seconds"]],
+    textposition="outside",
+))
+fig.update_layout(template="plotly_white", height=440,
+                   title="Runtime by tier (seconds — fit + score)",
+                   xaxis_tickangle=-30, yaxis_title="seconds",
+                   margin=dict(l=20, r=20, t=60, b=80), showlegend=False)
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -82,18 +92,18 @@ fig.tight_layout()
 # COMMAND ----------
 
 tier_score_tables = [
-    ("01_rules",                       1, "rule_score"),
-    ("02_isolation_forest", 2, "sklearn_score"),   # also write linkedin_score
-    ("03_autoencoder",                 2, "recon_error"),
-    ("04_xgboost_pu",                  3, "p_pu_corrected"),
-    ("05_graphframes",                 4, "score"),
-    ("06_graphsage",                   4, "score"),
-    ("07_lstm",                        5, "score"),
-    ("08_muletrack",                   5, "deviation"),
-    ("09_tgn",                         5, "score"),
+    ("01_rules",            1, "rule_score"),
+    ("02_isolation_forest", 2, "sklearn_score"),
+    ("03_autoencoder",      2, "recon_error"),
+    ("04_xgboost_pu",       3, "p_pu_corrected"),
+    ("05_graphframes",      4, "score"),
+    ("06_graphsage",        4, "score"),
+    ("07_lstm",             5, "score"),
+    ("08_muletrack",        5, "deviation"),
+    ("09_tgn",              5, "score"),
 ]
 
-fig, ax = plt.subplots(figsize=(9, 7))
+fig = go.Figure()
 for name, tier_n, col in tier_score_tables:
     try:
         df = spark.table(scores_table(name)).toPandas()
@@ -104,15 +114,21 @@ for name, tier_n, col in tier_score_tables:
         sc = df[col].values
         ap = average_precision_score(y, sc)
         p, r, _ = precision_recall_curve(y, sc)
-        ax.plot(r, p, color=colors_by_tier[tier_n], alpha=0.85,
-                 label=f"{name} (T{tier_n})  AUPRC={ap:.3f}")
+        fig.add_trace(go.Scatter(x=r, y=p, mode="lines",
+                                  line=dict(color=colors_by_tier[tier_n], width=2.2),
+                                  opacity=0.9,
+                                  name=f"{name} (T{tier_n})  AUPRC={ap:.3f}"))
     except Exception as e:
         print(f"  · {name} — skipped ({type(e).__name__}: {e})")
 
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall across all tiers")
-ax.grid(alpha=0.3); ax.legend(fontsize=8, loc="upper right")
-fig.tight_layout()
+fig.update_layout(template="plotly_white", height=560,
+                   title="Precision–Recall across all tiers",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="v", x=1.02, y=1, yanchor="top",
+                                xanchor="left", font=dict(size=10)))
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -138,20 +154,22 @@ for _, row in best_per_tier.iterrows():
     prev_recall = max(prev_recall, row["recall_at_5pct"])
 best_per_tier["incremental_recall"] = incrementals
 
-fig, ax = plt.subplots(figsize=(10, 5))
-bars = ax.bar(best_per_tier["tier_name"],
-               best_per_tier["recall_at_5pct"],
-               color=[colors_by_tier[t] for t in best_per_tier["tier_number"]])
-for b, inc, total in zip(bars, best_per_tier["incremental_recall"],
-                           best_per_tier["recall_at_5pct"]):
-    ax.text(b.get_x() + b.get_width()/2, total,
-             f"total {total:.0%}\n+{inc:.0%}",
-             ha="center", va="bottom", fontsize=9)
-ax.set_xticklabels(best_per_tier["tier_name"], rotation=30, ha="right")
-ax.set_ylabel("recall @ 5%")
-ax.set_ylim(0, min(1.0, best_per_tier['recall_at_5pct'].max() * 1.25 + 0.1))
-ax.set_title("Incremental recall lift up the maturity ladder")
-fig.tight_layout()
+fig = go.Figure(go.Bar(
+    x=best_per_tier["tier_name"], y=best_per_tier["recall_at_5pct"],
+    marker_color=[colors_by_tier[t] for t in best_per_tier["tier_number"]],
+    text=[f"total {tot:.0%}<br>+{inc:.0%}"
+           for tot, inc in zip(best_per_tier["recall_at_5pct"],
+                                best_per_tier["incremental_recall"])],
+    textposition="outside",
+))
+fig.update_layout(template="plotly_white", height=460,
+                   title="Incremental recall lift up the maturity ladder",
+                   xaxis_tickangle=-30,
+                   yaxis_title="recall @ 5%",
+                   yaxis=dict(tickformat=".0%",
+                               range=[0, min(1.05, best_per_tier['recall_at_5pct'].max() * 1.30 + 0.1)]),
+                   margin=dict(l=20, r=20, t=60, b=80), showlegend=False)
+plotly_show(fig)
 
 # COMMAND ----------
 

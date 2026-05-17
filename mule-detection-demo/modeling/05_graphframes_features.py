@@ -31,7 +31,8 @@ import time
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 
 from pyspark.sql import functions as F
 from pyspark.ml.feature import VectorAssembler
@@ -55,6 +56,17 @@ spark.sparkContext.setCheckpointDir("/tmp/graphframes_modeling_ckpt")
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
 
 vertices = accounts.withColumnRenamed("account_id", "id")
 edges    = txns.select(F.col("src").alias("src"),
@@ -183,40 +195,55 @@ print(f"P@1%={p1:.1%}    P@5%={p5:.1%}    R@5%={r5:.1%}")
 
 # 1. PageRank distribution ---------------------------------------------------
 pr_pd = graph_features.select("pagerank", "is_mule").toPandas()
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.hist(pr_pd.loc[~pr_pd["is_mule"], "pagerank"], bins=80, alpha=0.6,
-        color="#7f7f7f", label="legit", density=True)
-ax.hist(pr_pd.loc[ pr_pd["is_mule"], "pagerank"], bins=80, alpha=0.7,
-        color="#d62728", label="mule",  density=True)
-ax.set_xlim(0, pr_pd["pagerank"].quantile(0.999))
-ax.set_xlabel("PageRank"); ax.set_ylabel("density")
-ax.set_title("PageRank by class — mule collectors accumulate inbound mass")
-ax.legend()
-fig.tight_layout()
+pr_pd["class"] = np.where(pr_pd["is_mule"], "mule", "legit")
+upper = float(pr_pd["pagerank"].quantile(0.999))
+
+fig = px.histogram(
+    pr_pd, x="pagerank", color="class",
+    color_discrete_map={"legit": "#9aa0a6", "mule": "#d62728"},
+    barmode="overlay", opacity=0.65, histnorm="probability density",
+    nbins=80, range_x=[0, upper], height=420,
+    title="PageRank by class — mule collectors accumulate inbound mass",
+    labels={"pagerank": "PageRank"},
+)
+fig.update_layout(template="plotly_white",
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 2. Feature importance ------------------------------------------------------
-importances = model.get_booster().get_score(importance_type="gain")
-imp_pd = (pd.DataFrame({"feature": list(importances.keys()),
-                         "gain":    list(importances.values())})
-            .sort_values("gain", ascending=True))
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.barh(imp_pd["feature"], imp_pd["gain"], color="#9467bd")
-ax.set_xlabel("xgboost gain")
-ax.set_title("Graph feature importance")
-fig.tight_layout()
+# SparkXGBClassifier renames the VectorAssembler columns to f0, f1, … internally.
+# Map them back to the original FEATURE_COLS names so the chart is readable.
+importances_raw = model.get_booster().get_score(importance_type="gain")
+feature_map = {f"f{i}": name for i, name in enumerate(FEATURE_COLS)}
+imp_pd = (pd.DataFrame({
+        "feature": [feature_map.get(k, k) for k in importances_raw.keys()],
+        "gain":    list(importances_raw.values()),
+    }).sort_values("gain", ascending=True))
+fig = px.bar(imp_pd, x="gain", y="feature", orientation="h",
+              color_discrete_sequence=["#9467bd"], height=420,
+              title="Graph feature importance",
+              labels={"gain": "xgboost gain"})
+fig.update_layout(template="plotly_white",
+                   margin=dict(l=20, r=20, t=60, b=40), showlegend=False)
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. PR curve ----------------------------------------------------------------
 p, r, _ = precision_recall_curve(y, proba)
-fig, ax = plt.subplots(figsize=(7, 5))
-ax.plot(r, p, color="#9467bd", label=f"graph + SparkXGB  AUPRC={auprc:.3f}")
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall — Tier 4 (graph features)")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=r, y=p, mode="lines",
+                            line=dict(color="#9467bd", width=3),
+                            name=f"graph + SparkXGB  AUPRC={auprc:.3f}"))
+fig.update_layout(template="plotly_white", height=460,
+                   title="Precision–Recall — Tier 4 (graph features)",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 

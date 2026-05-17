@@ -1,0 +1,177 @@
+{
+  "name": "mule-detection-demo \u00b7 run all tiers",
+  "format": "MULTI_TASK",
+  "max_concurrent_runs": 1,
+  "queue": {
+    "enabled": true
+  },
+  "tags": {
+    "owner": "sergio.ballesteros",
+    "demo": "mule-detection",
+    "source": "modeling/mule_demo_job.json"
+  },
+  "tasks": [
+    {
+      "task_key": "data_generation",
+      "description": "00 \u2014 synthetic accounts + transactions + plotly EDA visuals",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/00_data_generation"
+      }
+    },
+    {
+      "task_key": "tier1_rules",
+      "description": "Tier 1 \u2014 pure-Spark rules engine",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/01_rules_engine"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier2_isolation_forest",
+      "description": "Tier 2 \u2014 sklearn vs LinkedIn Spark Isolation Forest",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/02_isolation_forest"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier2_autoencoder",
+      "description": "Tier 2 \u2014 PyTorch autoencoder (TorchDistributor with driver fallback)",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/03_autoencoder"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier3_xgboost_pu",
+      "description": "Tier 3 \u2014 SparkXGBClassifier + PU-learning correction",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/04_xgboost_pu_learning"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier4_graphframes",
+      "description": "Tier 4 \u2014 GraphFrames features + SparkXGBClassifier",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/05_graphframes_features"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier4_graphsage",
+      "description": "Tier 4 \u2014 PyTorch Geometric GraphSAGE (GPU)",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/06_graphsage_gnn"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier5_lstm",
+      "description": "Tier 5 \u2014 per-account LSTM sequence model (GPU)",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/07_lstm_sequence"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier5_muletrack",
+      "description": "Tier 5 \u2014 MuleTrack-style Markov chain over behavioural states (CPU)",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/08_muletrack_markov"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier5_tgn",
+      "description": "Tier 5 \u2014 Temporal Graph Network (GPU, PyG TGN)",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/09_tgn_temporal_graph"
+      },
+      "depends_on": [
+        {
+          "task_key": "data_generation"
+        }
+      ]
+    },
+    {
+      "task_key": "tier_comparison",
+      "description": "10 \u2014 read tier_benchmark and render the maturity-ladder comparison",
+      "existing_cluster_id": "0515-114053-9qo5ptwy",
+      "notebook_task": {
+        "notebook_path": "/Users/sergio.ballesteros@databricks.com/mule-detection-demo/modeling/10_tier_comparison"
+      },
+      "depends_on": [
+        {
+          "task_key": "tier1_rules"
+        },
+        {
+          "task_key": "tier2_isolation_forest"
+        },
+        {
+          "task_key": "tier2_autoencoder"
+        },
+        {
+          "task_key": "tier3_xgboost_pu"
+        },
+        {
+          "task_key": "tier4_graphframes"
+        },
+        {
+          "task_key": "tier4_graphsage"
+        },
+        {
+          "task_key": "tier5_lstm"
+        },
+        {
+          "task_key": "tier5_muletrack"
+        },
+        {
+          "task_key": "tier5_tgn"
+        }
+      ]
+    }
+  ]
+}

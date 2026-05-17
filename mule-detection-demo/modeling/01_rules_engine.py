@@ -34,7 +34,9 @@ import time
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 from pyspark.sql import DataFrame, functions as F
 
 mlflow.set_experiment(MLFLOW_EXPERIMENT)
@@ -52,6 +54,19 @@ spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+# MAGIC
+# MAGIC Before applying any rules, let's get a feel for what we're working with.
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
 
 features = build_account_window_features(accounts, txns, window_days=7)
 features.printSchema()
@@ -205,40 +220,36 @@ print(f"Precision@5%   : {p5:.1%}    Recall@5% : {r_at_5pct:.1%}")
 # 1. Hits-per-account ---------------------------------------------------------
 hits = (scored.groupBy("rule_score", "is_mule").count()
               .orderBy("rule_score").toPandas())
+hits["class"] = np.where(hits["is_mule"], "mule", "legit")
 
-fig, ax = plt.subplots(figsize=(8, 4))
-for is_mule, sub in hits.groupby("is_mule"):
-    label = "mule" if is_mule else "legit"
-    color = "#d62728" if is_mule else "#7f7f7f"
-    ax.bar(sub["rule_score"] + (0.18 if is_mule else -0.18), sub["count"],
-           width=0.36, label=label, color=color)
-ax.set_yscale("log")
-ax.set_xticks(range(len(RULES) + 1))
-ax.set_xlabel("# rules hit by an account")
-ax.set_ylabel("# accounts (log scale)")
-ax.set_title("How many rules each account triggers")
-ax.legend()
-fig.tight_layout()
+fig = px.bar(hits, x="rule_score", y="count", color="class", barmode="group",
+              color_discrete_map={"legit": "#7f7f7f", "mule": "#d62728"},
+              log_y=True, height=420,
+              title="How many rules each account triggers (log scale)",
+              labels={"rule_score": "# rules hit by an account",
+                       "count":     "# accounts"})
+fig.update_layout(template="plotly_white",
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"),
+                   margin=dict(l=20, r=20, t=60, b=40))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 2. Rule co-firing heatmap --------------------------------------------------
 rule_cols    = [name for name, _ in RULES]
 cofire_pd    = scored.select(*rule_cols).toPandas().astype(int)
-cofire_mat   = cofire_pd.T.dot(cofire_pd).values  # rule_i AND rule_j counts
+cofire_mat   = cofire_pd.T.dot(cofire_pd).values   # rule_i AND rule_j counts
 
-fig, ax = plt.subplots(figsize=(5, 4))
-im = ax.imshow(cofire_mat, cmap="Reds")
-ax.set_xticks(range(len(rule_cols))); ax.set_xticklabels(rule_cols, rotation=30, ha="right")
-ax.set_yticks(range(len(rule_cols))); ax.set_yticklabels(rule_cols)
-for i in range(len(rule_cols)):
-    for j in range(len(rule_cols)):
-        ax.text(j, i, f"{cofire_mat[i, j]:,}", ha="center", va="center",
-                color="white" if cofire_mat[i, j] > cofire_mat.max() * 0.5 else "black",
-                fontsize=8)
-ax.set_title("Rule co-firing (count of accounts hit by both rules)")
-fig.colorbar(im, ax=ax, fraction=0.04)
-fig.tight_layout()
+fig = go.Figure(data=go.Heatmap(
+    z=cofire_mat, x=rule_cols, y=rule_cols, colorscale="Reds",
+    text=[[f"{v:,}" for v in row] for row in cofire_mat],
+    texttemplate="%{text}", hovertemplate="%{y} ∩ %{x}: %{z:,}<extra></extra>",
+))
+fig.update_layout(template="plotly_white",
+                   title="Rule co-firing (count of accounts hit by both rules)",
+                   height=460, margin=dict(l=20, r=20, t=60, b=40),
+                   xaxis=dict(tickangle=-30))
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -252,15 +263,20 @@ for t in thresholds:
     prec.append(tp / max(1, n_flagged))
     rec.append (tp / max(1, eval_pd["is_mule"].sum()))
 
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(thresholds, prec, "-o", label="precision", color="#1f77b4")
-ax.plot(thresholds, rec,  "-s", label="recall",    color="#ff7f0e")
-ax.set_xlabel("rule_score threshold (≥)")
-ax.set_xticks(thresholds)
-ax.set_ylim(0, 1.05); ax.set_ylabel("")
-ax.set_title("Precision and recall as the alert threshold rises")
-ax.grid(alpha=0.3); ax.legend()
-fig.tight_layout()
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=thresholds, y=prec, mode="lines+markers",
+                          name="precision", line=dict(color="#1f77b4", width=3),
+                          marker=dict(size=10)))
+fig.add_trace(go.Scatter(x=thresholds, y=rec, mode="lines+markers",
+                          name="recall",    line=dict(color="#ff7f0e", width=3),
+                          marker=dict(size=10, symbol="square")))
+fig.update_layout(template="plotly_white",
+                   title="Precision and recall as the alert threshold rises",
+                   height=420, yaxis=dict(range=[0, 1.05], tickformat=".0%"),
+                   xaxis=dict(title="rule_score threshold (≥)", tickvals=thresholds),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"),
+                   margin=dict(l=20, r=20, t=60, b=40))
+plotly_show(fig)
 
 # COMMAND ----------
 

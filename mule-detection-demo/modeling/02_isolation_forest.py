@@ -34,7 +34,9 @@ import time
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 from pyspark.sql import DataFrame as SparkDataFrame, functions as F
 from pyspark.ml.feature import VectorAssembler
@@ -53,6 +55,18 @@ spark.sql(f"USE CATALOG {CATALOG}"); spark.sql(f"USE SCHEMA {SCHEMA}")
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
+
 feat_sdf = build_account_features(accounts, txns).cache()
 
 FEATURE_COLS = [
@@ -199,56 +213,66 @@ print(f"✓ Wrote {scores_table('02_isolation_forest')}")
 # COMMAND ----------
 
 # 1. Score histograms -------------------------------------------------------
-# IMPORTANT: each (scores, labels) pair must be drawn from the *same row order*.
-# `scores_sklearn` is aligned to `feat_pd` (so use `y`); `scores_li` was pulled
-# back from Spark sorted by account_id (so use `y_li`). Mixing the two collapses
-# the LinkedIn histogram to look identical for both classes — that's a bug, not
-# a real result.
-fig, axes = plt.subplots(1, 2, figsize=(14, 4), sharey=True)
-for ax, (name, scores_arr, y_arr) in zip(axes, [
-    ("sklearn",        scores_sklearn, y),
-    ("LinkedIn-Spark", scores_li,      y_li),
-]):
-    ax.hist(scores_arr[y_arr == 0], bins=60, alpha=0.6, color="#7f7f7f", label="legit", density=True)
-    ax.hist(scores_arr[y_arr == 1], bins=60, alpha=0.7, color="#d62728", label="mule",  density=True)
-    ax.set_title(f"{name} — anomaly score distribution")
-    ax.set_xlabel("score (higher = more anomalous)"); ax.legend()
-fig.tight_layout()
+# IMPORTANT: each (scores, labels) pair must be from the *same row order*. The
+# sklearn scores are aligned with `y`; the LinkedIn scores were pulled sorted by
+# account_id, so they need `y_li`.
+fig = make_subplots(rows=1, cols=2, shared_yaxes=True,
+                     subplot_titles=("sklearn — anomaly score distribution",
+                                       "LinkedIn-Spark — anomaly score distribution"))
+for col, (scores_arr, y_arr) in enumerate(
+    [(scores_sklearn, y), (scores_li, y_li)], start=1):
+    fig.add_trace(go.Histogram(x=scores_arr[y_arr == 0], nbinsx=60, histnorm="probability density",
+                                marker_color="#9aa0a6", opacity=0.6, name="legit",
+                                showlegend=(col == 1)), row=1, col=col)
+    fig.add_trace(go.Histogram(x=scores_arr[y_arr == 1], nbinsx=60, histnorm="probability density",
+                                marker_color="#d62728", opacity=0.65, name="mule",
+                                showlegend=(col == 1)), row=1, col=col)
+    fig.update_xaxes(title_text="score (higher = more anomalous)", row=1, col=col)
+fig.update_layout(barmode="overlay", template="plotly_white", height=420,
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 2. Side-by-side metrics ---------------------------------------------------
-fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-labels = ["sklearn\n(single node)", "LinkedIn Spark\n(distributed)"]
-
-axes[0].bar(labels, [pr_auc_sk, pr_auc_li], color=["#1f77b4", "#2ca02c"])
-for i, v in enumerate([pr_auc_sk, pr_auc_li]):
-    axes[0].text(i, v, f"{v:.3f}", ha="center", va="bottom")
-axes[0].set_title("PR-AUC"); axes[0].set_ylim(0, 1.05)
-
-axes[1].bar(labels, [runtime_sklearn, runtime_spark], color=["#1f77b4", "#2ca02c"])
-for i, v in enumerate([runtime_sklearn, runtime_spark]):
-    axes[1].text(i, v, f"{v:.1f}s", ha="center", va="bottom")
-axes[1].set_title("Runtime (fit + score)"); axes[1].set_ylabel("seconds")
-fig.suptitle("sklearn vs LinkedIn Spark Isolation Forest", fontsize=13)
-fig.tight_layout()
+labels = ["sklearn (single node)", "LinkedIn Spark (distributed)"]
+fig = make_subplots(rows=1, cols=2,
+                     subplot_titles=("PR-AUC", "Runtime — fit + score (seconds)"))
+fig.add_trace(go.Bar(x=labels, y=[pr_auc_sk, pr_auc_li],
+                      marker_color=["#1f77b4", "#2ca02c"],
+                      text=[f"{v:.3f}" for v in [pr_auc_sk, pr_auc_li]],
+                      textposition="outside"), row=1, col=1)
+fig.add_trace(go.Bar(x=labels, y=[runtime_sklearn, runtime_spark],
+                      marker_color=["#1f77b4", "#2ca02c"],
+                      text=[f"{v:.1f}s" for v in [runtime_sklearn, runtime_spark]],
+                      textposition="outside"), row=1, col=2)
+fig.update_layout(template="plotly_white", showlegend=False, height=440,
+                   title_text="<b>sklearn vs LinkedIn Spark — Isolation Forest</b>",
+                   margin=dict(l=20, r=20, t=70, b=40))
+fig.update_yaxes(range=[0, 1.05], row=1, col=1)
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. PR curves overlay -------------------------------------------------------
 from sklearn.metrics import precision_recall_curve
 
-fig, ax = plt.subplots(figsize=(7, 5))
-for name, sc, color in [("sklearn", scores_sklearn, "#1f77b4"),
-                          ("LinkedIn-Spark", scores_li, "#2ca02c")]:
-    p, r, _ = precision_recall_curve(y, sc) if name == "sklearn" else \
-              precision_recall_curve(y_li, sc)
-    auprc = pr_auc_sk if name == "sklearn" else pr_auc_li
-    ax.plot(r, p, color=color, label=f"{name}  AUPRC={auprc:.3f}")
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall — sklearn vs LinkedIn Spark")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+p_sk, r_sk, _ = precision_recall_curve(y,    scores_sklearn)
+p_li, r_li, _ = precision_recall_curve(y_li, scores_li)
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=r_sk, y=p_sk, mode="lines", line=dict(color="#1f77b4", width=3),
+                          name=f"sklearn  AUPRC={pr_auc_sk:.3f}"))
+fig.add_trace(go.Scatter(x=r_li, y=p_li, mode="lines", line=dict(color="#2ca02c", width=3),
+                          name=f"LinkedIn-Spark  AUPRC={pr_auc_li:.3f}"))
+fig.update_layout(template="plotly_white",
+                   title="Precision–Recall — sklearn vs LinkedIn Spark",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   height=460, margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 

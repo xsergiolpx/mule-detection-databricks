@@ -18,7 +18,11 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install torchinfo torchview --quiet
+# MAGIC %pip install torchinfo torchviz --quiet
+
+# COMMAND ----------
+
+# MAGIC %sh apt-get install -y graphviz > /dev/null 2>&1 && echo "✓ graphviz binary ready" || echo "graphviz install skipped (already present or no sudo)"
 
 # COMMAND ----------
 
@@ -32,7 +36,8 @@ import json
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 
 import torch
 from pyspark.sql import functions as F
@@ -57,6 +62,17 @@ os.makedirs(LSTM_DATA_DIR, exist_ok=True)
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
 
 # Build (account_id, day, amount, direction=+1 inbound / -1 outbound) ---------
 inbound  = txns.select(F.col("dst").alias("account_id"), "day", "amount",
@@ -231,14 +247,19 @@ print(summary(_viz_model,
 # COMMAND ----------
 
 try:
-    from torchview import draw_graph
-    g = draw_graph(_viz_model, input_size=(1, SEQ_LEN, 3),
-                    expand_nested=True, depth=3, graph_dir="TB",
-                    graph_name="MuleLSTM")
-    displayHTML(g.visual_graph.pipe(format="svg").decode("utf-8"))
+    from torchviz import make_dot
+    # Force model and input onto CPU — DBR ML GPU runtime defaults parameters
+    # to cuda:0, which mismatches the CPU-side dummy input.
+    _viz_model_cpu = _viz_model.to("cpu")
+    _x = torch.randn(1, SEQ_LEN, 3, device="cpu")
+    _yhat = _viz_model_cpu(_x)
+    dot = make_dot(_yhat, params=dict(_viz_model_cpu.named_parameters()),
+                    show_attrs=False, show_saved=False)
+    dot.attr(rankdir="TB", size="9,14")
+    displayHTML(dot.pipe(format="svg").decode("utf-8"))
 except Exception as e:
-    print(f"torchview rendering failed ({type(e).__name__}: {e})")
-    print("If the error mentions 'dot' / 'graphviz', run:  %sh apt-get install -y graphviz")
+    print(f"torchviz rendering failed ({type(e).__name__}: {e})")
+    print("If the error mentions 'dot' / 'graphviz', the system binary is missing.")
 
 # COMMAND ----------
 
@@ -290,23 +311,28 @@ print(f"LSTM AUPRC={auprc:.3f}  P@5%={p5:.1%}  R@5%={r5:.1%}")
 # COMMAND ----------
 
 # 1. Training loss -----------------------------------------------------------
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(ckpt["losses"], marker="o", color="#e377c2")
-ax.set_xlabel("epoch"); ax.set_ylabel("loss")
-ax.set_title("LSTM training loss (rank 0)")
-ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=list(range(len(ckpt["losses"]))), y=ckpt["losses"],
+                            mode="lines+markers", line=dict(color="#e377c2", width=3),
+                            marker=dict(size=8)))
+fig.update_layout(template="plotly_white", height=380,
+                   title="LSTM training loss (rank 0)",
+                   xaxis_title="epoch", yaxis_title="loss",
+                   margin=dict(l=20, r=20, t=60, b=40))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 2. PR curve ----------------------------------------------------------------
 p, r, _ = precision_recall_curve(y_test, sc_test)
-fig, ax = plt.subplots(figsize=(7, 5))
-ax.plot(r, p, color="#e377c2", label=f"LSTM  AUPRC={auprc:.3f}")
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Precision–Recall — Tier 5 (LSTM)")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=r, y=p, mode="lines", line=dict(color="#e377c2", width=3),
+                            name=f"LSTM  AUPRC={auprc:.3f}"))
+fig.update_layout(template="plotly_white", height=460,
+                   title="Precision–Recall — Tier 5 (LSTM)",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -316,15 +342,22 @@ test_mules = test_idx[y[test_idx] == 1]
 if len(test_mules) > 0:
     best_mule = test_mules[np.argsort(proba[test_mules])[::-1][0]]
     seq = X[best_mule]   # (SEQ_LEN, 3)
-    fig, ax = plt.subplots(figsize=(10, 3))
-    im = ax.imshow(seq.T, aspect="auto", cmap="RdBu_r",
-                    vmin=-np.abs(seq).max(), vmax=np.abs(seq).max())
-    ax.set_yticks([0, 1, 2]); ax.set_yticklabels(["log(amt)", "direction", "day"])
-    ax.set_xlabel("event #")
-    ax.set_title(f"Top-scored mule (account_id={int(acc_pd['account_id'].values[best_mule])}, "
-                  f"score={proba[best_mule]:.3f}) — last {SEQ_LEN} events")
-    fig.colorbar(im, ax=ax, fraction=0.05)
-    fig.tight_layout()
+    seq_T = seq.T        # (3, SEQ_LEN)
+    vmax = float(np.abs(seq).max())
+    fig = go.Figure(go.Heatmap(
+        z=seq_T,
+        x=[f"event {i+1}" for i in range(seq_T.shape[1])],
+        y=["log(amt)", "direction", "day"],
+        zmin=-vmax, zmax=vmax,
+        colorscale="RdBu_r",
+        hovertemplate="%{y} @ %{x}: %{z:.3f}<extra></extra>",
+        colorbar=dict(title=""),
+    ))
+    fig.update_layout(template="plotly_white", height=320,
+                       title=f"Top-scored mule (account_id={int(acc_pd['account_id'].values[best_mule])}, "
+                              f"score={proba[best_mule]:.3f}) — last {SEQ_LEN} events",
+                       margin=dict(l=20, r=20, t=60, b=40))
+    plotly_show(fig)
 
 # COMMAND ----------
 

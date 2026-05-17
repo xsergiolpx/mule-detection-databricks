@@ -30,7 +30,8 @@ import time
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 
 from pyspark.sql import functions as F
 from pyspark.ml.feature import VectorAssembler
@@ -56,6 +57,18 @@ FEATURE_COLS = [
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
+
 feat_sdf = build_account_features(accounts, txns).cache()
 
 assembler = VectorAssembler(inputCols=FEATURE_COLS, outputCol="features")
@@ -205,50 +218,65 @@ p5_sup, r5_sup = precision_recall_at_k(y_sup, proba_sup, 0.05)
 # COMMAND ----------
 
 # 1. PR curves overlay --------------------------------------------------------
-fig, ax = plt.subplots(figsize=(8, 5))
-for name, y_arr, sc_arr, color in [
-    ("supervised baseline",  y_sup, proba_sup, "#1f77b4"),
-    ("PU-corrected",         y_test, proba_pu, "#2ca02c"),
-]:
-    p, r, _ = precision_recall_curve(y_arr, sc_arr)
-    auc = auprc_sup if name == "supervised baseline" else auprc_pu
-    ax.plot(r, p, color=color, label=f"{name}  AUPRC={auc:.3f}")
-ax.set_xlabel("recall"); ax.set_ylabel("precision")
-ax.set_title("Supervised vs PU-corrected SparkXGBoost")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure()
+p_s, r_s, _ = precision_recall_curve(y_sup,  proba_sup)
+p_p, r_p, _ = precision_recall_curve(y_test, proba_pu)
+fig.add_trace(go.Scatter(x=r_s, y=p_s, mode="lines", line=dict(color="#1f77b4", width=3),
+                          name=f"supervised baseline  AUPRC={auprc_sup:.3f}"))
+fig.add_trace(go.Scatter(x=r_p, y=p_p, mode="lines", line=dict(color="#2ca02c", width=3),
+                          name=f"PU-corrected  AUPRC={auprc_pu:.3f}"))
+fig.update_layout(template="plotly_white", height=440,
+                   title="Supervised vs PU-corrected SparkXGBoost",
+                   xaxis_title="recall", yaxis_title="precision",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1.05]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 2. Feature importance -------------------------------------------------------
-importances = model_pu.get_booster().get_score(importance_type="gain")
-imp_pd = (pd.DataFrame({"feature": list(importances.keys()),
-                         "gain":    list(importances.values())})
-            .sort_values("gain", ascending=True))
+# SparkXGBClassifier renames the VectorAssembler columns to f0, f1, … internally.
+# Map them back to the original FEATURE_COLS names so the chart is readable.
+importances_raw = model_pu.get_booster().get_score(importance_type="gain")
+feature_map = {f"f{i}": name for i, name in enumerate(FEATURE_COLS)}
+imp_pd = (pd.DataFrame({
+        "feature": [feature_map.get(k, k) for k in importances_raw.keys()],
+        "gain":    list(importances_raw.values()),
+    }).sort_values("gain", ascending=True))
 
-fig, ax = plt.subplots(figsize=(8, 5))
-ax.barh(imp_pd["feature"], imp_pd["gain"], color="#2ca02c")
-ax.set_xlabel("xgboost gain")
-ax.set_title("Feature importance (PU-corrected model)")
-fig.tight_layout()
+fig = px.bar(imp_pd, x="gain", y="feature", orientation="h",
+              color_discrete_sequence=["#2ca02c"], height=440,
+              title="Feature importance (PU-corrected model)",
+              labels={"gain": "xgboost gain"})
+fig.update_layout(template="plotly_white",
+                   margin=dict(l=20, r=20, t=60, b=40), showlegend=False)
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. Calibration curve --------------------------------------------------------
 from sklearn.calibration import calibration_curve
-fig, ax = plt.subplots(figsize=(7, 5))
-for name, sc, color in [
-    ("supervised raw probability",  proba_sup, "#1f77b4"),
-    ("PU-corrected probability",    proba_pu,  "#2ca02c"),
+
+fig = go.Figure()
+for name, sc, y_arr, color in [
+    ("supervised raw probability", proba_sup, y_sup,  "#1f77b4"),
+    ("PU-corrected probability",   proba_pu,  y_test, "#2ca02c"),
 ]:
-    frac_pos, mean_pred = calibration_curve(y_test if name != "supervised raw probability" else y_sup,
-                                            sc, n_bins=20, strategy="quantile")
-    ax.plot(mean_pred, frac_pos, "-o", color=color, label=name)
-ax.plot([0, 1], [0, 1], "k--", alpha=0.5, label="perfect")
-ax.set_xlabel("mean predicted probability"); ax.set_ylabel("fraction of positives")
-ax.set_title(f"Calibration  (estimated c = {c_est:.3f})")
-ax.legend(); ax.grid(alpha=0.3)
-fig.tight_layout()
+    frac_pos, mean_pred = calibration_curve(y_arr, sc, n_bins=20, strategy="quantile")
+    fig.add_trace(go.Scatter(x=mean_pred, y=frac_pos, mode="lines+markers",
+                              line=dict(color=color, width=3), name=name))
+fig.add_trace(go.Scatter(x=[0, 1], y=[0, 1], mode="lines",
+                          line=dict(color="black", width=1, dash="dash"),
+                          name="perfect calibration"))
+fig.update_layout(template="plotly_white", height=460,
+                   title=f"Calibration  (estimated c = {c_est:.3f})",
+                   xaxis_title="mean predicted probability",
+                   yaxis_title="fraction of positives",
+                   xaxis=dict(range=[0, 1]), yaxis=dict(range=[0, 1]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 

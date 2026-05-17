@@ -18,7 +18,11 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install torchinfo torchview --quiet
+# MAGIC %pip install torchinfo torchviz --quiet
+
+# COMMAND ----------
+
+# MAGIC %sh apt-get install -y graphviz > /dev/null 2>&1 && echo "✓ graphviz binary ready" || echo "graphviz install skipped (already present or no sudo)"
 
 # COMMAND ----------
 
@@ -32,7 +36,8 @@ import json
 import mlflow
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 
 import torch
 import torch.nn as nn
@@ -64,6 +69,18 @@ FEATURE_COLS = [
 
 accounts = spark.table(ACCOUNTS_TABLE)
 txns     = spark.table(TXNS_TABLE)
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### 🎯 Meet the dataset
+
+# COMMAND ----------
+
+show_dataset_overview(accounts, txns)
+
+# COMMAND ----------
+
 feat_sdf = build_account_features(accounts, txns)
 
 assembler  = VectorAssembler(inputCols=FEATURE_COLS, outputCol="features_raw")
@@ -186,7 +203,7 @@ def train_autoencoder(
 # MAGIC Before launching training, let's look at what we're about to train. Two views:
 # MAGIC
 # MAGIC - **`torchinfo`** — the spec sheet (layers, output shapes, parameter counts).
-# MAGIC - **`torchview`** — the picture (boxes and arrows of the forward pass).
+# MAGIC - **`torchviz`** — the picture (autograd graph rendered via Graphviz).
 
 # COMMAND ----------
 
@@ -211,16 +228,21 @@ print(summary(_viz_model,
 
 # COMMAND ----------
 
-# Visual architecture diagram (torchview → graphviz SVG)
+# Visual architecture diagram via torchviz (autograd graph)
+# Force everything to CPU — on DBR ML GPU runtimes PyTorch may default to CUDA,
+# which causes "mat1 on cpu, other tensors on cuda:0" if we don't pin the device.
 try:
-    from torchview import draw_graph
-    g = draw_graph(_viz_model, input_size=(1, len(FEATURE_COLS)),
-                    expand_nested=True, depth=3, graph_dir="TB",
-                    graph_name="AutoEncoder")
-    displayHTML(g.visual_graph.pipe(format="svg").decode("utf-8"))
+    from torchviz import make_dot
+    _viz_model_cpu = _viz_model.to("cpu")
+    _x = torch.randn(1, len(FEATURE_COLS), device="cpu")
+    _yhat = _viz_model_cpu(_x)
+    dot = make_dot(_yhat, params=dict(_viz_model_cpu.named_parameters()),
+                    show_attrs=False, show_saved=False)
+    dot.attr(rankdir="TB", size="9,12")
+    displayHTML(dot.pipe(format="svg").decode("utf-8"))
 except Exception as e:
-    print(f"torchview rendering failed ({type(e).__name__}: {e})")
-    print("If the error mentions 'dot' / 'graphviz', run:  %sh apt-get install -y graphviz")
+    print(f"torchviz rendering failed ({type(e).__name__}: {e})")
+    print("If the error mentions 'dot' / 'graphviz', the system binary is missing.")
 
 # COMMAND ----------
 
@@ -301,12 +323,14 @@ print(f"PR-AUC={pr_auc:.3f}  P@5%={p5:.1%}  R@5%={r_at_5pct:.1%}")
 # COMMAND ----------
 
 # 1. Training loss -----------------------------------------------------------
-fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(ckpt["losses"], marker="o")
-ax.set_xlabel("epoch"); ax.set_ylabel("MSE loss")
-ax.set_title("Autoencoder training loss (rank 0)")
-ax.grid(alpha=0.3)
-fig.tight_layout()
+fig = go.Figure(go.Scatter(x=list(range(len(ckpt["losses"]))), y=ckpt["losses"],
+                            mode="lines+markers", line=dict(color="#1f77b4", width=3),
+                            marker=dict(size=8)))
+fig.update_layout(template="plotly_white", height=380,
+                   title="Autoencoder training loss (rank 0)",
+                   xaxis_title="epoch", yaxis_title="MSE loss",
+                   margin=dict(l=20, r=20, t=60, b=40))
+plotly_show(fig)
 
 # COMMAND ----------
 
@@ -316,30 +340,44 @@ if latent_2d.shape[1] > 2:
     from sklearn.decomposition import PCA
     latent_2d = PCA(n_components=2, random_state=SEED).fit_transform(latent_2d)
 
-fig, ax = plt.subplots(figsize=(8, 6))
 mask_legit = y == 0
 mask_mule  = y == 1
-ax.scatter(latent_2d[mask_legit, 0], latent_2d[mask_legit, 1],
-           s=4, alpha=0.15, color="#7f7f7f", label="legit")
-ax.scatter(latent_2d[mask_mule, 0],  latent_2d[mask_mule, 1],
-           s=10, alpha=0.7, color="#d62728", label="mule")
-ax.set_xlabel("latent 1"); ax.set_ylabel("latent 2")
-ax.set_title("Learned latent space (mules cluster apart from legit)")
-ax.legend()
-fig.tight_layout()
+
+# Downsample legit for plot size safety
+rng_lat = np.random.default_rng(SEED)
+legit_idx = np.where(mask_legit)[0]
+legit_sample = rng_lat.choice(legit_idx, size=min(4000, len(legit_idx)), replace=False)
+
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=latent_2d[legit_sample, 0], y=latent_2d[legit_sample, 1],
+                          mode="markers", marker=dict(size=4, color="#9aa0a6", opacity=0.35),
+                          name="legit"))
+fig.add_trace(go.Scatter(x=latent_2d[mask_mule, 0], y=latent_2d[mask_mule, 1],
+                          mode="markers", marker=dict(size=7, color="#d62728", opacity=0.85),
+                          name="mule"))
+fig.update_layout(template="plotly_white", height=520,
+                   title="Learned latent space — mules cluster apart from legit",
+                   xaxis_title="latent 1", yaxis_title="latent 2",
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
 # 3. Reconstruction error distribution --------------------------------------
-fig, ax = plt.subplots(figsize=(10, 4))
-ax.hist(recon_err[mask_legit], bins=80, alpha=0.6, color="#7f7f7f", label="legit", density=True)
-ax.hist(recon_err[mask_mule],  bins=80, alpha=0.7, color="#d62728", label="mule",  density=True)
-ax.set_xlim(0, np.quantile(recon_err, 0.995))
-ax.set_xlabel("reconstruction error")
-ax.set_ylabel("density")
-ax.set_title("Reconstruction error by class")
-ax.legend()
-fig.tight_layout()
+upper = float(np.quantile(recon_err, 0.995))
+fig = go.Figure()
+fig.add_trace(go.Histogram(x=recon_err[mask_legit], nbinsx=80, histnorm="probability density",
+                            marker_color="#9aa0a6", opacity=0.6, name="legit"))
+fig.add_trace(go.Histogram(x=recon_err[mask_mule],  nbinsx=80, histnorm="probability density",
+                            marker_color="#d62728", opacity=0.65, name="mule"))
+fig.update_layout(template="plotly_white", barmode="overlay", height=420,
+                   title="Reconstruction error by class",
+                   xaxis_title="reconstruction error", yaxis_title="density",
+                   xaxis=dict(range=[0, upper]),
+                   margin=dict(l=20, r=20, t=60, b=40),
+                   legend=dict(orientation="h", y=1.05, x=1, xanchor="right"))
+plotly_show(fig)
 
 # COMMAND ----------
 
